@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lottie/lottie.dart';
 import 'package:mobile/features/auth/presentation/widgets/auth_action_row.dart';
 import '../../../../config/routes/routes_names.dart';
 import '../../../../config/theme/app_colors.dart';
@@ -35,6 +36,9 @@ class _EmailRegisterScreenState extends State<EmailRegisterScreen> {
   }
 
   Future<void> _handleRegisterSuccess(BuildContext context) async {
+    // Grab the cubit instance BEFORE any async gaps / context changes.
+    final registerCubit = context.read<RegisterCubit>();
+
     setState(() => _showOverlay = true);
 
     AppTopSnackBar.show(
@@ -48,18 +52,34 @@ class _EmailRegisterScreenState extends State<EmailRegisterScreen> {
     await Future.delayed(const Duration(milliseconds: 2000));
     if (!context.mounted) return;
 
+    // Reset status before showing the OTP step, so a leftover
+    // "emailSent" status doesn't leak into the sheet.
+    registerCubit.prepareOtpStep();
+
     await showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       barrierColor: Colors.transparent,
-      builder: (context) {
-        return const OtpBottomSheet();
+      isDismissible: false,
+      enableDrag: false,
+      builder: (sheetContext) {
+        return BlocProvider.value(
+          value: registerCubit,
+          child: const OtpBottomSheet(),
+        );
       },
     );
 
-    if (mounted) {
-      setState(() => _showOverlay = false);
+    if (!mounted) return;
+    setState(() => _showOverlay = false);
+
+    // The sheet only closes itself (via its internal 4s timer) once
+    // OTP verification succeeds, so if we're here with otpVerified,
+    // it's safe to move on to the next step.
+    if (registerCubit.state.status == RegisterStatus.otpVerified &&
+        context.mounted) {
+      context.go(RouteNames.addPropertyScreenOne);
     }
   }
 
@@ -183,7 +203,7 @@ class _EmailRegisterScreenState extends State<EmailRegisterScreen> {
                 BlocListener<RegisterCubit, RegisterState>(
                   listenWhen: (previous, current) =>
                   previous.status != current.status &&
-                      current.status == RegisterStatus.success,
+                      current.status == RegisterStatus.emailSent,
                   listener: (context, state) {
                     _handleRegisterSuccess(context);
                   },
@@ -232,6 +252,32 @@ class _EmailRegisterScreenState extends State<EmailRegisterScreen> {
                 child: Container(
                   color: AppColors.primaryDark.withValues(alpha: 0.63),
                 ),
+              ),
+            ),
+          ),
+
+          // Fullscreen celebratory Lottie, shown only during the
+          // OTP-verified success state.
+          Positioned.fill(
+            child: IgnorePointer(
+              child: BlocBuilder<RegisterCubit, RegisterState>(
+                buildWhen: (previous, current) =>
+                previous.status != current.status,
+                builder: (context, state) {
+                  final showConfetti =
+                      state.status == RegisterStatus.otpVerified;
+                  return AnimatedOpacity(
+                    opacity: showConfetti ? 1 : 0,
+                    duration: const Duration(milliseconds: 300),
+                    child: showConfetti
+                        ? Lottie.asset(
+                      ImagePath.welcomeTopDecorations,
+                      fit: BoxFit.cover,
+                      repeat: false,
+                    )
+                        : const SizedBox.shrink(),
+                  );
+                },
               ),
             ),
           ),

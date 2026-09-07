@@ -95,7 +95,7 @@ class _SplashScreenState extends State<SplashScreen>
     //   context,
     //   MaterialPageRoute(builder: (_) => const VerifyIdentityScreen()),
     // );
-    context.go(RouteNames.proofOfOwnershipPage);
+    context.go(RouteNames.onboardingScreen);
   }
 
   @override
