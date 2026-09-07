@@ -19,4 +19,5 @@ extension MediaQueryExtension on BuildContext {
   double get rightPadding => MediaQuery.paddingOf(this).right;
 
   double get textScaleFactor => MediaQuery.textScalerOf(this).scale(1.0);
+  double get keyboardBottomInset => MediaQuery.viewInsetsOf(this).bottom;
 }

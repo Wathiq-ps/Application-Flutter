@@ -67,7 +67,7 @@ class OnBoardingScreen extends StatelessWidget {
                       textAlign: TextAlign.center,
                       style: textTheme.headlineLarge?.copyWith(
                         color: AppColors.white,
-                        fontSize: _heightScale * 36,
+                        fontSize: _widthScale * 36,
                         height:  (45 / 36),
                         fontWeight: FontWeight.w700,
                         letterSpacing: -0.9,
@@ -81,7 +81,7 @@ class OnBoardingScreen extends StatelessWidget {
                         textAlign: TextAlign.center,
                         style: textTheme.bodyLarge?.copyWith(
                           color: AppColors.secondary,
-                          fontSize:_heightScale * 18,
+                          fontSize:_widthScale * 18,
                           height:  (28 / 18),
                           fontWeight: FontWeight.w500,
                         ),
@@ -97,7 +97,7 @@ class OnBoardingScreen extends StatelessWidget {
                         );
                       },
                       backgroundColor: AppColors.white,
-                      height: _heightScale * 56,
+                      height: (_widthScale * 56).clamp(20, 100),
                       width: double.infinity,
                       borderRadius: 50,
                       preIcon: SvgPicture.asset(
@@ -131,7 +131,7 @@ class OnBoardingScreen extends StatelessWidget {
                       enableBorder: true,
                       borderColor:
                       AppColors.border.withValues(alpha: 0.5),
-                      height: _heightScale *  56,
+                      height: (_widthScale * 56).clamp(20, 100),
                       width: double.infinity,
                       borderRadius: 9999,
                       preIcon: SvgPicture.asset(

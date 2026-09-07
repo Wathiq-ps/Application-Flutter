@@ -1,1 +1,5 @@
-// is first time ? which use in onboarding
+class StorageKeys {
+  StorageKeys() ;
+  static const String accessToken = 'access_token';
+  static const String refreshToken = 'refresh_token';
+}

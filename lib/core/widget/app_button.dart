@@ -70,7 +70,7 @@ class AppElevatedButton extends StatelessWidget {
     const double figmaLineHeight = 24;
 
     final double effectiveHeight =
-        height ?? (figmaButtonHeight * heightScale);
+        height ?? (figmaButtonHeight * widthScale);
 
     final double effectiveBorderRadius =
         borderRadius ?? (figmaBorderRadius * widthScale);
