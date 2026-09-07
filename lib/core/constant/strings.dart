@@ -212,4 +212,67 @@ class AppStrings {
 
   static const String checkEmailForVerificationCode =
       'Check your Email for the verification code';
+
+  static const String welcomeBack = 'Welcome back!';
+  static const String signInToContinueSearch = 'Sign in to continue your search';
+  static const String dontHaveAccount = "Don't have an account?";
+  static const String signUp = 'Sign up';
+
+  static const String enterPhoneNumberToSignIn =
+      'Enter your phone number to sign in your account';
+  static const String enterPhoneNumber = 'Enter Phone Number';
+
+  static const String enterEmailAddressToSignIn =
+      'Enter your email address to sign in your account';
+  static const String emailHint = 'example@mail.com';
+  static const String letGetStarted = "You're in! Let's get started";
+  static const String welcomeToWathiq = 'Welcome to Wathiq' ;
+  static const String pleaseEnterFullOtp = 'Please enter the full OTP';
+  static const String somethingWentWrong = 'Something went wrong. Please try again.';
+  static const String verificationFailed = 'Verification failed';
+// ─────────────────────────────────────────────
+// OTP
+// ─────────────────────────────────────────────
+
+  static const String enterCode = 'Enter Code';
+
+  static const String otpVerificationInstruction =
+      'We sent a 6-digit verification code to your email. Please enter it below.';
+
+  static const String verifyAndProceed = 'Verify and Proceed';
+
+  static const String didntReceiveCode = "Didn't receive the code?";
+
+  static const String resend = 'Resend';
+
+// ─────────────────────────────────────────────
+// Error Messages
+// ─────────────────────────────────────────────
+
+  static const String emailNotRegistered =
+      'This email is not registered. Please register first';
+
+  static const String emailAlreadyRegistered =
+      'This email is already registered. Please login instead';
+
+  static const String otpExpiredOrInvalid =
+      'This code has expired or is invalid. Please request a new one';
+
+  static const String tooManyAttempts =
+      'Too many attempts. Please wait before trying again';
+
+  static const String otpExpired =
+      'This code has expired. Please request a new one';
+
+  static const String incorrectOtp =
+      'The code you entered is incorrect';
+
+  static const String accountSuspended =
+      'Your account has been suspended';
+
+  static const String checkInternetConnection =
+      'Check your internet connection and try again';
+
+  static String tooManyAttemptsWithRetry(int retryAfter) =>
+      'Too many attempts. Please wait ${retryAfter}s before trying again';
 }
