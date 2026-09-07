@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
+import 'package:mobile/features/auth/presentation/state_mangement/cubit/auth_state.dart';
 import 'package:mobile/features/auth/presentation/widgets/auth_action_row.dart';
 import '../../../../config/routes/routes_names.dart';
 import '../../../../config/theme/app_colors.dart';
@@ -13,8 +14,7 @@ import '../../../../core/widget/app_button.dart';
 import '../../../../core/widget/app_top_snackbar.dart';
 import '../../../../core/widget/input_field.dart';
 import '../../../../core/extensions/media_query_extensions.dart';
-import '../state_mangement/cubit/register/register_cubit.dart';
-import '../state_mangement/cubit/register/register_state.dart';
+import '../state_mangement/cubit/auth_cubit.dart';
 import '../widgets/otp_bottom_sheet.dart';
 
 class EmailRegisterScreen extends StatefulWidget {
@@ -36,9 +36,7 @@ class _EmailRegisterScreenState extends State<EmailRegisterScreen> {
   }
 
   Future<void> _handleRegisterSuccess(BuildContext context) async {
-    // Grab the cubit instance BEFORE any async gaps / context changes.
-    final registerCubit = context.read<RegisterCubit>();
-
+    final authCubit = context.read<AuthCubit>();
     setState(() => _showOverlay = true);
 
     AppTopSnackBar.show(
@@ -52,9 +50,7 @@ class _EmailRegisterScreenState extends State<EmailRegisterScreen> {
     await Future.delayed(const Duration(milliseconds: 2000));
     if (!context.mounted) return;
 
-    // Reset status before showing the OTP step, so a leftover
-    // "emailSent" status doesn't leak into the sheet.
-    registerCubit.prepareOtpStep();
+    authCubit.prepareOtpStep();
 
     await showModalBottomSheet(
       context: context,
@@ -64,21 +60,14 @@ class _EmailRegisterScreenState extends State<EmailRegisterScreen> {
       isDismissible: false,
       enableDrag: false,
       builder: (sheetContext) {
-        return BlocProvider.value(
-          value: registerCubit,
-          child: const OtpBottomSheet(),
-        );
+        return BlocProvider.value(value: authCubit, child: const OtpBottomSheet());
       },
     );
 
     if (!mounted) return;
     setState(() => _showOverlay = false);
 
-    // The sheet only closes itself (via its internal 4s timer) once
-    // OTP verification succeeds, so if we're here with otpVerified,
-    // it's safe to move on to the next step.
-    if (registerCubit.state.status == RegisterStatus.otpVerified &&
-        context.mounted) {
+    if (authCubit.state.status == AuthStatus.otpVerified && context.mounted) {
       context.go(RouteNames.addPropertyScreenOne);
     }
   }
@@ -153,7 +142,7 @@ class _EmailRegisterScreenState extends State<EmailRegisterScreen> {
                   AppStrings.getStarted,
                   style: textTheme.headlineLarge?.copyWith(
                     color: AppColors.white,
-                    fontSize: _heightScale * 32,
+                    fontSize: _widthScale * 32,
                     height: (40 / 32),
                     fontWeight: FontWeight.w700,
                   ),
@@ -165,7 +154,7 @@ class _EmailRegisterScreenState extends State<EmailRegisterScreen> {
                   AppStrings.enterYourEmailAdd,
                   style: textTheme.bodyLarge?.copyWith(
                     color: AppColors.white,
-                    fontSize: _heightScale * 16,
+                    fontSize: _widthScale * 16,
                     height: (24 / 16),
                     fontWeight: FontWeight.w500,
                   ),
@@ -177,7 +166,7 @@ class _EmailRegisterScreenState extends State<EmailRegisterScreen> {
                   AppStrings.enterEmail,
                   style: textTheme.labelMedium?.copyWith(
                     color: AppColors.white,
-                    fontSize: _heightScale * 14,
+                    fontSize: _widthScale * 14,
                     height: (20 / 14),
                     fontWeight: FontWeight.w500,
                   ),
@@ -185,14 +174,14 @@ class _EmailRegisterScreenState extends State<EmailRegisterScreen> {
 
                 SizedBox(height: _heightScale * 12),
 
-                BlocBuilder<RegisterCubit, RegisterState>(
-                  builder: (BuildContext context, RegisterState state) {
+                BlocBuilder<AuthCubit, AuthState>(
+                  builder: (BuildContext context, AuthState state) {
                     return InputFieldWidget(
                       hint: AppStrings.emailHintText,
                       controller: _emailController,
                       errorText: state.errorMessage,
                       onChanged: (value) {
-                        context.read<RegisterCubit>().emailChange(value);
+                        context.read<AuthCubit>().emailChange(value);
                       },
                     );
                   },
@@ -200,27 +189,16 @@ class _EmailRegisterScreenState extends State<EmailRegisterScreen> {
 
                 SizedBox(height: _heightScale * 24),
 
-                BlocListener<RegisterCubit, RegisterState>(
+                BlocListener<AuthCubit, AuthState>(
                   listenWhen: (previous, current) =>
-                  previous.status != current.status &&
-                      current.status == RegisterStatus.emailSent,
-                  listener: (context, state) {
-                    _handleRegisterSuccess(context);
-                  },
-                  child: BlocBuilder<RegisterCubit, RegisterState>(
-                    builder: (BuildContext context, RegisterState state) {
+                  previous.status != current.status && current.status == AuthStatus.otpRequested,
+                  listener: (context, state) => _handleRegisterSuccess(context),
+                  child: BlocBuilder<AuthCubit, AuthState>(
+                    builder: (context, state) {
                       return AppElevatedButton(
-                        text: AppStrings.sendCode,
-                        onPressed: () {
-                          context.read<RegisterCubit>().emailValidate();
-                        },
-                        backgroundColor: AppColors.primary,
-                        borderWidth: 1,
-                        height: (_widthScale * 58).clamp(20, 130),
-                        borderRadius: 9999,
-                        postIcon: SvgPicture.asset(AppIcons.send),
-                        iconSize: 15 * _widthScale,
-                        iconGap: 8 * _widthScale,
+                          text: AppStrings.sendCode,
+                          onPressed: () => context.read<AuthCubit>().emailValidate(),
+
                       );
                     },
                   ),
@@ -260,12 +238,12 @@ class _EmailRegisterScreenState extends State<EmailRegisterScreen> {
           // OTP-verified success state.
           Positioned.fill(
             child: IgnorePointer(
-              child: BlocBuilder<RegisterCubit, RegisterState>(
+              child: BlocBuilder<AuthCubit, AuthState>(
                 buildWhen: (previous, current) =>
                 previous.status != current.status,
                 builder: (context, state) {
                   final showConfetti =
-                      state.status == RegisterStatus.otpVerified;
+                      state.status == AuthStatus.otpVerified;
                   return AnimatedOpacity(
                     opacity: showConfetti ? 1 : 0,
                     duration: const Duration(milliseconds: 300),

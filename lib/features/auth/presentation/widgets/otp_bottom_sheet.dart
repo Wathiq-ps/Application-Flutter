@@ -6,11 +6,12 @@ import 'package:mobile/config/theme/app_colors.dart';
 import 'package:mobile/core/constant/app_icons.dart';
 import 'package:mobile/core/widget/app_button.dart';
 import 'package:mobile/core/widget/app_top_snackbar.dart';
-import 'package:mobile/features/auth/presentation/state_mangement/cubit/register/register_cubit.dart';
-import 'package:mobile/features/auth/presentation/state_mangement/cubit/register/register_state.dart';
 import 'package:pinput/pinput.dart';
 
+import '../../../../core/constant/strings.dart';
 import '../../../../core/extensions/media_query_extensions.dart';
+import '../state_mangement/cubit/auth_cubit.dart';
+import '../state_mangement/cubit/auth_state.dart';
 import 'auth_action_row.dart';
 import 'otp_success.dart';
 
@@ -23,10 +24,6 @@ class OtpBottomSheet extends StatefulWidget {
 
 class _OtpBottomSheetState extends State<OtpBottomSheet> {
   final TextEditingController _otpController = TextEditingController();
-
-  static const double _figmaWidth = 393;
-  static const double _figmaHeight = 852;
-
   Timer? _autoCloseTimer;
 
   @override
@@ -46,7 +43,7 @@ class _OtpBottomSheetState extends State<OtpBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final widthScale = context.screenWidth / _figmaWidth;
+    final widthScale = context.screenWidth / 393;
 
     return Padding(
       padding: EdgeInsets.only(bottom: context.keyboardBottomInset),
@@ -54,28 +51,27 @@ class _OtpBottomSheetState extends State<OtpBottomSheet> {
         padding: EdgeInsets.all(24 * widthScale),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.vertical(
-            top: Radius.circular(35 * widthScale),
-          ),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(35 * widthScale)),
         ),
-        child: BlocConsumer<RegisterCubit, RegisterState>(
+        child: BlocConsumer<AuthCubit, AuthState>(
           listenWhen: (previous, current) => previous.status != current.status,
           listener: (context, state) {
-            if (state.status == RegisterStatus.error &&
-                state.errorMessage != null) {
+            // Snackbar ONLY for backend verify failures — never for the
+            // local "please enter the full otp" validation state.
+            if (state.status == AuthStatus.otpBackendError && state.errorMessage != null) {
               AppTopSnackBar.show(
                 context,
-                title: 'Verification failed',
+                title: AppStrings.verificationFailed,
                 message: state.errorMessage!,
                 prefixIcon: AppIcons.error,
               );
-            } else if (state.status == RegisterStatus.otpVerified) {
+            } else if (state.status == AuthStatus.otpVerified) {
               _scheduleAutoClose();
             }
           },
           buildWhen: (previous, current) => previous.status != current.status,
           builder: (context, state) {
-            if (state.status == RegisterStatus.otpVerified) {
+            if (state.status == AuthStatus.otpVerified) {
               return const OtpSuccessView();
             }
             return _OtpForm(controller: _otpController);
@@ -105,7 +101,7 @@ class _OtpForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    final cubit = context.read<RegisterCubit>();
+    final cubit = context.read<AuthCubit>();
 
     final widthScale = context.screenWidth / _figmaWidth;
     final heightScale = context.screenHeight / _figmaHeight;
@@ -145,9 +141,11 @@ class _OtpForm extends StatelessWidget {
       ),
     );
 
-    return BlocBuilder<RegisterCubit, RegisterState>(
+    return BlocBuilder<AuthCubit, AuthState>(
       builder: (context, state) {
-        final hasError = state.status == RegisterStatus.error;
+
+        final hasError = state.status == AuthStatus.otpValidationError ||
+            state.status == AuthStatus.otpBackendError;
 
         return Column(
           mainAxisSize: MainAxisSize.min,

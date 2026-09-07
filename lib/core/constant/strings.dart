@@ -212,4 +212,22 @@ class AppStrings {
 
   static const String checkEmailForVerificationCode =
       'Check your Email for the verification code';
+
+  static const String welcomeBack = 'Welcome back!';
+  static const String signInToContinueSearch = 'Sign in to continue your search';
+  static const String dontHaveAccount = "Don't have an account?";
+  static const String signUp = 'Sign up';
+
+  static const String enterPhoneNumberToSignIn =
+      'Enter your phone number to sign in your account';
+  static const String enterPhoneNumber = 'Enter Phone Number';
+
+  static const String enterEmailAddressToSignIn =
+      'Enter your email address to sign in your account';
+  static const String emailHint = 'example@mail.com';
+  static const String letGetStarted = "You're in! Let's get started";
+  static const String welcomeToWathiq = 'Welcome to Wathiq' ;
+  static const String pleaseEnterFullOtp = 'Please enter the full OTP';
+  static const String somethingWentWrong = 'Something went wrong. Please try again.';
+  static const String verificationFailed = 'Verification failed';
 }

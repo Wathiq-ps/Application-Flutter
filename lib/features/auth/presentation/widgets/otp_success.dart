@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:mobile/config/theme/app_colors.dart';
 import 'package:mobile/core/constant/images_path.dart';
+import 'package:mobile/core/constant/strings.dart';
 
 import '../../../../core/extensions/media_query_extensions.dart';
 
@@ -21,6 +22,7 @@ class OtpSuccessView extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
+        SizedBox(height: 80 * heightScale),
         SizedBox(
           width: 96 * widthScale,
           height: 96 * widthScale,
@@ -32,7 +34,7 @@ class OtpSuccessView extends StatelessWidget {
         ),
         SizedBox(height: 24 * heightScale),
         Text(
-          'Welcome to Wathiq',
+          AppStrings.welcomeToWathiq,
           textAlign: TextAlign.center,
           style: textTheme.headlineLarge?.copyWith(
             fontSize: 35 * widthScale,
@@ -44,7 +46,7 @@ class OtpSuccessView extends StatelessWidget {
         ),
         SizedBox(height: 8 * heightScale),
         Text(
-          "You're in! Let's get started",
+          AppStrings.letGetStarted,
           textAlign: TextAlign.center,
           style: textTheme.bodyLarge?.copyWith(
             fontSize: 18 * widthScale,
@@ -62,6 +64,7 @@ class OtpSuccessView extends StatelessWidget {
             repeat: false,
           ),
         ),
+        SizedBox(height: 50*heightScale,)
       ],
     );
   }

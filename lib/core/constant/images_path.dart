@@ -13,6 +13,6 @@ class ImagePath {
   static const String circularProgressCheck = 'assets/lottie_json/circular_progress_check.json';
   static const String minimalClock = 'assets/lottie_json/minimal_clock.json';
   static const String progressBar = 'assets/lottie_json/progress_bar.json';
-  static const String welcomeTopDecorations = 'assets/lottie_json/welcome_top_decorations.json';
+  static const String welcomeTopDecorations = 'assets/lottie_json/welcome_top_decorations_rain.json';
 
 }
