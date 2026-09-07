@@ -107,7 +107,7 @@ class OnBoardingLoginScreen extends StatelessWidget {
                 AppElevatedButton(
                   text: AppStrings.continueWithEmail,
                   onPressed: () {
-                    context.go(
+                    context.push(
                       RouteNames.emailLoginScreen,
                     );
                   },
