@@ -3,8 +3,8 @@ class ImagePath {
 
   /// png images
   static const String background = 'assets/images/background.png';
-
-
+  static const String splashWathiqGroup = 'assets/images/group1.png' ;
+  static const String shakeHands ='assets/images/logo.png';
   /// SVG images
 
 
