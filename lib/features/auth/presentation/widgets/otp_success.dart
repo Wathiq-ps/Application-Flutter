@@ -3,7 +3,6 @@ import 'package:lottie/lottie.dart';
 import 'package:mobile/config/theme/app_colors.dart';
 import 'package:mobile/core/constant/images_path.dart';
 import 'package:mobile/core/constant/strings.dart';
-
 import '../../../../core/extensions/media_query_extensions.dart';
 
 class OtpSuccessView extends StatelessWidget {

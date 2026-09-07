@@ -50,65 +50,151 @@ class AppRoutes {
       GoRoute(
         path: RouteNames.onboardingScreen,
         name: 'onboardingScreen',
-        builder: (context, state) {
-          return const OnBoardingScreen();
+        pageBuilder: (context, state) {
+          return CustomTransitionPage(
+            key: state.pageKey,
+            child: const OnBoardingScreen(),
+            transitionsBuilder: (
+                context,
+                animation,
+                secondaryAnimation,
+                child,
+                ) {
+              return FadeTransition(
+                opacity: animation,
+                child: child,
+              );
+            },
+          );
         },
       ),
 
       GoRoute(
         path: RouteNames.onboardingLoginScreen,
         name: 'onboardingLoginScreen',
-        builder: (context, state) {
-          return const OnBoardingLoginScreen();
-        },
-      ),
-
-      // ─────────────────────────────────────────────
-      // Login
-      // ─────────────────────────────────────────────
-      GoRoute(
-        path: RouteNames.phoneLoginScreen,
-        name: 'phoneLoginScreen',
-        builder: (context, state) {
-          return const PhoneLoginScreen();
-        },
-      ),
-
-      GoRoute(
-        path: RouteNames.emailLoginScreen,
-        name: 'emailLoginScreen',
-        builder: (context, state) {
-          return BlocProvider(
-            create: (_) => AuthCubit(
-              mode: AuthMode.login,
-              authRepository: Injector.authRepository,
-            ),
-            child: const EmailLoginScreen(),
+        pageBuilder: (context, state) {
+          return CustomTransitionPage(
+            key: state.pageKey,
+            child: const OnBoardingLoginScreen(),
+            transitionsBuilder: (
+                context,
+                animation,
+                secondaryAnimation,
+                child,
+                ) {
+              return FadeTransition(
+                opacity: animation,
+                child: child,
+              );
+            },
           );
         },
       ),
 
+// ─────────────────────────────────────────────
+// Login
+// ─────────────────────────────────────────────
+      GoRoute(
+        path: RouteNames.phoneLoginScreen,
+        name: 'phoneLoginScreen',
+        pageBuilder: (context, state) {
+          return CustomTransitionPage(
+            key: state.pageKey,
+            child: const PhoneLoginScreen(),
+            transitionsBuilder: (
+                context,
+                animation,
+                secondaryAnimation,
+                child,
+                ) {
+              return FadeTransition(
+                opacity: animation,
+                child: child,
+              );
+            },
+          );
+        },
+      ),
       // ─────────────────────────────────────────────
-      // Register
-      // ─────────────────────────────────────────────
+// Email Login
+// ─────────────────────────────────────────────
+      GoRoute(
+        path: RouteNames.emailLoginScreen,
+        name: 'emailLoginScreen',
+        pageBuilder: (context, state) {
+          return CustomTransitionPage(
+            key: state.pageKey,
+            child: BlocProvider(
+              create: (_) => AuthCubit(
+                mode: AuthMode.login,
+                authRepository: Injector.authRepository,
+              ),
+              child: const EmailLoginScreen(),
+            ),
+            transitionsBuilder: (
+                context,
+                animation,
+                secondaryAnimation,
+                child,
+                ) {
+              return FadeTransition(
+                opacity: animation,
+                child: child,
+              );
+            },
+          );
+        },
+      ),
+
+// ─────────────────────────────────────────────
+// Register
+// ─────────────────────────────────────────────
       GoRoute(
         path: RouteNames.phoneRegisterScreen,
         name: 'phoneRegisterScreen',
-        builder: (context, state) {
-          return const PhoneRegisterScreen();
+        pageBuilder: (context, state) {
+          return CustomTransitionPage(
+            key: state.pageKey,
+            child: const PhoneRegisterScreen(),
+            transitionsBuilder: (
+                context,
+                animation,
+                secondaryAnimation,
+                child,
+                ) {
+              return FadeTransition(
+                opacity: animation,
+                child: child,
+              );
+            },
+          );
         },
       ),
 
       GoRoute(
         path: RouteNames.emailRegisterScreen,
         name: 'emailRegisterScreen',
-        builder: (context, state) {
-          return BlocProvider(
-            create: (_) => AuthCubit(
-              mode: AuthMode.register,
-              authRepository: Injector.authRepository,
+        pageBuilder: (context, state) {
+          return CustomTransitionPage(
+            key: state.pageKey,
+            child: BlocProvider(
+              create: (_) => AuthCubit(
+                mode: AuthMode.register,
+                authRepository: Injector.authRepository,
+              ),
+              child: const EmailRegisterScreen(),
             ),
-            child: const EmailRegisterScreen(),
+            transitionsBuilder: (
+                context,
+                animation,
+                secondaryAnimation,
+                child,
+                ) {
+              return FadeTransition(
+                opacity: animation,
+                child: child,
+              );
+            },
           );
         },
       ),
