@@ -193,9 +193,6 @@ class _EmailRegisterScreenState extends State<EmailRegisterScreen> {
                       return InputFieldWidget(
                         hint: AppStrings.emailHintText,
                         controller: _emailController,
-                        // Inline error ONLY for local format validation.
-                        // Backend errors (email_already_registered, etc.)
-                        // surface via the snackbar above instead.
                         errorText: state.status == AuthStatus.validationError
                             ? state.errorMessage
                             : null,

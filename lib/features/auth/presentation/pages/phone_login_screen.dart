@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile/core/extensions/media_query_extensions.dart';
-
 import '../../../../config/routes/routes_names.dart';
 import '../../../../config/theme/app_colors.dart';
 import '../../../../core/constant/app_icons.dart';
@@ -166,7 +165,6 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
                 textFontSize: widthScale * 14,
                 gap: widthScale * 4,
               ),
-
               SizedBox(
                 height: heightScale * 24,
               ),

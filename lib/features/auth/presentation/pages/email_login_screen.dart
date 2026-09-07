@@ -4,7 +4,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
 import 'package:mobile/core/extensions/media_query_extensions.dart';
-
 import '../../../../config/routes/routes_names.dart';
 import '../../../../config/theme/app_colors.dart';
 import '../../../../core/constant/app_icons.dart';

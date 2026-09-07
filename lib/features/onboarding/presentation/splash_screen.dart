@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile/config/routes/routes_names.dart';
+import 'package:mobile/config/theme/app_colors.dart';
 import 'package:mobile/core/constant/images_path.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -160,8 +161,8 @@ class _SplashScreenState extends State<SplashScreen>
           body: SizedBox.expand(
             child: ColoredBox(
               color: Color.lerp(
-                Colors.white,
-                const Color(0xFF00113A),
+               AppColors.white,
+                AppColors.primary,
                 _backgroundAnimation.value,
               )!,
               child: Center(
