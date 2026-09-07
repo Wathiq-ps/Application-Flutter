@@ -1,9 +1,8 @@
-
-
 import 'package:flutter_bloc/flutter_bloc.dart';
-
+import '../../../../../core/constant/strings.dart';
 import '../../../../../core/error/auth_exception.dart';
-import '../../../../../core/utils/validators.dart';
+
+import '../../../../../../core/utils/validators.dart';
 import '../../../domain/entities/auth_mode.dart';
 import '../../../domain/repository/auth_repository.dart';
 import 'auth_state.dart';
@@ -28,7 +27,7 @@ class AuthCubit extends Cubit<AuthState> {
   Future<void> emailValidate() async {
     final error = state.emailOrPhone.validateEmail();
     if (error != null) {
-      emit(state.copyWith(errorMessage: error, status: AuthStatus.requestError));
+      emit(state.copyWith(errorMessage: error, status: AuthStatus.validationError));
       return;
     }
 
@@ -45,12 +44,11 @@ class AuthCubit extends Cubit<AuthState> {
     } catch (_) {
       emit(state.copyWith(
         isLoading: false,
-        errorMessage: 'Something went wrong. Please try again.',
+        errorMessage: AppStrings.somethingWentWrong,
         status: AuthStatus.requestError,
       ));
     }
   }
-
 
   void prepareOtpStep() {
     emit(state.copyWith(otp: '', errorMessage: null, status: AuthStatus.initial));
@@ -61,9 +59,9 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   Future<void> otpVerify() async {
-    if (state.otp.length < 4) {
+    if (state.otp.length < 6) {
       emit(state.copyWith(
-        errorMessage: 'Please enter the full OTP',
+        errorMessage: AppStrings.pleaseEnterFullOtp,
         status: AuthStatus.otpValidationError,
       ));
       return;
@@ -86,7 +84,7 @@ class AuthCubit extends Cubit<AuthState> {
     } catch (_) {
       emit(state.copyWith(
         isLoading: false,
-        errorMessage: 'Something went wrong. Please try again.',
+        errorMessage: AppStrings.somethingWentWrong,
         status: AuthStatus.otpBackendError,
       ));
     }

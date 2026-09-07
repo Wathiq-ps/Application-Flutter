@@ -90,6 +90,8 @@ class _OtpForm extends StatelessWidget {
   static const double _figmaWidth = 393;
   static const double _figmaHeight = 852;
 
+  static const int _otpLength = 6;
+
   int _fontSize(BuildContext context) {
     if (context.screenHeight > 1020) {
       return 10;
@@ -106,44 +108,45 @@ class _OtpForm extends StatelessWidget {
     final widthScale = context.screenWidth / _figmaWidth;
     final heightScale = context.screenHeight / _figmaHeight;
 
+    // Six boxes now need to fit the same row width four used to —
+    // shrink each box a bit so they don't overflow on narrower screens.
     final defaultPinTheme = PinTheme(
-      width: 64 * widthScale,
-      height: 80 * heightScale,
+      width: 48 * widthScale,
+      height: 56 * heightScale,
       decoration: BoxDecoration(
         border: Border.all(color: AppColors.border),
-        borderRadius: BorderRadius.circular(12 * widthScale),
+        borderRadius: BorderRadius.circular(10 * widthScale),
       ),
     );
 
     final activePinTheme = PinTheme(
       textStyle: textTheme.headlineLarge?.copyWith(
-        fontSize: 30 * widthScale,
+        fontSize: 24 * widthScale,
         color: AppColors.primary,
       ),
-      width: 64 * widthScale,
-      height: 80 * heightScale,
+      width: 48 * widthScale,
+      height: 56 * heightScale,
       decoration: BoxDecoration(
         border: Border.all(color: AppColors.primary),
-        borderRadius: BorderRadius.circular(12 * widthScale),
+        borderRadius: BorderRadius.circular(10 * widthScale),
       ),
     );
 
     final errorPinTheme = PinTheme(
       textStyle: textTheme.headlineLarge?.copyWith(
-        fontSize: 30 * widthScale,
+        fontSize: 24 * widthScale,
         color: AppColors.primary,
       ),
-      width: 64 * widthScale,
-      height: 80 * heightScale,
+      width: 48 * widthScale,
+      height: 56 * heightScale,
       decoration: BoxDecoration(
         border: Border.all(color: AppColors.error),
-        borderRadius: BorderRadius.circular(12 * widthScale),
+        borderRadius: BorderRadius.circular(10 * widthScale),
       ),
     );
 
     return BlocBuilder<AuthCubit, AuthState>(
       builder: (context, state) {
-
         final hasError = state.status == AuthStatus.otpValidationError ||
             state.status == AuthStatus.otpBackendError;
 
@@ -160,7 +163,7 @@ class _OtpForm extends StatelessWidget {
             ),
             SizedBox(height: 8 * heightScale),
             Text(
-              'We sent a 4-digit verification code to your email. Please enter it below.',
+              'We sent a 6-digit verification code to your email. Please enter it below.',
               style: textTheme.bodyLarge?.copyWith(
                 fontSize: 16 * widthScale,
                 color: AppColors.primary,
@@ -168,7 +171,7 @@ class _OtpForm extends StatelessWidget {
             ),
             SizedBox(height: 48 * heightScale),
             Pinput(
-              length: 4,
+              length: _otpLength,
               controller: controller,
               defaultPinTheme: defaultPinTheme,
               focusedPinTheme: activePinTheme,

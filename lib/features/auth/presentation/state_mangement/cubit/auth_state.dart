@@ -5,6 +5,7 @@ import '../../../domain/entities/user_entitiy.dart';
 enum AuthStatus {
   initial,
   otpRequested,
+  validationError,
   requestError,
   otpValidationError,
   otpBackendError,

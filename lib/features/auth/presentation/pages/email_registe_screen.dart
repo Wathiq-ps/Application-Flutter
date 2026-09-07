@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
-import 'package:mobile/features/auth/presentation/state_mangement/cubit/auth_state.dart';
 import 'package:mobile/features/auth/presentation/widgets/auth_action_row.dart';
 import '../../../../config/routes/routes_names.dart';
 import '../../../../config/theme/app_colors.dart';
@@ -15,6 +14,7 @@ import '../../../../core/widget/app_top_snackbar.dart';
 import '../../../../core/widget/input_field.dart';
 import '../../../../core/extensions/media_query_extensions.dart';
 import '../state_mangement/cubit/auth_cubit.dart';
+import '../state_mangement/cubit/auth_state.dart';
 import '../widgets/otp_bottom_sheet.dart';
 
 class EmailRegisterScreen extends StatefulWidget {
@@ -37,6 +37,7 @@ class _EmailRegisterScreenState extends State<EmailRegisterScreen> {
 
   Future<void> _handleRegisterSuccess(BuildContext context) async {
     final authCubit = context.read<AuthCubit>();
+
     setState(() => _showOverlay = true);
 
     AppTopSnackBar.show(
@@ -60,7 +61,10 @@ class _EmailRegisterScreenState extends State<EmailRegisterScreen> {
       isDismissible: false,
       enableDrag: false,
       builder: (sheetContext) {
-        return BlocProvider.value(value: authCubit, child: const OtpBottomSheet());
+        return BlocProvider.value(
+          value: authCubit,
+          child: const OtpBottomSheet(),
+        );
       },
     );
 
@@ -76,7 +80,6 @@ class _EmailRegisterScreenState extends State<EmailRegisterScreen> {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
 
-    // Figma reference dimensions.
     final _figmaWidth = 393;
     final _figmaHeight = 852;
     final _currentScreenWidth = context.screenWidth;
@@ -142,7 +145,7 @@ class _EmailRegisterScreenState extends State<EmailRegisterScreen> {
                   AppStrings.getStarted,
                   style: textTheme.headlineLarge?.copyWith(
                     color: AppColors.white,
-                    fontSize: _widthScale * 32,
+                    fontSize: _heightScale * 32,
                     height: (40 / 32),
                     fontWeight: FontWeight.w700,
                   ),
@@ -154,7 +157,7 @@ class _EmailRegisterScreenState extends State<EmailRegisterScreen> {
                   AppStrings.enterYourEmailAdd,
                   style: textTheme.bodyLarge?.copyWith(
                     color: AppColors.white,
-                    fontSize: _widthScale * 16,
+                    fontSize: _heightScale * 16,
                     height: (24 / 16),
                     fontWeight: FontWeight.w500,
                   ),
@@ -166,39 +169,69 @@ class _EmailRegisterScreenState extends State<EmailRegisterScreen> {
                   AppStrings.enterEmail,
                   style: textTheme.labelMedium?.copyWith(
                     color: AppColors.white,
-                    fontSize: _widthScale * 14,
+                    fontSize: _heightScale * 14,
                     height: (20 / 14),
                     fontWeight: FontWeight.w500,
                   ),
                 ),
 
                 SizedBox(height: _heightScale * 12),
-
-                BlocBuilder<AuthCubit, AuthState>(
-                  builder: (BuildContext context, AuthState state) {
-                    return InputFieldWidget(
-                      hint: AppStrings.emailHintText,
-                      controller: _emailController,
-                      errorText: state.errorMessage,
-                      onChanged: (value) {
-                        context.read<AuthCubit>().emailChange(value);
-                      },
+                BlocListener<AuthCubit, AuthState>(
+                  listenWhen: (previous, current) =>
+                  previous.status != current.status &&
+                      current.status == AuthStatus.requestError,
+                  listener: (context, state) {
+                    AppTopSnackBar.show(
+                      context,
+                      title: AppStrings.verificationFailed,
+                      message: state.errorMessage ?? AppStrings.somethingWentWrong,
+                      prefixIcon: AppIcons.error,
                     );
                   },
+                  child: BlocBuilder<AuthCubit, AuthState>(
+                    builder: (BuildContext context, AuthState state) {
+                      return InputFieldWidget(
+                        hint: AppStrings.emailHintText,
+                        controller: _emailController,
+                        // Inline error ONLY for local format validation.
+                        // Backend errors (email_already_registered, etc.)
+                        // surface via the snackbar above instead.
+                        errorText: state.status == AuthStatus.validationError
+                            ? state.errorMessage
+                            : null,
+                        onChanged: (value) {
+                          context.read<AuthCubit>().emailChange(value);
+                        },
+                      );
+                    },
+                  ),
                 ),
 
                 SizedBox(height: _heightScale * 24),
 
                 BlocListener<AuthCubit, AuthState>(
                   listenWhen: (previous, current) =>
-                  previous.status != current.status && current.status == AuthStatus.otpRequested,
-                  listener: (context, state) => _handleRegisterSuccess(context),
+                  previous.status != current.status &&
+                      current.status == AuthStatus.otpRequested,
+                  listener: (context, state) {
+                    _handleRegisterSuccess(context);
+                  },
                   child: BlocBuilder<AuthCubit, AuthState>(
-                    builder: (context, state) {
+                    builder: (BuildContext context, AuthState state) {
                       return AppElevatedButton(
-                          text: AppStrings.sendCode,
-                          onPressed: () => context.read<AuthCubit>().emailValidate(),
-
+                        text: AppStrings.sendCode,
+                        onPressed: state.isLoading
+                            ? null
+                            : () {
+                          context.read<AuthCubit>().emailValidate();
+                        },
+                        backgroundColor: AppColors.primary,
+                        borderWidth: 1,
+                        height: (_widthScale * 58).clamp(20, 130),
+                        borderRadius: 9999,
+                        postIcon: SvgPicture.asset(AppIcons.send),
+                        iconSize: 15 * _widthScale,
+                        iconGap: 8 * _widthScale,
                       );
                     },
                   ),
@@ -234,16 +267,13 @@ class _EmailRegisterScreenState extends State<EmailRegisterScreen> {
             ),
           ),
 
-          // Fullscreen celebratory Lottie, shown only during the
-          // OTP-verified success state.
           Positioned.fill(
             child: IgnorePointer(
               child: BlocBuilder<AuthCubit, AuthState>(
                 buildWhen: (previous, current) =>
                 previous.status != current.status,
                 builder: (context, state) {
-                  final showConfetti =
-                      state.status == AuthStatus.otpVerified;
+                  final showConfetti = state.status == AuthStatus.otpVerified;
                   return AnimatedOpacity(
                     opacity: showConfetti ? 1 : 0,
                     duration: const Duration(milliseconds: 300),
