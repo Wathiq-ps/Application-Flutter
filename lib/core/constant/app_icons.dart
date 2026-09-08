@@ -40,6 +40,16 @@ class AppIcons {
   static const String addPhoto = 'assets/svg/add_photo.svg';
   static const String remove = 'assets/svg/remove.svg';
 
+  static const String houseSelected = 'assets/svg/house_selected.svg';
+  static const String houseUnSelected = house ;
+  static const String favouriteUnselected = 'assets/svg/favourite_unselected.svg';
+  static const String favouriteSelected = 'assets/svg/favourite_selected.svg';
+  static const String searchSelected = 'assets/svg/search_selected.svg';
+  static const String searchUnselected = 'assets/svg/search_unselected.svg';
+  static const String personSelected = 'assets/svg/person_selected.svg';
+  static const String personUnselected = 'assets/svg/person_unselected.svg';
+  static const String notifications = 'assets/svg/notifications.svg';
+  static const String rateStar = 'assets/svg/rate_star.svg';
 
 
 }

@@ -275,4 +275,14 @@ class AppStrings {
 
   static String tooManyAttemptsWithRetry(int retryAfter) =>
       'Too many attempts. Please wait ${retryAfter}s before trying again';
+
+  static const String home = 'Home';
+
+  static const String search = 'Search';
+
+  static const String favourite = 'Favourite';
+
+  static const String profile = 'Profile';
+
+
 }
