@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/core/extensions/media_query_extensions.dart';
 import '../../../../config/theme/app_colors.dart';
 import '../../../../core/constant/app_icons.dart';
 import '../../../../core/constant/strings.dart';
@@ -16,11 +17,11 @@ class MainBottomNavigationBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.sizeOf(context).width;
+    final screenWidth = context.screenWidth;
 
     const figmaWidth = 394.0;
     final scale = screenWidth / figmaWidth;
-    final navigationHeight = (62 * scale).clamp(56.0, 150.0);
+    final navigationHeight = (62 * scale).clamp(56.0, 140.0);
 
     return Container(
       height: navigationHeight,

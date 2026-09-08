@@ -68,7 +68,7 @@ class NavigationItem extends StatelessWidget {
                   label,
                   style: Theme.of(context).textTheme.labelMedium?.copyWith(
                     color: AppColors.primary,
-                    fontSize: (14 * scale).clamp(11.0, 14.0),
+                    fontSize: (14 * scale),
                     fontWeight: FontWeight.w700,
                     height: 20 / 14,
                     letterSpacing: 0.14,
