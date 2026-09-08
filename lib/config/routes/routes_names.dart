@@ -29,4 +29,7 @@ class RouteNames {
   static const String addPropertyScreenFour = '/addPropertyScreenFour';
   static const String proofOfOwnershipPage = '/proofOfOwnershipPage';
   static const String reviewListingPage = '/reviewListingPage';
+
+  static const String mainNavigation = '/main-navigation';
+
 }
