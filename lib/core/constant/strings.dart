@@ -284,5 +284,29 @@ class AppStrings {
 
   static const String profile = 'Profile';
 
+  static const String hello = 'Hello';
+  static const String findYourPerfectProperty =
+      'Find Your Perfect Property';
+
+  static const String buySellOrRent =
+      'Buy, sell, or rent verified properties with confidence.';
+
+  static const String getStartedHome = 'Get Started';
+
+  static const String searchByLocation =
+      'Search by location';
+
+
+  static const String allProperties = 'All Properties';
+  static const String viewAll = 'View all';
+
+  static const String apartmentThreeRooms =
+      'Apartment — 3 rooms';
+
+  static const String ramallah = 'Ramallah';
+  static const String alBireh = 'Al-Bireh';
+
+  static const String threeRooms = '3 rooms';
+  static const String eightyFiveThousandJod = '85,000 JOD';
 
 }
