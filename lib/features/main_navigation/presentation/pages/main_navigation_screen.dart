@@ -13,8 +13,8 @@ class MainNavigationScreen extends StatelessWidget {
 
   static const List<Widget> pages = [
     HomeScreen(),
-    NavigationPlaceholder(title: AppStrings.search),
     NavigationPlaceholder(title: AppStrings.favourite),
+    NavigationPlaceholder(title: AppStrings.search),
     NavigationPlaceholder(title: AppStrings.profile),
   ];
 

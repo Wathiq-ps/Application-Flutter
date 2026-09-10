@@ -1,31 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../../../../config/theme/app_colors.dart';
-import '../../../../core/constant/app_icons.dart';
-import '../../../../core/constant/strings.dart';
+import '../../config/theme/app_colors.dart';
+import '../constant/app_icons.dart';
+import '../constant/strings.dart';
 
-class HomeHeader extends StatelessWidget {
-  const HomeHeader({
+class PageHeader extends StatelessWidget {
+  const PageHeader({
     super.key,
+    required this.widthScale,
     this.userName = 'Samer',
+    this.onNotificationTap,
   });
 
+  final double widthScale;
   final String userName;
+  final VoidCallback? onNotificationTap;
 
   @override
   Widget build(BuildContext context) {
-    const double figmaWidth = 393.0;
-
-    final double widthScale =
-        MediaQuery.sizeOf(context).width / figmaWidth;
-
     return Row(
       children: [
         // ─────────────────────────────────────
         // Profile
         // ─────────────────────────────────────
-
         Container(
           width: 36 * widthScale,
           height: 36 * widthScale,
@@ -41,9 +39,7 @@ class HomeHeader extends StatelessWidget {
           ),
           alignment: Alignment.center,
           child: Text(
-            userName.isNotEmpty
-                ? userName[0].toUpperCase()
-                : 'S',
+            userName.isNotEmpty ? userName[0].toUpperCase() : 'S',
             style: TextStyle(
               color: AppColors.secondary,
               fontSize: 12 * widthScale,
@@ -54,14 +50,11 @@ class HomeHeader extends StatelessWidget {
           ),
         ),
 
-        SizedBox(
-          width: 10 * widthScale,
-        ),
+        SizedBox(width: 10 * widthScale),
 
         // ─────────────────────────────────────
         // Greeting
         // ─────────────────────────────────────
-
         Expanded(
           child: Text(
             '${AppStrings.hello}, $userName',
@@ -78,11 +71,8 @@ class HomeHeader extends StatelessWidget {
         // ─────────────────────────────────────
         // Notification
         // ─────────────────────────────────────
-
         GestureDetector(
-          onTap: () {
-            // TODO: Open notifications.
-          },
+          onTap: onNotificationTap,
           child: SizedBox(
             width: 24 * widthScale,
             height: 24 * widthScale,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/core/constant/images_path.dart';
 
 import '../../../../core/constant/strings.dart';
 import 'property_card.dart';
@@ -62,8 +63,8 @@ class AllPropertiesSection extends StatelessWidget {
         // Property List
         // ─────────────────────────────────────
 
-        const PropertyCard(
-          imagePath: 'assets/images/home/property_1.jpg',
+         PropertyCard(
+          imagePath: ImagePath.villa,
           title: 'Apartment — 3 rooms',
           location: 'Ramallah',
           price: '85,000 JOD',
@@ -75,8 +76,8 @@ class AllPropertiesSection extends StatelessWidget {
           height: 12 * widthScale,
         ),
 
-        const PropertyCard(
-          imagePath: 'assets/images/home/property_2.jpg',
+         PropertyCard(
+            imagePath: ImagePath.villa,
           title: 'Apartment — 3 rooms',
           location: 'Al-Bireh',
           price: '85,000 JOD',
@@ -88,8 +89,8 @@ class AllPropertiesSection extends StatelessWidget {
           height: 12 * widthScale,
         ),
 
-        const PropertyCard(
-          imagePath: 'assets/images/home/property_3.jpg',
+         PropertyCard(
+          imagePath:ImagePath.villa,
           title: 'Apartment — 3 rooms',
           location: 'Ramallah',
           price: '85,000 JOD',

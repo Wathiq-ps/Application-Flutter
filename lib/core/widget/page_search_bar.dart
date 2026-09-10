@@ -1,25 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import '../../config/theme/app_colors.dart';
+import '../constant/app_icons.dart';
+import '../constant/strings.dart';
 
-import '../../../../config/theme/app_colors.dart';
-import '../../../../core/constant/app_icons.dart';
-import '../../../../core/constant/strings.dart';
-
-class HomeSearchBar extends StatelessWidget {
-  const HomeSearchBar({
+class PageSearchBar extends StatelessWidget {
+  const PageSearchBar({
     super.key,
+    required this.widthScale,
     this.onTap,
   });
 
+  final double widthScale;
   final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
-    const double figmaWidth = 393.0;
-
-    final double widthScale =
-        MediaQuery.sizeOf(context).width / figmaWidth;
-
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -54,11 +50,7 @@ class HomeSearchBar extends StatelessWidget {
                 BlendMode.srcIn,
               ),
             ),
-
-            SizedBox(
-              width: 5 * widthScale,
-            ),
-
+            SizedBox(width: 5 * widthScale),
             Expanded(
               child: Text(
                 AppStrings.searchByLocation,

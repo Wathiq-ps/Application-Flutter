@@ -5,6 +5,7 @@ class ImagePath {
   static const String background = 'assets/images/background.png';
   static const String splashWathiqGroup = 'assets/images/group1.png' ;
   static const String shakeHands ='assets/images/logo.png';
+  static const String villa ='assets/images/villa.jpg';
   /// SVG images
 
 
