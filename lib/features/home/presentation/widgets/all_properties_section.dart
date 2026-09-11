@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/config/theme/app_colors.dart';
 import 'package:mobile/core/constant/images_path.dart';
-
 import '../../../../core/constant/strings.dart';
+import '../../../../core/extensions/media_query_extensions.dart';
 import 'property_card.dart';
 
 class AllPropertiesSection extends StatelessWidget {
@@ -14,15 +15,11 @@ class AllPropertiesSection extends StatelessWidget {
     const double figmaWidth = 393.0;
 
     final double widthScale =
-        MediaQuery.sizeOf(context).width / figmaWidth;
+      context.screenWidth / figmaWidth;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // ─────────────────────────────────────
-        // Section Header
-        // ─────────────────────────────────────
-
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -30,7 +27,7 @@ class AllPropertiesSection extends StatelessWidget {
             Text(
               AppStrings.allProperties,
               style: TextStyle(
-                color: const Color(0xFF00113A),
+                color: AppColors.primary,
                 fontSize: 18 * widthScale,
                 fontWeight: FontWeight.w600,
                 height: 24 / 18,
@@ -44,7 +41,7 @@ class AllPropertiesSection extends StatelessWidget {
               child: Text(
                 AppStrings.viewAll,
                 style: TextStyle(
-                  color: const Color(0xFF00113A),
+                  color: AppColors.primary,
                   fontSize: 11 * widthScale,
                   fontWeight: FontWeight.w400,
                   height: 14 / 11,
@@ -59,40 +56,37 @@ class AllPropertiesSection extends StatelessWidget {
           height: 12 * widthScale,
         ),
 
-        // ─────────────────────────────────────
-        // Property List
-        // ─────────────────────────────────────
-
          PropertyCard(
           imagePath: ImagePath.villa,
-          title: 'Apartment — 3 rooms',
+          title: 'Al-Masyoun, \nRamallah',
           location: 'Ramallah',
           price: '85,000 JOD',
           type: 'For Sale',
           rooms: '3 rooms',
-        ),
-
-        SizedBox(
-          height: 12 * widthScale,
         ),
 
          PropertyCard(
             imagePath: ImagePath.villa,
           title: 'Apartment — 3 rooms',
-          location: 'Al-Bireh',
+          location: 'Al-Masyoun, \nRamallah',
           price: '85,000 JOD',
           type: 'For Sale',
           rooms: '3 rooms',
         ),
 
-        SizedBox(
-          height: 12 * widthScale,
-        ),
-
          PropertyCard(
           imagePath:ImagePath.villa,
           title: 'Apartment — 3 rooms',
-          location: 'Ramallah',
+          location: 'Al-Masyoun, \nRamallah',
+          price: '85,000 JOD',
+          type: 'For Sale',
+          rooms: '3 rooms',
+        ),
+
+        PropertyCard(
+          imagePath:ImagePath.villa,
+          title: 'Apartment — 3 rooms',
+          location: 'Al-Masyoun, \nRamallah',
           price: '85,000 JOD',
           type: 'For Sale',
           rooms: '3 rooms',

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/core/constant/images_path.dart';
-
 import '../../../../config/theme/app_colors.dart';
 import '../../../../core/constant/strings.dart';
 import '../../../../core/extensions/media_query_extensions.dart';
@@ -34,15 +33,6 @@ class HomePromoBanner extends StatefulWidget {
 class HomePromoBannerState extends State<HomePromoBanner> {
   final PageController pageController = PageController();
 
-  // Temporary 3 banners.
-  //
-  // You can replace the images later with:
-  // ImagePath.banner1
-  // ImagePath.banner2
-  // ImagePath.banner3
-  //
-  // The PageView and indicators will automatically adapt
-  // to the number of banners in this list.
   final List<PromoBannerData> banners = const [
     PromoBannerData(
       image: ImagePath.villa,
@@ -94,10 +84,6 @@ class HomePromoBannerState extends State<HomePromoBanner> {
   }
 }
 
-// ─────────────────────────────────────────────
-// Single banner card
-// ─────────────────────────────────────────────
-
 class PromoBannerCard extends StatelessWidget {
   const PromoBannerCard({
     super.key,
@@ -143,10 +129,6 @@ class PromoBannerCard extends StatelessWidget {
               fit: BoxFit.cover,
             ),
 
-            // ─────────────────────────────────────
-            // Dark gradient overlay
-            // ─────────────────────────────────────
-
             DecoratedBox(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
@@ -165,10 +147,6 @@ class PromoBannerCard extends StatelessWidget {
                 ),
               ),
             ),
-
-            // ─────────────────────────────────────
-            // Banner content
-            // ─────────────────────────────────────
 
             Padding(
               padding: EdgeInsets.fromLTRB(
@@ -209,17 +187,10 @@ class PromoBannerCard extends StatelessWidget {
 
                   const Spacer(),
 
-                  // ─────────────────────────────────────
-                  // Bottom row
-                  // ─────────────────────────────────────
-
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      // ─────────────────────────────────────
-                      // Get Started button
-                      // ─────────────────────────────────────
 
                       Container(
                         decoration: BoxDecoration(
@@ -250,10 +221,6 @@ class PromoBannerCard extends StatelessWidget {
                         ),
                       ),
 
-                      // ─────────────────────────────────────
-                      // Page indicators
-                      // ─────────────────────────────────────
-
                       AnimatedBuilder(
                         animation: pageController,
                         builder: (context, _) {
@@ -273,14 +240,8 @@ class PromoBannerCard extends StatelessWidget {
                                 (currentPageValue - index)
                                     .abs()
                                     .clamp(0.0, 1.0);
-
-                                // Selected indicator = 16
-                                // Unselected indicator = 6
                                 final double dotWidth =
                                     (16 - (10 * distance)) * widthScale;
-
-                                // Selected indicator = full opacity
-                                // Unselected indicator = 40% opacity
                                 final double dotOpacity =
                                     1 - (0.6 * distance);
 
