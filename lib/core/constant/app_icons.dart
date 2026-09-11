@@ -50,6 +50,14 @@ class AppIcons {
   static const String personUnselected = 'assets/svg/person_unselected.svg';
   static const String notifications = 'assets/svg/notifications.svg';
   static const String rateStar = 'assets/svg/rate_star.svg';
-
+  static const String edit = 'assets/svg/pin.svg';
+  static const String delete = 'assets/svg/trash.svg';
+  static const String eye = 'assets/svg/eye.svg';
+  static const String eyeOff = 'assets/svg/eye_off.svg';
+  static const String filter = 'assets/svg/filter.svg';
+  static const String bed = 'assets/svg/bed.svg';
+  static const String bath = 'assets/svg/bathroom.svg';
+  static const String area = 'assets/svg/area.svg';
+  static const String addNew = plus;
 
 }

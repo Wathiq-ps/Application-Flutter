@@ -308,5 +308,30 @@ class AppStrings {
 
   static const String threeRooms = '3 rooms';
   static const String eightyFiveThousandJod = '85,000 JOD';
-
+  static const String myProperties = 'My Properties';
+  static const String addNewProperty = 'Add New';
+  static const String propertiesListedCount = 'Properties Listed';
+  static const String allStatus = 'All Status';
+  static const String editProperty = 'Edit Property';
+  static const String deleteProperty = 'Delete Property';
+  static const String editAction = 'Edit';
+  static const String deleteAction = 'Delete';
+  static const String saveAction = 'Save';
+  static const String discardChanges = 'Discard Changes';
+  static const String deleteThisProperty = 'Delete this property';
+  static const String cancelAction = 'Cancel';
+  static const String viewDetails = 'View Details';
+  static const String listingType = 'Listing Type';
+  static const String propertyEditedSuccessfully =
+      'Property Edited Successfully';
+  static const String propertyDeletedSuccessfully =
+      'Property Deleted Successfully';
+  static const String listingActive = 'Active';
+  static const String listingInactive = 'Inactive';
+  static const String statusActive = 'Active';
+  static const String statusReview = 'Review';
+  static const String statusRejected = 'Rejected';
+  static const String statusSuspended = 'Suspended';
+  static const String deletePropertyWarning =
+      'This action cannot be undone. Are you sure you want to delete this property?';
 }

@@ -5,6 +5,10 @@
   import 'package:mobile/core/di/injector.dart';
   import 'package:mobile/features/auth/domain/entities/auth_mode.dart';
   import 'package:mobile/features/auth/presentation/state_mangement/cubit/auth_cubit.dart';
+import 'package:mobile/features/home/presentation/widgets/property_card.dart';
+import 'package:mobile/features/owner_property_mangment/presentation/pages/owner_delete_property_screen.dart';
+import 'package:mobile/features/owner_property_mangment/presentation/pages/owner_edit_property_screen.dart';
+import 'package:mobile/features/owner_property_mangment/presentation/pages/owner_properties_screen.dart';
   import 'package:mobile/features/property/presentation/pages/add_property_page_four.dart';
   import 'package:mobile/features/property/presentation/pages/proof_of_ownership_page.dart';
   import 'package:mobile/features/property/presentation/pages/review_listing_page.dart';
@@ -21,7 +25,8 @@ import '../../features/main_navigation/presentation/state_mangment/navigation_cu
 import '../../features/onboarding/presentation/onboardin_screen.dart';
   import '../../features/onboarding/presentation/onboarding_login_screen.dart';
   import '../../features/onboarding/presentation/splash_screen.dart';
-  import '../../features/property/presentation/pages/add_property_page_one.dart';
+  import '../../features/owner_property_mangment/presentation/state_management/owner_property_state.dart';
+import '../../features/property/presentation/pages/add_property_page_one.dart';
   import '../../features/property/presentation/pages/add_property_page_three.dart';
 
   class AppRoutes {
@@ -32,7 +37,7 @@ import '../../features/onboarding/presentation/onboardin_screen.dart';
     // ─────────────────────────────────────────────
 
     static final GoRouter router = GoRouter(
-      initialLocation: RouteNames.mainNavigation,
+      initialLocation: RouteNames.ownerEditPropertyScreen,
 
       routes: [
         // ─────────────────────────────────────────────
@@ -285,6 +290,50 @@ import '../../features/onboarding/presentation/onboardin_screen.dart';
             return BlocProvider(
               create: (_) => NavigationCubit(),
               child: const MainNavigationScreen(),
+            );
+          },
+        ),
+// ─────────────────────────────────────────────
+// Owner Property Management
+// ─────────────────────────────────────────────
+
+        GoRoute(
+          path: RouteNames.ownerPropertiesScreen,
+          name: 'ownerPropertiesScreen',
+          builder: (context, state) {
+            return const OwnerPropertiesScreen();
+          },
+        ),
+
+        GoRoute(
+          path: RouteNames.ownerEditPropertyScreen,
+          name: 'ownerEditPropertyScreen',
+          builder: (context, state) {
+            final property = state.extra;
+
+
+            if (property == null) {
+              return const OwnerPropertiesScreen();
+            }
+
+            return OwnerEditPropertyScreen(
+              property: property as OwnerPropertyListItem,
+            );
+          },
+        ),
+
+        GoRoute(
+          path: RouteNames.ownerDeletePropertyScreen,
+          name: 'ownerDeletePropertyScreen',
+          builder: (context, state) {
+            final property = state.extra;
+
+            if (property == null) {
+              return const OwnerPropertiesScreen();
+            }
+
+            return OwnerDeletePropertyScreen(
+              property: property as OwnerPropertyListItem,
             );
           },
         ),
