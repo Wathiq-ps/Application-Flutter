@@ -10,6 +10,7 @@ import '../../../../core/extensions/media_query_extensions.dart';
 import '../../../../core/widget/app_button.dart';
 import '../../../../core/widget/app_top_snackbar.dart';
 import '../../../../core/widget/property_filter_chips.dart';
+import '../../domain/entities/owner_property_list_item.dart';
 import '../state_management/owner_property_cubit.dart';
 import '../state_management/owner_property_state.dart';
 import '../widgets/listing_status_toggle.dart';
@@ -49,14 +50,21 @@ class _OwnerEditPropertyView extends StatelessWidget {
       listenWhen: (previous, current) =>
       previous.saveStatus != current.saveStatus &&
           current.saveStatus == OwnerPropertySaveStatus.success,
-      listener: (context, state) {
+      listener: (context, state) async {
         AppTopSnackBar.show(
           context,
           title: AppStrings.propertyEditedSuccessfully,
           message: '',
           prefixIcon: AppIcons.success,
+          duration: const Duration(milliseconds: 1500),
         );
+
         context.read<OwnerPropertyCubit>().resetSaveStatus();
+
+        await Future.delayed(const Duration(milliseconds: 1500));
+        if (context.mounted) {
+          context.pop();
+        }
       },
       child: Scaffold(
         backgroundColor: AppColors.background,

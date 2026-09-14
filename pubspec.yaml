@@ -78,7 +78,14 @@ dev_dependencies:
 
   # Linting
   flutter_lints: ^5.0.0
+  flutter_launcher_icons: ^0.14.4
 
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/app_icon/wathiq_app_icon01.png"
+  min_sdk_android: 21
+  
 flutter:
   uses-material-design: true
 
@@ -94,3 +101,4 @@ flutter:
     - assets/images/
     - assets/svg/
     - assets/lottie_json/
+

@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
+import 'package:go_router/go_router.dart';
+import '../../../../config/routes/routes_names.dart';
 import '../../../../config/theme/app_colors.dart';
 import '../../../../core/constant/strings.dart';
 import '../../../../core/extensions/media_query_extensions.dart';
 import '../../../../core/widget/app_button.dart';
 import '../../../../core/widget/page_header.dart';
+import '../../../../core/widget/property_card.dart';
 import '../state_management/owner_property_cubit.dart';
 import '../state_management/owner_property_state.dart';
-import '../widgets/owner_property_card.dart';
 
 class OwnerPropertiesScreen extends StatelessWidget {
   const OwnerPropertiesScreen({super.key});
@@ -143,19 +144,7 @@ class OwnerPropertiesScreen extends StatelessWidget {
 
                                   SizedBox(width: 8 * widthScale),
 
-                                  // Show/hide status badge toggle.
-                                  GestureDetector(
-                                    onTap: () => context
-                                        .read<OwnerPropertyCubit>()
-                                        .toggleStatusVisibility(),
-                                    child: Icon(
-                                      state.showStatusBadge
-                                          ? Icons.visibility_outlined
-                                          : Icons.visibility_off_outlined,
-                                      size: 18 * widthScale,
-                                      color: AppColors.textPrimary,
-                                    ),
-                                  ),
+
                                 ],
                               ),
                             ],
@@ -181,18 +170,25 @@ class OwnerPropertiesScreen extends StatelessWidget {
                       itemBuilder: (context, index) {
                         final property = state.properties[index];
 
-                        return OwnerPropertyCard(
+                        return PropertyCard(
                           property: property,
                           widthScale: widthScale,
-                          showStatus: state.showStatusBadge,
+                          showStatus: true,
+                          propMang: true,
                           onViewDetails: () {
-                            // TODO: navigate to details screen.
+                            // TODO: navigate to details screen once it exists.
                           },
                           onEdit: () {
-                            // TODO: context.push(RouteNames.ownerEditPropertyScreen, extra: property);
+                            context.push(
+                              RouteNames.ownerEditPropertyScreen,
+                              extra: property,
+                            );
                           },
                           onDelete: () {
-                            // TODO: context.push(RouteNames.ownerDeletePropertyScreen, extra: property);
+                            context.push(
+                              RouteNames.ownerDeletePropertyScreen,
+                              extra: property,
+                            );
                           },
                         );
                       },

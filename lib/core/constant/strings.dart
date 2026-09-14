@@ -334,4 +334,8 @@ class AppStrings {
   static const String statusSuspended = 'Suspended';
   static const String deletePropertyWarning =
       'This action cannot be undone. Are you sure you want to delete this property?';
+  static const String beds = ' Beds';
+  static const String baths = ' Baths';
+  static const String sqm = ' m²';
+  static const String perWeek = ' / week';
 }

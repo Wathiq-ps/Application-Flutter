@@ -71,7 +71,7 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
     setState(() => _showOverlay = false);
 
     if (authCubit.state.status == AuthStatus.otpVerified && context.mounted) {
-      context.go(RouteNames.reviewListingPage);
+      context.go(RouteNames.mainNavigation);
     }
   }
 

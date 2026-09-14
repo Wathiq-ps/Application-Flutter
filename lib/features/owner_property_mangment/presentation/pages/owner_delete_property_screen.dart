@@ -9,6 +9,7 @@ import '../../../../core/constant/strings.dart';
 import '../../../../core/extensions/media_query_extensions.dart';
 import '../../../../core/widget/app_button.dart';
 import '../../../../core/widget/app_top_snackbar.dart';
+import '../../domain/entities/owner_property_list_item.dart';
 import '../state_management/owner_property_cubit.dart';
 import '../state_management/owner_property_state.dart';
 
@@ -46,14 +47,19 @@ class _OwnerDeletePropertyView extends StatelessWidget {
       listenWhen: (previous, current) =>
       previous.saveStatus != current.saveStatus &&
           current.saveStatus == OwnerPropertySaveStatus.success,
-      listener: (context, state) {
+      listener: (context, state) async {
         AppTopSnackBar.show(
           context,
           title: AppStrings.propertyDeletedSuccessfully,
           message: '',
           prefixIcon: AppIcons.success,
-          onClose: () => context.pop(),
+          duration: const Duration(milliseconds: 1500),
         );
+
+        await Future.delayed(const Duration(milliseconds: 1500));
+        if (context.mounted) {
+          context.pop();
+        }
       },
       child: Scaffold(
         backgroundColor: AppColors.background,

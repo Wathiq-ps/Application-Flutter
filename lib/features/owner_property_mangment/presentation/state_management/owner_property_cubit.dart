@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../domain/entities/owner_property_list_item.dart';
 import '../../domain/entities/property_status.dart';
 import 'owner_property_state.dart';
 
@@ -17,7 +18,6 @@ class OwnerPropertyCubit extends Cubit<OwnerPropertyState> {
             id: '1',
             title: 'Modern Apartment — 3 Rooms',
             location: 'Gaza',
-            imageUrl: '',
             rooms: 3,
             bathrooms: 2,
             areaSqm: 165,
@@ -29,7 +29,6 @@ class OwnerPropertyCubit extends Cubit<OwnerPropertyState> {
             id: '2',
             title: 'Modern Apartment — 3 Rooms',
             location: 'Gaza',
-            imageUrl: '',
             rooms: 3,
             bathrooms: 2,
             areaSqm: 165,

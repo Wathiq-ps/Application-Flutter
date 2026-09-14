@@ -25,7 +25,8 @@ import '../../features/main_navigation/presentation/state_mangment/navigation_cu
 import '../../features/onboarding/presentation/onboardin_screen.dart';
   import '../../features/onboarding/presentation/onboarding_login_screen.dart';
   import '../../features/onboarding/presentation/splash_screen.dart';
-  import '../../features/owner_property_mangment/presentation/state_management/owner_property_state.dart';
+  import '../../features/owner_property_mangment/domain/entities/owner_property_list_item.dart';
+import '../../features/owner_property_mangment/presentation/state_management/owner_property_state.dart';
 import '../../features/property/presentation/pages/add_property_page_one.dart';
   import '../../features/property/presentation/pages/add_property_page_three.dart';
 
@@ -37,7 +38,7 @@ import '../../features/property/presentation/pages/add_property_page_one.dart';
     // ─────────────────────────────────────────────
 
     static final GoRouter router = GoRouter(
-      initialLocation: RouteNames.ownerEditPropertyScreen,
+      initialLocation: RouteNames.ownerPropertiesScreen,
 
       routes: [
         // ─────────────────────────────────────────────
@@ -309,16 +310,14 @@ import '../../features/property/presentation/pages/add_property_page_one.dart';
           path: RouteNames.ownerEditPropertyScreen,
           name: 'ownerEditPropertyScreen',
           builder: (context, state) {
-            final property = state.extra;
-
-
+            final property = state.extra as OwnerPropertyListItem?;
             if (property == null) {
-              return const OwnerPropertiesScreen();
+              // No property was passed in `extra` — avoid a hard crash.
+              return const Scaffold(
+                body: Center(child: Text('Property not found.')),
+              );
             }
-
-            return OwnerEditPropertyScreen(
-              property: property as OwnerPropertyListItem,
-            );
+            return OwnerEditPropertyScreen(property: property);
           },
         ),
 
@@ -326,15 +325,13 @@ import '../../features/property/presentation/pages/add_property_page_one.dart';
           path: RouteNames.ownerDeletePropertyScreen,
           name: 'ownerDeletePropertyScreen',
           builder: (context, state) {
-            final property = state.extra;
-
+            final property = state.extra as OwnerPropertyListItem?;
             if (property == null) {
-              return const OwnerPropertiesScreen();
+              return const Scaffold(
+                body: Center(child: Text('Property not found.')),
+              );
             }
-
-            return OwnerDeletePropertyScreen(
-              property: property as OwnerPropertyListItem,
-            );
+            return OwnerDeletePropertyScreen(property: property);
           },
         ),
       ],
