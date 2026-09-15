@@ -17,6 +17,8 @@ class PropertySpecChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      width:  85 * widthScale,
+      height: 32 * widthScale,
       padding: EdgeInsets.symmetric(
         horizontal: 10 * widthScale,
         vertical: 4 * widthScale,
@@ -27,6 +29,7 @@ class PropertySpecChip extends StatelessWidget {
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           SvgPicture.asset(
             iconAsset,

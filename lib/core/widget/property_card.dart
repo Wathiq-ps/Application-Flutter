@@ -122,10 +122,6 @@ class PropertyCard extends StatelessWidget {
                 ),
             ],
           ),
-
-          // ─────────────────────────────────────
-          // Details
-          // ─────────────────────────────────────
           Padding(
             padding: EdgeInsets.only(top: 16 * widthScale, left: 16 * widthScale,right: 16 * widthScale,bottom: 23 * widthScale),
             child: Column(
@@ -169,8 +165,6 @@ class PropertyCard extends StatelessWidget {
                 ),
 
                 SizedBox(height: 10 * widthScale),
-
-                // Specs chips
                 Row(
                   children: [
                     PropertySpecChip(
@@ -238,6 +232,15 @@ class PropertyCard extends StatelessWidget {
                                   text: property.priceUnit,
                                   style: (textTheme.bodyLarge ?? const TextStyle()).copyWith(
                                     fontSize: 18 * widthScale,
+                                    fontWeight: FontWeight.w600,
+                                    height: 28 / 18,
+                                    letterSpacing: -0.22,
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: property.pricePeriod,
+                                  style: (textTheme.bodyLarge ?? const TextStyle()).copyWith(
+                                    fontSize: 11 * widthScale,
                                     fontWeight: FontWeight.w700,
                                     height: 28 / 18,
                                     letterSpacing: -0.22,
@@ -249,21 +252,19 @@ class PropertyCard extends StatelessWidget {
                         ],
                       ),
 
-                      AppElevatedButton(
-                        text: AppStrings.viewDetails,
-                        onPressed: onViewDetails ?? () {},
-                        width: 104 * widthScale,
-                        height: 32 * widthScale,
-                        backgroundColor: colorScheme.primary,
-                        borderRadius: 9999,
-                        elevation: 0,
-                        textStyle: (textTheme.labelMedium ?? const TextStyle()).copyWith(
-                          color: colorScheme.onPrimary,
-                          fontSize: 12 * widthScale,
-                          fontWeight: FontWeight.w500,
-                          letterSpacing: 0.24,
-                        ),
-                      ),
+
+            AppElevatedButton(
+            text: AppStrings.viewDetails,
+            onPressed: onViewDetails ?? () {},
+            width: 104 * widthScale,
+            height: 32 * widthScale,
+            backgroundColor: theme.colorScheme.primary,
+            borderRadius: 9999,
+            elevation: 0,
+            textStyle: theme.textTheme.labelSmall?.copyWith(
+              color: theme.colorScheme.onPrimary,
+            ),
+          )
                     ],
                   ),
                 ),

@@ -12,6 +12,7 @@ class OwnerPropertyListItem extends Equatable {
     required this.areaSqm,
     required this.price,
     required this.priceUnit,
+     this.pricePeriod = '',
     required this.status,
     this.imageUrl,
     this.isListingActive = true,
@@ -31,6 +32,7 @@ class OwnerPropertyListItem extends Equatable {
   final String priceUnit;
   final PropertyStatus status;
   final bool isListingActive;
+  final String pricePeriod;
 
   OwnerPropertyListItem copyWith({
     String? id,
@@ -42,6 +44,7 @@ class OwnerPropertyListItem extends Equatable {
     int? areaSqm,
     String? price,
     String? priceUnit,
+    String? PricePeriod,
     PropertyStatus? status,
     bool? isListingActive,
   }) {
@@ -55,6 +58,7 @@ class OwnerPropertyListItem extends Equatable {
       areaSqm: areaSqm ?? this.areaSqm,
       price: price ?? this.price,
       priceUnit: priceUnit ?? this.priceUnit,
+      pricePeriod: pricePeriod ?? this.pricePeriod,
       status: status ?? this.status,
       isListingActive: isListingActive ?? this.isListingActive,
     );
@@ -71,6 +75,7 @@ class OwnerPropertyListItem extends Equatable {
     areaSqm,
     price,
     priceUnit,
+    pricePeriod,
     status,
     isListingActive,
   ];

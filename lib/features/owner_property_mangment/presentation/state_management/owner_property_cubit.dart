@@ -22,8 +22,9 @@ class OwnerPropertyCubit extends Cubit<OwnerPropertyState> {
             bathrooms: 2,
             areaSqm: 165,
             price: '5,000',
-            priceUnit: 'JOD / week',
-            status: PropertyStatus.active,
+            priceUnit: 'JOD /',
+            pricePeriod:" week",
+            status: PropertyStatus.active
           ),
           OwnerPropertyListItem(
             id: '2',
@@ -33,7 +34,8 @@ class OwnerPropertyCubit extends Cubit<OwnerPropertyState> {
             bathrooms: 2,
             areaSqm: 165,
             price: '100',
-            priceUnit: 'JOD / hour',
+            priceUnit: 'JOD /',
+            pricePeriod:" hour",
             status: PropertyStatus.review,
           ),
         ],
