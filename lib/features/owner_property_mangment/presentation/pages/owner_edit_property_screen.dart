@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
-
 import '../../../../config/theme/app_colors.dart';
 import '../../../../core/constant/app_icons.dart';
 import '../../../../core/constant/strings.dart';
@@ -73,9 +72,6 @@ class _OwnerEditPropertyView extends StatelessWidget {
             children: [
               Column(
                 children: [
-                  // ─────────────────────────────────────
-                  // Header
-                  // ─────────────────────────────────────
                   Padding(
                     padding: EdgeInsets.symmetric(
                       horizontal: 20 * widthScale,

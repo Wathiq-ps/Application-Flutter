@@ -59,5 +59,6 @@ class AppIcons {
   static const String bath = 'assets/svg/bathroom.svg';
   static const String area = 'assets/svg/area.svg';
   static const String addNew = plus;
-
+  static const String backArrowProp = 'assets/svg/back_arrow_prop.svg';
+  static const String arrowDownBlue = 'assets/svg/arrow_down_blue.svg';
 }

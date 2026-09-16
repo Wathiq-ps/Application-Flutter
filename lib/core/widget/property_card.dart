@@ -100,9 +100,6 @@ class PropertyCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ─────────────────────────────────────
-          // Thumbnail + status badge
-          // ─────────────────────────────────────
           Stack(
             children: [
               Container(
@@ -263,6 +260,7 @@ class PropertyCard extends StatelessWidget {
             elevation: 0,
             textStyle: theme.textTheme.labelSmall?.copyWith(
               color: theme.colorScheme.onPrimary,
+              fontSize: 12 * widthScale
             ),
           )
                     ],
