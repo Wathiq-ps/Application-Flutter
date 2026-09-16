@@ -31,7 +31,7 @@ class _PropertyFilterChipsState extends State<PropertyFilterChips> {
     final widthScale = widget.widthScale;
 
     return SizedBox(
-      height: 44 * widthScale,
+      height: 38 * widthScale,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         physics: const BouncingScrollPhysics(),
@@ -50,7 +50,7 @@ class _PropertyFilterChipsState extends State<PropertyFilterChips> {
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 200),
               curve: Curves.easeInOut,
-              height: 36 * widthScale,
+              height: 32 * widthScale,
               padding: EdgeInsets.symmetric(horizontal: 20 * widthScale),
               decoration: BoxDecoration(
                 color: selected ? AppColors.primary : AppColors.white,

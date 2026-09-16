@@ -341,4 +341,10 @@ class AppStrings {
   static const String cancel = 'Cancel';
   static const String discardChangesMessage =
       'Your changes will be lost if you leave this page.';
+  static const String saveChanges = 'Save Changes?';
+
+  static const String saveChangesMessage =
+      'Are you sure you want to save the changes made to this property?';
+  static const String photo = "Photos" ;
+  static const String statusProperty = "Status Property";
 }

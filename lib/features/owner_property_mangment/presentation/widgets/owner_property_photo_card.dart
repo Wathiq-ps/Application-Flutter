@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-
+import 'package:mobile/core/constant/app_icons.dart';
+import 'package:mobile/core/widget/app_circular_icon_button.dart';
 import '../../../../config/theme/app_colors.dart';
 
 class OwnerPropertyPhotoCard extends StatelessWidget {
@@ -12,22 +13,18 @@ class OwnerPropertyPhotoCard extends StatelessWidget {
     this.borderRadius = 8,
     this.showEditBadge = true,
     this.onEdit,
-    this.editIcon = Icons.edit_outlined,
+    this.icon =  AppIcons.circleCloseBlue,
   });
 
   final double widthScale;
-
-  /// Remote image. When null a neutral placeholder box is shown.
   final String? imageUrl;
-
-  /// Unscaled design dimensions.
   final double width;
   final double height;
   final double borderRadius;
 
   final bool showEditBadge;
   final VoidCallback? onEdit;
-  final IconData editIcon;
+  final String icon;
 
   bool get _hasImage => imageUrl != null && imageUrl!.trim().isNotEmpty;
 
@@ -59,23 +56,16 @@ class OwnerPropertyPhotoCard extends StatelessWidget {
           ),
           if (showEditBadge)
             Positioned(
-              right: 10 * widthScale,
-              top: 8 * widthScale,
+              right: 3 * widthScale,
+              top: 5 * widthScale,
               child: GestureDetector(
                 onTap: onEdit,
                 behavior: HitTestBehavior.opaque,
-                child: Container(
-                  padding: EdgeInsets.all(4 * widthScale),
-                  decoration: BoxDecoration(
-                    color: AppColors.secondary.withValues(alpha: 0.5),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    editIcon,
-                    size: 13 * widthScale,
-                    color: AppColors.primary,
-                  ),
-                ),
+                child: AppCircularIconButton(
+                  iconWidth:23 * widthScale ,
+                    iconHeight: 23 * widthScale,
+                    icon:
+                   icon, onPressed: (){})
               ),
             ),
         ],

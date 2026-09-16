@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../config/theme/app_colors.dart';
 import '../../../../core/constant/strings.dart';
@@ -9,12 +10,14 @@ class OwnerFormInputCard extends StatelessWidget {
     required this.label,
     required this.value,
     required this.widthScale,
+    required this.icon,
     this.onEdit,
     this.valueMaxLines = 1,
   });
 
   final String label;
   final String value;
+  final String icon;
   final double widthScale;
   final VoidCallback? onEdit;
   final int valueMaxLines;
@@ -61,11 +64,7 @@ class OwnerFormInputCard extends StatelessWidget {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(
-                        Icons.edit_outlined,
-                        size: 12 * widthScale,
-                        color: AppColors.primary,
-                      ),
+                      SvgPicture.asset(icon),
                       SizedBox(width: 4 * widthScale),
                       Text(
                         AppStrings.editAction,
