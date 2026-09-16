@@ -338,4 +338,7 @@ class AppStrings {
   static const String baths = ' Baths';
   static const String sqm = ' m²';
   static const String perWeek = ' / week';
+  static const String cancel = 'Cancel';
+  static const String discardChangesMessage =
+      'Your changes will be lost if you leave this page.';
 }
