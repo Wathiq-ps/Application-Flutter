@@ -15,7 +15,7 @@ import '../../../../core/widget/property_filter_chips.dart';
 import '../../domain/entities/owner_property_list_item.dart';
 import '../state_management/owner_property_cubit.dart';
 import '../state_management/owner_property_state.dart';
-import '../widgets/app_icon_label_trigger.dart';
+import '../../../../core/widget/app_icon_label_trigger.dart';
 import '../widgets/listing_status_toggle.dart';
 import '../widgets/owner_form_input_card.dart';
 import '../widgets/owner_property_photo_card.dart';
@@ -113,12 +113,10 @@ class _OwnerEditPropertyView extends StatelessWidget {
         AppTopSnackBar.show(
           context,
           title: AppStrings.propertyEditedSuccessfully,
-          message: '',
           prefixIcon: AppIcons.success,
-          duration: const Duration(
-            milliseconds: 1500,
-          ),
+          duration: const Duration(milliseconds: 1500),
         );
+
 
         context.read<OwnerPropertyCubit>().resetSaveStatus();
 
@@ -318,10 +316,11 @@ class _OwnerEditPropertyView extends StatelessWidget {
 
 
                         OwnerFormInputCard(
-                          label: AppStrings.city,
-                          value: property.location,
+                          label: AppStrings.propertyType,
+                          value: AppStrings.propertyApartment,
+                          actionIcon: AppIcons.edit,
+                          suffixIcon: AppIcons.arrowDown, // or your dropdown chevron icon
                           widthScale: widthScale,
-                          icon: AppIcons.edit,
                           onEdit: () {},
                         ),
 
@@ -329,11 +328,12 @@ class _OwnerEditPropertyView extends StatelessWidget {
                           height: 16 * heightScale,
                         ),
 
-
                         OwnerFormInputCard(
-                          label: AppStrings.propertyType,
-                          value: AppStrings.propertyApartment,
-                          icon: AppIcons.edit,
+                          label: AppStrings.location,
+                          value: property.location, // replace with actual location string
+                          actionLabel: "AppStrings.changeOnMap", // or "Change on Map" string
+                          actionIcon: "AppIcons.externalLink", // or map/external icon
+                          switchIconText: false, // Places text first, then external icon on right
                           widthScale: widthScale,
                           onEdit: () {},
                         ),
@@ -344,9 +344,10 @@ class _OwnerEditPropertyView extends StatelessWidget {
 
                         OwnerFormInputCard(
                           label: AppStrings.price,
-                          value: '${property.price} JOD',
+                          value: '${property.price}',
+                          suffixText: 'JOD',
+                          actionIcon: AppIcons.edit,
                           widthScale: widthScale,
-                          icon: AppIcons.edit,
                           onEdit: () {},
                         ),
 
@@ -356,8 +357,9 @@ class _OwnerEditPropertyView extends StatelessWidget {
 
                         OwnerFormInputCard(
                           label: AppStrings.area,
-                          value: '${property.areaSqm} m²',
-                          icon: AppIcons.edit,
+                          value: '${property.areaSqm}',
+                          suffixText: 'm²',
+                          actionIcon: AppIcons.edit,
                           widthScale: widthScale,
                           onEdit: () {},
                         ),
@@ -368,11 +370,9 @@ class _OwnerEditPropertyView extends StatelessWidget {
 
                         OwnerFormInputCard(
                           label: AppStrings.features,
-                          value:
-                          '${property.rooms} Rooms\n'
-                              '${property.bathrooms} Bathrooms',
+                          value: '${property.rooms} Rooms\n${property.bathrooms} Bathrooms',
+                          actionIcon: AppIcons.edit,
                           widthScale: widthScale,
-                          icon: AppIcons.edit,
                           valueMaxLines: 2,
                           onEdit: () {},
                         ),
@@ -383,8 +383,8 @@ class _OwnerEditPropertyView extends StatelessWidget {
 
                         OwnerFormInputCard(
                           label: AppStrings.description,
-                          value: AppStrings.descriptionHint,
-                          icon: AppIcons.edit,
+                          value:  AppStrings.descriptionHint,
+                          actionIcon: AppIcons.edit,
                           widthScale: widthScale,
                           valueMaxLines: 3,
                           onEdit: () {},

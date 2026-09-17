@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-
 import '../../../../config/theme/app_colors.dart';
 import '../../../../core/constant/strings.dart';
+import '../../../../core/widget/app_icon_label_trigger.dart';
 
 class OwnerFormInputCard extends StatelessWidget {
   const OwnerFormInputCard({
@@ -10,17 +10,39 @@ class OwnerFormInputCard extends StatelessWidget {
     required this.label,
     required this.value,
     required this.widthScale,
-    required this.icon,
+    this.actionIcon,
+    this.actionLabel,
+    this.switchIconText = true,
     this.onEdit,
     this.valueMaxLines = 1,
+    this.suffixText,
+    this.suffixIcon,
+    this.suffixWidget,
+    this.suffixIconWidth = 12,
+    this.suffixIconHeight = 12,
+    this.actionIconWidth = 12,
+    this.actionIconHeight = 12,
   });
 
   final String label;
   final String value;
-  final String icon;
   final double widthScale;
+
+  // Top Action Parameters
+  final String? actionIcon;
+  final String? actionLabel;
+  final bool switchIconText;
   final VoidCallback? onEdit;
+  final double actionIconWidth;
+  final double actionIconHeight;
+
+  // Second Row Parameters
   final int valueMaxLines;
+  final String? suffixText;
+  final String? suffixIcon;
+  final Widget? suffixWidget;
+  final double suffixIconWidth;
+  final double suffixIconHeight;
 
   @override
   Widget build(BuildContext context) {
@@ -44,6 +66,7 @@ class OwnerFormInputCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Header Row: Label & AppLabelIconTrigger
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -57,42 +80,65 @@ class OwnerFormInputCard extends StatelessWidget {
                   letterSpacing: 0.24,
                 ),
               ),
-              if (onEdit != null)
-                GestureDetector(
+              if (onEdit != null && actionIcon != null)
+                AppLabelIconTrigger(
+                  widthScale: widthScale,
+                  label: actionLabel ?? AppStrings.editAction,
+                  icon: actionIcon!,
                   onTap: onEdit,
-                  behavior: HitTestBehavior.opaque,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      SvgPicture.asset(icon),
-                      SizedBox(width: 4 * widthScale),
-                      Text(
-                        AppStrings.editAction,
-                        style: TextStyle(
-                          color: AppColors.primary,
-                          fontSize: 12 * widthScale,
-                          fontWeight: FontWeight.w500,
-                          height: 16 / 12,
-                        ),
-                      ),
-                    ],
-                  ),
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.primary,
+                  iconColor: AppColors.primary,
+                  iconWidth: actionIconWidth,
+                  iconHeight: actionIconHeight,
+                  switchIconText: switchIconText,
                 ),
             ],
           ),
 
           SizedBox(height: 10 * widthScale),
 
-          Text(
-            value,
-            maxLines: valueMaxLines,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              color: AppColors.primary,
-              fontSize: 16 * widthScale,
-              fontWeight: FontWeight.w500,
-              height: 24 / 16,
-            ),
+          // Value Row: Text & Optional Suffix
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(
+                child: Text(
+                  value,
+                  maxLines: valueMaxLines,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: AppColors.primary,
+                    fontSize: 16 * widthScale,
+                    fontWeight: FontWeight.w500,
+                    height: 24 / 16,
+                  ),
+                ),
+              ),
+              if (suffixWidget != null) ...[
+                SizedBox(width: 8 * widthScale),
+                suffixWidget!,
+              ] else if (suffixIcon != null) ...[
+                SizedBox(width: 8 * widthScale),
+                SvgPicture.asset(
+                  suffixIcon!,
+                  width: suffixIconWidth * widthScale,
+                  height: suffixIconHeight * widthScale,
+                ),
+              ] else if (suffixText != null) ...[
+                SizedBox(width: 8 * widthScale),
+                Text(
+                  suffixText!,
+                  style: TextStyle(
+                    color: AppColors.primary,
+                    fontSize: 14 * widthScale,
+                    fontWeight: FontWeight.w700,
+                    height: 20 / 14,
+                  ),
+                ),
+              ],
+            ],
           ),
         ],
       ),

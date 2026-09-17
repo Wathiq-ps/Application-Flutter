@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../config/theme/app_colors.dart';
-import '../../../../core/widget/app_svg_button.dart';
+import '../../config/theme/app_colors.dart';
+import 'app_svg_button.dart';
 
 class AppLabelIconTrigger extends StatelessWidget {
   const AppLabelIconTrigger({

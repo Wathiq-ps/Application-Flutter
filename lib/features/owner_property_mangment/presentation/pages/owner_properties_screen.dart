@@ -14,7 +14,7 @@ import '../../../../core/widget/page_header.dart';
 import '../../../../core/widget/property_card.dart';
 import '../state_management/owner_property_cubit.dart';
 import '../state_management/owner_property_state.dart';
-import '../widgets/app_icon_label_trigger.dart';
+import '../../../../core/widget/app_icon_label_trigger.dart';
 
 class OwnerPropertiesScreen extends StatelessWidget {
   const OwnerPropertiesScreen({super.key});

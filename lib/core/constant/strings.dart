@@ -347,5 +347,7 @@ class AppStrings {
       'Are you sure you want to save the changes made to this property?';
   static const String photo = "Photos" ;
   static const String statusProperty = "Status Property";
+  static const String location = "Location";
+
   static const String sureToEditProperty =  "Are you sure you’d like to edit this property?";
 }

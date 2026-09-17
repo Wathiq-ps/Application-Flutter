@@ -9,29 +9,29 @@ class AppTopSnackBar extends StatelessWidget {
   const AppTopSnackBar({
     super.key,
     required this.title,
-    required this.message,
+    this.message,
     required this.prefixIcon,
     this.postfixIcon = AppIcons.cancel,
     this.onClose,
     this.width = 350,
-    this.height = 75,
+    this.height,
     this.gap = 10,
     this.titleMessageGap = 4,
-    this.prefixIconWidth = 30,
-    this.prefixIconHeight = 30,
-    this.postfixIconWidth = 15,
-    this.postfixIconHeight = 15,
+    this.prefixIconWidth = 25,
+    this.prefixIconHeight = 25,
+    this.postfixIconWidth = 14,
+    this.postfixIconHeight = 14,
     this.titleFontSize = 14,
     this.messageFontSize = 12,
   });
 
   final String title;
-  final String message;
+  final String? message;
   final String prefixIcon;
   final String postfixIcon;
   final VoidCallback? onClose;
   final double width;
-  final double height;
+  final double? height;
   final double gap;
   final double titleMessageGap;
   final double prefixIconWidth;
@@ -40,13 +40,14 @@ class AppTopSnackBar extends StatelessWidget {
   final double postfixIconHeight;
   final double titleFontSize;
   final double messageFontSize;
+
   static const double _figmaWidth = 393;
   static const double _figmaHeight = 852;
 
   static void show(
       BuildContext context, {
         required String title,
-        required String message,
+        String? message,
         required String prefixIcon,
         String postfixIcon = AppIcons.cancel,
         VoidCallback? onClose,
@@ -68,7 +69,6 @@ class AppTopSnackBar extends StatelessWidget {
           prefixIcon: prefixIcon,
           postfixIcon: postfixIcon,
           width: 350 * widthScale,
-          height: 81 * widthScale,
           prefixIconWidth: 25 * widthScale,
           prefixIconHeight: 25 * widthScale,
           postfixIconWidth: 14 * widthScale,
@@ -76,7 +76,7 @@ class AppTopSnackBar extends StatelessWidget {
           titleFontSize: 14 * widthScale,
           messageFontSize: 12 * widthScale,
           gap: 10 * widthScale,
-          titleMessageGap: 10 * widthScale,
+          titleMessageGap: 4 * widthScale,
           onClose: () {
             if (overlayEntry.mounted) {
               overlayEntry.remove();
@@ -105,13 +105,10 @@ class AppTopSnackBar extends StatelessWidget {
     final aspectRatio = currentScreenWidth / currentScreenHeight;
 
     if (aspectRatio >= 0.65) {
-      // Tablets / Wider aspect ratios (Desktop / Landscape)
       return 0.85 * heightScale;
     } else if (aspectRatio >= 0.4) {
-      // Standard phone aspect ratios
       return 1.0 * heightScale;
     } else {
-      // Tall narrow screens
       return 1.15 * heightScale;
     }
   }
@@ -149,6 +146,8 @@ class AppTopSnackBar extends StatelessWidget {
       heightScale,
     );
 
+    final bool hasMessage = message != null && message!.trim().isNotEmpty;
+
     return SafeArea(
       child: Align(
         alignment: Alignment.topCenter,
@@ -172,7 +171,10 @@ class AppTopSnackBar extends StatelessWidget {
             child: Container(
               width: double.infinity,
               height: height,
-              padding: EdgeInsets.all(16 * widthScale),
+              padding: EdgeInsets.symmetric(
+                horizontal: 16 * widthScale,
+                vertical: (hasMessage ? 14 : 10) * widthScale,
+              ),
               decoration: BoxDecoration(
                 color: AppColors.surface,
                 border: Border.all(
@@ -207,6 +209,7 @@ class AppTopSnackBar extends StatelessWidget {
 
                   Expanded(
                     child: Column(
+                      mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -225,22 +228,23 @@ class AppTopSnackBar extends StatelessWidget {
                           ),
                         ),
 
-                        SizedBox(height: responsiveGap),
-
-                        Text(
-                          message,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall
-                              ?.copyWith(
-                            fontSize: messageFontSize,
-                            fontWeight: FontWeight.w400,
-                            height: responsiveTextHeight,
-                            color: AppColors.topSnackBarMessage,
+                        if (hasMessage) ...[
+                          SizedBox(height: responsiveGap),
+                          Text(
+                            message!,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodySmall
+                                ?.copyWith(
+                              fontSize: messageFontSize,
+                              fontWeight: FontWeight.w400,
+                              height: responsiveTextHeight,
+                              color: AppColors.topSnackBarMessage,
+                            ),
                           ),
-                        ),
+                        ],
                       ],
                     ),
                   ),
