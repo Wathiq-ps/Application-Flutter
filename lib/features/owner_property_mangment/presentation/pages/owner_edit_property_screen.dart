@@ -49,6 +49,9 @@ class _OwnerEditPropertyView extends StatelessWidget {
   Future<void> _confirmDiscard(BuildContext context) async {
     final bool? discard = await AppDialog.show<bool>(
       context,
+      iconWidth: 64,
+      iconHeight: 64,
+      icon: AppIcons.circleCloseBlue,
       title: AppStrings.discardChanges,
       message: AppStrings.discardChangesMessage,
       primaryText: AppStrings.discardChanges,
@@ -69,8 +72,11 @@ class _OwnerEditPropertyView extends StatelessWidget {
   Future<void> _confirmSave(BuildContext context) async {
     final bool? save = await AppDialog.show<bool>(
       context,
-      title: AppStrings.saveChanges,
-      message: AppStrings.saveChangesMessage,
+      icon: AppIcons.circleEdit,
+      iconWidth: 64,
+      iconHeight: 64,
+      title: AppStrings.editProperty,
+      message: AppStrings.sureToEditProperty,
       primaryText: AppStrings.saveAction,
       onPrimary: () {
         Navigator.of(context).pop(true);
@@ -232,6 +238,7 @@ class _OwnerEditPropertyView extends StatelessWidget {
                           fontSize: 12 * heightScale,
                           fontWeight:FontWeight.w500 ,
                           icon: AppIcons.edit,
+                          switchIconText: true,
                           iconHeight: 12 * widthScale,
                           iconWidth: 16 * widthScale,
                           onTap: () {

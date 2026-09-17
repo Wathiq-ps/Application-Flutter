@@ -17,6 +17,7 @@ class AppLabelIconTrigger extends StatelessWidget {
     this.iconWidth = 7,
     this.iconHeight = 5,
     this.iconColor,
+    this.switchIconText = false,
   });
 
   final double widthScale;
@@ -31,35 +32,40 @@ class AppLabelIconTrigger extends StatelessWidget {
   final double iconWidth;
   final double iconHeight;
   final Color? iconColor;
+  final bool switchIconText;
 
   @override
   Widget build(BuildContext context) {
+    final Widget textWidget = Text(
+      label,
+      style: TextStyle(
+        color: color ?? AppColors.textPrimary,
+        fontSize: fontSize * widthScale,
+        fontWeight: fontWeight,
+        letterSpacing: letterSpacing,
+      ),
+    );
+
+    final Widget iconWidget = AppSvgIconButton(
+      widthScale: widthScale,
+      icon: icon,
+      iconWidth: iconWidth,
+      iconHeight: iconHeight,
+      boxSize: 12,
+      color: iconColor,
+      onTap: onTap,
+    );
+
+    final Widget gapWidget = SizedBox(width: gap * widthScale);
+
     return GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
       child: Row(
         mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            label,
-            style: TextStyle(
-              color: color ?? AppColors.textPrimary,
-              fontSize: fontSize * widthScale,
-              fontWeight: fontWeight,
-              letterSpacing: letterSpacing,
-            ),
-          ),
-          SizedBox(width: gap * widthScale),
-          AppSvgIconButton(
-            widthScale: widthScale,
-            icon: icon,
-            iconWidth: iconWidth,
-            iconHeight: iconHeight,
-            boxSize: 12,
-            color: iconColor,
-            onTap: onTap,
-          ),
-        ],
+        children: switchIconText
+            ? [iconWidget, gapWidget, textWidget]
+            : [textWidget, gapWidget, iconWidget],
       ),
     );
   }

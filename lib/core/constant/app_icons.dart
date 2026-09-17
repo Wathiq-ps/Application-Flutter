@@ -131,6 +131,8 @@ class AppIcons {
 
   static const String rateStar =
       'assets/svg/rate_star.svg';
+  static const String circleEdit =
+      'assets/svg/circle_edit.svg';
 
 // Aliases
   static const String addNew = plus;
