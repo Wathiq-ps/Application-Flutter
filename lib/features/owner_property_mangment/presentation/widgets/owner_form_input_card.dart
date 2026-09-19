@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:mobile/core/widget/app_dropdown_option_tile.dart';
 
 import '../../../../config/theme/app_colors.dart';
 import '../../../../core/constant/strings.dart';
@@ -24,59 +25,58 @@ class OwnerFormInputCard extends StatefulWidget {
     this.suffixIconHeight = 12,
     this.actionIconWidth = 12,
     this.actionIconHeight = 12,
-    // Label typography controls.
     this.labelFontSize = 12,
     this.labelFontWeight = FontWeight.w700,
     this.labelColor,
-    // Value typography controls.
     this.valueFontSize = 16,
     this.valueFontWeight = FontWeight.w500,
     this.valueColor,
-    // Inline value editing.
     this.isEditable = false,
     this.onValueChanged,
     this.keyboardType,
     this.inputFormatters,
     this.editHintText,
-  });
-
+    this.dropdownOptions,
+    this.onDropdownSelected,
+    this.otherOptionLabel,
+    this.enableOtherCustomInput = true,
+    this.dropdownSheetTitle,
+  }) : assert(
+  !(isEditable && dropdownOptions != null),
+  'A field cannot be both free-text editable and a dropdown at the same time.',
+  );
   final String label;
   final String value;
   final double widthScale;
-
-  // Top Action Parameters
   final String? actionIcon;
   final String? actionLabel;
   final bool switchIconText;
   final VoidCallback? onEdit;
   final double actionIconWidth;
   final double actionIconHeight;
-
-  // Second Row Parameters
   final int valueMaxLines;
   final String? suffixText;
   final String? suffixIcon;
   final Widget? suffixWidget;
   final double suffixIconWidth;
   final double suffixIconHeight;
-
-  // Label typography.
   final double labelFontSize;
   final FontWeight labelFontWeight;
   final Color? labelColor;
-
-  // Value typography.
   final double valueFontSize;
   final FontWeight valueFontWeight;
   final Color? valueColor;
-
-  /// When true, tapping the value switches it into an editable text field.
-  /// Editing is committed via [onValueChanged] on submit or on losing focus.
   final bool isEditable;
   final ValueChanged<String>? onValueChanged;
   final TextInputType? keyboardType;
   final List<TextInputFormatter>? inputFormatters;
   final String? editHintText;
+  final List<String>? dropdownOptions;
+  final ValueChanged<String>? onDropdownSelected;
+  final String? otherOptionLabel;
+  final bool enableOtherCustomInput;
+  final String? dropdownSheetTitle;
+  bool get _isDropdown => dropdownOptions != null && dropdownOptions!.isNotEmpty;
 
   @override
   State<OwnerFormInputCard> createState() => _OwnerFormInputCardState();
@@ -150,9 +150,185 @@ class _OwnerFormInputCardState extends State<OwnerFormInputCard> {
     _focusNode.unfocus();
   }
 
+  void _handleActionTap() {
+    widget.onEdit?.call();
+    if (widget._isDropdown) {
+      _openDropdownPicker();
+    } else if (widget.isEditable) {
+      _startEditing();
+    }
+  }
+
+  void _handleValueTap() {
+    if (widget._isDropdown) {
+      _openDropdownPicker();
+    } else if (widget.isEditable) {
+      _startEditing();
+    }
+  }
+
+  Future<void> _openDropdownPicker() async {
+    final double ws = widget.widthScale;
+    final String otherLabel = widget.otherOptionLabel ?? AppStrings.propertyOther;
+    final List<String> baseOptions = widget.dropdownOptions ?? const [];
+
+    final bool valueIsCustom =
+        widget.value.trim().isNotEmpty && !baseOptions.contains(widget.value);
+
+    String? selected = await showModalBottomSheet<String>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: AppColors.transparent,
+      builder: (sheetContext) {
+        final TextEditingController otherController = TextEditingController(
+          text: valueIsCustom ? widget.value : '',
+        );
+        bool showOtherField = valueIsCustom;
+
+        return StatefulBuilder(
+          builder: (context, setSheetState) {
+            return Padding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom,
+              ),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: AppColors.white,
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(22 * ws),
+                  ),
+                ),
+                padding: EdgeInsets.fromLTRB(
+                  20 * ws,
+                  12 * ws,
+                  20 * ws,
+                  20 * ws,
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Center(
+                      child: Container(
+                        width: 36 * ws,
+                        height: 4 * ws,
+                        margin: EdgeInsets.only(bottom: 12 * ws),
+                        decoration: BoxDecoration(
+                          color: AppColors.border,
+                          borderRadius: BorderRadius.circular(999),
+                        ),
+                      ),
+                    ),
+                    Text(
+                      widget.dropdownSheetTitle ?? widget.label,
+                      style: TextStyle(
+                        color: AppColors.textPrimary,
+                        fontSize: 16 * ws,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 0.24,
+                      ),
+                    ),
+                    SizedBox(height: 12 * ws),
+
+                    ...baseOptions.map((option) {
+                      final bool isSelected =
+                          !showOtherField && option == widget.value;
+                      return AppDropdownOptionTile(
+                        widthScale: ws,
+                        label: option,
+                        isSelected: isSelected,
+                        onTap: () => Navigator.of(sheetContext).pop(option),
+                      );
+                    }),
+
+                    if (widget.enableOtherCustomInput) ...[
+                      AppDropdownOptionTile(
+                        widthScale: ws,
+                        label: otherLabel,
+                        isSelected: showOtherField,
+                        onTap: () =>
+                            setSheetState(() => showOtherField = true),
+                      ),
+                      if (showOtherField) ...[
+                        SizedBox(height: 8 * ws),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: TextField(
+                                controller: otherController,
+                                autofocus: true,
+                                style: TextStyle(
+                                  fontSize: 14 * ws,
+                                  color: AppColors.textPrimary,
+                                ),
+                                decoration: InputDecoration(
+                                  isDense: true,
+                                  hintText: otherLabel,
+                                  contentPadding: EdgeInsets.symmetric(
+                                    horizontal: 12 * ws,
+                                    vertical: 12 * ws,
+                                  ),
+                                  border: OutlineInputBorder(
+                                    borderRadius:
+                                    BorderRadius.circular(10 * ws),
+                                    borderSide: const BorderSide(
+                                      color: AppColors.border,
+                                    ),
+                                  ),
+                                ),
+                                onSubmitted: (text) {
+                                  final String trimmed = text.trim();
+                                  if (trimmed.isNotEmpty) {
+                                    Navigator.of(sheetContext).pop(trimmed);
+                                  }
+                                },
+                              ),
+                            ),
+                            SizedBox(width: 8 * ws),
+                            GestureDetector(
+                              onTap: () {
+                                final String trimmed =
+                                otherController.text.trim();
+                                if (trimmed.isNotEmpty) {
+                                  Navigator.of(sheetContext).pop(trimmed);
+                                }
+                              },
+                              behavior: HitTestBehavior.opaque,
+                              child: Container(
+                                padding: EdgeInsets.all(10 * ws),
+                                decoration: const BoxDecoration(
+                                  color: AppColors.primary,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Icon(
+                                  Icons.check_rounded,
+                                  size: 16 * ws,
+                                  color: AppColors.white,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ],
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+
+    if (selected != null && selected.trim().isNotEmpty) {
+      widget.onDropdownSelected?.call(selected.trim());
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final double ws = widget.widthScale;
+    final bool isInteractiveValue = widget.isEditable || widget._isDropdown;
 
     return Container(
       width: double.infinity,
@@ -188,12 +364,12 @@ class _OwnerFormInputCardState extends State<OwnerFormInputCard> {
                   letterSpacing: 0.24,
                 ),
               ),
-              if (widget.onEdit != null && widget.actionIcon != null)
+              if (widget.actionIcon != null)
                 AppLabelIconTrigger(
                   widthScale: ws,
                   label: widget.actionLabel ?? AppStrings.editAction,
                   icon: widget.actionIcon!,
-                  onTap: widget.onEdit,
+                  onTap: _handleActionTap,
                   fontSize: 12,
                   fontWeight: FontWeight.w500,
                   color: AppColors.primary,
@@ -206,12 +382,13 @@ class _OwnerFormInputCardState extends State<OwnerFormInputCard> {
           ),
 
           SizedBox(height: 10 * ws),
+
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Expanded(
                 child: GestureDetector(
-                  onTap: widget.isEditable ? _startEditing : null,
+                  onTap: isInteractiveValue ? _handleValueTap : null,
                   behavior: HitTestBehavior.opaque,
                   child: _isEditing
                       ? TextField(
@@ -277,10 +454,14 @@ class _OwnerFormInputCardState extends State<OwnerFormInputCard> {
                   widget.suffixWidget!,
                 ] else if (widget.suffixIcon != null) ...[
                   SizedBox(width: 8 * ws),
-                  SvgPicture.asset(
-                    widget.suffixIcon!,
-                    width: widget.suffixIconWidth * ws,
-                    height: widget.suffixIconHeight * ws,
+                  GestureDetector(
+                    onTap: widget._isDropdown ? _openDropdownPicker : null,
+                    behavior: HitTestBehavior.opaque,
+                    child: SvgPicture.asset(
+                      widget.suffixIcon!,
+                      width: widget.suffixIconWidth * ws,
+                      height: widget.suffixIconHeight * ws,
+                    ),
                   ),
                 ] else if (widget.suffixText != null) ...[
                   SizedBox(width: 8 * ws),
@@ -302,3 +483,4 @@ class _OwnerFormInputCardState extends State<OwnerFormInputCard> {
     );
   }
 }
+

@@ -2,7 +2,12 @@ import 'package:equatable/equatable.dart';
 
 import '../../domain/entities/owner_property_list_item.dart';
 
-enum OwnerPropertySaveStatus { idle, saving, success, error }
+enum OwnerPropertySaveStatus {
+  idle,
+  saving,
+  success,
+  error,
+}
 
 class OwnerPropertyState extends Equatable {
   const OwnerPropertyState({
@@ -27,7 +32,7 @@ class OwnerPropertyState extends Equatable {
       properties: properties ?? this.properties,
       showStatusBadge: showStatusBadge ?? this.showStatusBadge,
       saveStatus: saveStatus ?? this.saveStatus,
-      errorMessage: errorMessage,
+      errorMessage: errorMessage ?? this.errorMessage,
     );
   }
 

@@ -69,6 +69,8 @@ class AppIcons {
   static const String bed = 'assets/svg/bed.svg';
   static const String bath = 'assets/svg/bathroom.svg';
   static const String area = 'assets/svg/area.svg';
+  static const String arrowDownAshen = 'assets/svg/arrow_down_ashen.svg';
+
 
 // ─────────────────────────────────────────
 // Property Actions
@@ -131,7 +133,7 @@ class AppIcons {
 
   static const String rateStar =
       'assets/svg/rate_star.svg';
-  static const String circleEdit =
+  static const String circleEditF =
       'assets/svg/circle_edit.svg';
 
 // Aliases

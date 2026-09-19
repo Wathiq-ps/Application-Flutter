@@ -352,4 +352,5 @@ class AppStrings {
   static const String sureToEditProperty =  "Are you sure you’d like to edit this property?";
   static const String featureComingSoon =
       'This feature isn\'t available right now. It will be added soon.';
+  static const String currency = 'Currency';
 }
