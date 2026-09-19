@@ -319,7 +319,7 @@ class _OwnerEditPropertyView extends StatelessWidget {
                           label: AppStrings.propertyType,
                           value: AppStrings.propertyApartment,
                           actionIcon: AppIcons.edit,
-                          suffixIcon: AppIcons.arrowDown, // or your dropdown chevron icon
+                          suffixIcon: AppIcons.arrowDown,
                           widthScale: widthScale,
                           onEdit: () {},
                         ),
@@ -330,12 +330,22 @@ class _OwnerEditPropertyView extends StatelessWidget {
 
                         OwnerFormInputCard(
                           label: AppStrings.location,
-                          value: property.location, // replace with actual location string
-                          actionLabel: "AppStrings.changeOnMap", // or "Change on Map" string
-                          actionIcon: "AppIcons.externalLink", // or map/external icon
-                          switchIconText: false, // Places text first, then external icon on right
+                          value: property.location,
+                          actionLabel: AppStrings.changeOnMap,
+                          actionIcon: AppIcons.viewOnMap,
+                          actionIconHeight: 10.5 * widthScale,
+                          actionIconWidth: 10.5 * widthScale,
+                          switchIconText: false,
                           widthScale: widthScale,
-                          onEdit: () {},
+                          isEditable: false,
+                          onEdit: () {
+                            AppTopSnackBar.show(
+                              context,
+                              title: AppStrings.featureNotAvailable,
+                              message: AppStrings.featureComingSoon,
+                              prefixIcon: AppIcons.error,
+                            );
+                          },
                         ),
 
                         SizedBox(
@@ -348,6 +358,8 @@ class _OwnerEditPropertyView extends StatelessWidget {
                           suffixText: 'JOD',
                           actionIcon: AppIcons.edit,
                           widthScale: widthScale,
+                          valueFontSize: 16,
+                          valueFontWeight: FontWeight.w700,
                           onEdit: () {},
                         ),
 
@@ -361,6 +373,8 @@ class _OwnerEditPropertyView extends StatelessWidget {
                           suffixText: 'm²',
                           actionIcon: AppIcons.edit,
                           widthScale: widthScale,
+                          valueFontSize: 16,
+                          valueFontWeight: FontWeight.w700,
                           onEdit: () {},
                         ),
 
@@ -383,7 +397,7 @@ class _OwnerEditPropertyView extends StatelessWidget {
 
                         OwnerFormInputCard(
                           label: AppStrings.description,
-                          value:  AppStrings.descriptionHint,
+                          value: AppStrings.descriptionHint,
                           actionIcon: AppIcons.edit,
                           widthScale: widthScale,
                           valueMaxLines: 3,

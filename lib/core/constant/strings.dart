@@ -348,6 +348,8 @@ class AppStrings {
   static const String photo = "Photos" ;
   static const String statusProperty = "Status Property";
   static const String location = "Location";
-
+  static const String changeOnMap = "Change On Map";
   static const String sureToEditProperty =  "Are you sure you’d like to edit this property?";
+  static const String featureComingSoon =
+      'This feature isn\'t available right now. It will be added soon.';
 }
