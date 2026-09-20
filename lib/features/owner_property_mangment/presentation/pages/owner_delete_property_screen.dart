@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
-
+import 'package:mobile/core/constant/images_path.dart';
 import '../../../../config/theme/app_colors.dart';
 import '../../../../core/constant/app_icons.dart';
 import '../../../../core/constant/strings.dart';
 import '../../../../core/extensions/media_query_extensions.dart';
-import '../../../../core/widget/app_button.dart';
+import '../../../../core/widget/app_dialog.dart';
+import '../../../../core/widget/app_svg_button.dart';
 import '../../../../core/widget/app_top_snackbar.dart';
+import '../../../../core/widget/page_header.dart';
 import '../../domain/entities/owner_property_list_item.dart';
 import '../state_management/owner_property_cubit.dart';
 import '../state_management/owner_property_state.dart';
+import '../widgets/owner_form_input_card.dart';
+import '../widgets/owner_property_photo_card.dart';
 
 class OwnerDeletePropertyScreen extends StatelessWidget {
   const OwnerDeletePropertyScreen({
@@ -24,16 +27,48 @@ class OwnerDeletePropertyScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => OwnerPropertyCubit(),
-      child: _OwnerDeletePropertyView(property: property),
+      create: (_) => OwnerPropertyCubit.forEdit(
+        property: property,
+      ),
+      child: _OwnerDeletePropertyView(
+        property: property,
+      ),
     );
   }
 }
 
 class _OwnerDeletePropertyView extends StatelessWidget {
-  const _OwnerDeletePropertyView({required this.property});
+  const _OwnerDeletePropertyView({
+    required this.property,
+  });
 
   final OwnerPropertyListItem property;
+
+  Future<void> _confirmDelete(BuildContext context) async {
+    final bool? delete = await AppDialog.show<bool>(
+      context,
+      icon: AppIcons.errorDialog,
+      iconWidth: 26,
+      iconHeight: 22,
+      title: AppStrings.deleteProperty,
+      message: AppStrings.sureToDeleteProperty,
+      primaryText: AppStrings.deleteAction,
+      primaryBackgroundColor: AppColors.error,
+      onPrimary: () {
+        Navigator.of(context).pop(true);
+      },
+      secondaryText: AppStrings.cancel,
+      onSecondary: () {
+        Navigator.of(context).pop(false);
+      },
+    );
+
+    if (delete == true && context.mounted) {
+      await context.read<OwnerPropertyCubit>().deleteProperty(
+        property.id,
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,6 +78,9 @@ class _OwnerDeletePropertyView extends StatelessWidget {
     final double widthScale = context.screenWidth / figmaWidth;
     final double heightScale = context.screenHeight / figmaHeight;
 
+    final ThemeData theme = Theme.of(context);
+    final TextTheme textTheme = theme.textTheme;
+
     return BlocListener<OwnerPropertyCubit, OwnerPropertyState>(
       listenWhen: (previous, current) =>
       previous.saveStatus != current.saveStatus &&
@@ -51,207 +89,177 @@ class _OwnerDeletePropertyView extends StatelessWidget {
         AppTopSnackBar.show(
           context,
           title: AppStrings.propertyDeletedSuccessfully,
-          message: '',
           prefixIcon: AppIcons.success,
           duration: const Duration(milliseconds: 1500),
         );
 
+        context.read<OwnerPropertyCubit>().resetSaveStatus();
+
         await Future.delayed(const Duration(milliseconds: 1500));
+
         if (context.mounted) {
           context.pop();
         }
       },
       child: Scaffold(
-        backgroundColor: AppColors.background,
+        backgroundColor: theme.scaffoldBackgroundColor,
         body: SafeArea(
-          child: Stack(
+          child: Column(
             children: [
-              Column(
-                children: [
-                  // ─────────────────────────────────────
-                  // Header
-                  // ─────────────────────────────────────
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 20 * widthScale,
-                      vertical: 12 * heightScale,
-                    ),
-                    child: Row(
-                      children: [
-                        IconButton(
-                          onPressed: () => context.pop(),
-                          padding: EdgeInsets.zero,
-                          icon: SvgPicture.asset(
-                            AppIcons.back,
-                            width: 20 * widthScale,
-                            height: 16 * widthScale,
-                          ),
-                        ),
-                        Expanded(
-                          child: Text(
-                            AppStrings.deleteProperty,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: AppColors.textPrimary,
-                              fontSize: 18 * widthScale,
-                              fontWeight: FontWeight.w500,
-                              height: 24 / 18,
-                              letterSpacing: -0.45,
-                            ),
-                          ),
-                        ),
-                        Text(
-                          AppStrings.deleteAction,
-                          style: TextStyle(
-                            color: AppColors.error,
-                            fontSize: 18 * widthScale,
-                            fontWeight: FontWeight.w500,
-                            height: 24 / 18,
-                            letterSpacing: -0.45,
-                          ),
-                        ),
-                      ],
-                    ),
+              // ─────────────────────────────────────
+              // Header: back • title • delete
+              // ─────────────────────────────────────
+              PageHeader(
+                widthScale: widthScale,
+                expandCenter: true,
+                padding: EdgeInsets.symmetric(
+                  horizontal: 20 * widthScale,
+                  vertical: 12 * heightScale,
+                ),
+                left: AppSvgIconButton(
+                  widthScale: widthScale,
+                  icon: AppIcons.backArrowProp,
+                  iconWidth: 20,
+                  iconHeight: 16,
+                  onTap: () => context.pop(),
+                ),
+                center: Text(
+                  AppStrings.deleteProperty,
+                  textAlign: TextAlign.center,
+                  style: textTheme.bodyLarge?.copyWith(
+                    color: theme.colorScheme.onSurface,
+                    fontSize: 18 * widthScale,
+                    fontWeight: FontWeight.w500,
+                    height: 24 / 18,
+                    letterSpacing: -0.45,
                   ),
+                ),
+                right: BlocBuilder<OwnerPropertyCubit, OwnerPropertyState>(
+                  buildWhen: (previous, current) =>
+                  previous.saveStatus != current.saveStatus,
+                  builder: (context, state) {
+                    final bool isDeleting =
+                        state.saveStatus == OwnerPropertySaveStatus.saving;
 
-                  // ─────────────────────────────────────
-                  // Warning content
-                  // ─────────────────────────────────────
-                  Expanded(
-                    child: SingleChildScrollView(
-                      padding: EdgeInsets.fromLTRB(
-                        20 * widthScale,
-                        24 * heightScale,
-                        20 * widthScale,
-                        120 * heightScale,
+                    return GestureDetector(
+                      onTap: isDeleting ? null : () => _confirmDelete(context),
+                      behavior: HitTestBehavior.opaque,
+                      child: Text(
+                        AppStrings.deleteAction,
+                        style: textTheme.bodyLarge?.copyWith(
+                          color: isDeleting
+                              ? AppColors.disabled
+                              : AppColors.error,
+                          fontSize: 18 * widthScale,
+                          fontWeight: FontWeight.w500,
+                          height: 24 / 18,
+                          letterSpacing: -0.45,
+                        ),
                       ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            width: 220 * widthScale,
-                            height: 120 * widthScale,
-                            decoration: BoxDecoration(
-                              color: AppColors.iconBg,
-                              borderRadius:
-                              BorderRadius.circular(8 * widthScale),
-                            ),
-                          ),
-
-                          SizedBox(height: 20 * heightScale),
-
-                          Text(
-                            property.title,
-                            style: TextStyle(
-                              color: AppColors.textPrimary,
-                              fontSize: 18 * widthScale,
-                              fontWeight: FontWeight.w600,
-                              height: 24 / 18,
-                              letterSpacing: -0.45,
-                            ),
-                          ),
-
-                          SizedBox(height: 12 * heightScale),
-
-                          Container(
-                            width: double.infinity,
-                            padding: EdgeInsets.all(14 * widthScale),
-                            decoration: BoxDecoration(
-                              color: AppColors.error.withValues(
-                                alpha: 0.06,
-                              ),
-                              borderRadius:
-                              BorderRadius.circular(16 * widthScale),
-                              border: Border.all(
-                                color: AppColors.error.withValues(
-                                  alpha: 0.3,
-                                ),
-                              ),
-                            ),
-                            child: Text(
-                              AppStrings.deletePropertyWarning,
-                              style: TextStyle(
-                                color: AppColors.error,
-                                fontSize: 13 * widthScale,
-                                fontWeight: FontWeight.w400,
-                                height: 20 / 13,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
+                    );
+                  },
+                ),
               ),
 
-              // ─────────────────────────────────────
-              // Sticky delete bar
-              // ─────────────────────────────────────
-              Positioned(
-                left: 0,
-                right: 0,
-                bottom: 0,
-                child: Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 16 * widthScale,
-                    vertical: 12 * heightScale,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColors.white,
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color(0xFF0A1F44).withValues(
-                          alpha: 0.08,
-                        ),
-                        offset: const Offset(0, -8),
-                        blurRadius: 24,
+              SizedBox(height: 12 * widthScale),
+
+
+              Expanded(
+                child: BlocBuilder<OwnerPropertyCubit, OwnerPropertyState>(
+                  buildWhen: (previous, current) =>
+                  previous.properties != current.properties,
+                  builder: (context, state) {
+                    final OwnerPropertyListItem currentProperty =
+                    state.properties.firstWhere(
+                          (item) => item.id == property.id,
+                      orElse: () => property,
+                    );
+
+                    return ListView(
+                      padding: EdgeInsets.fromLTRB(
+                        20 * widthScale,
+                        8 * heightScale,
+                        20 * widthScale,
+                        32 * heightScale,
                       ),
-                    ],
-                  ),
-                  child: SafeArea(
-                    top: false,
-                    child: BlocBuilder<OwnerPropertyCubit,
-                        OwnerPropertyState>(
-                      builder: (context, state) {
-                        return Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            AppElevatedButton(
-                              text: AppStrings.deleteThisProperty,
-                              onPressed: state.saveStatus ==
-                                  OwnerPropertySaveStatus.saving
-                                  ? null
-                                  : () => context
-                                  .read<OwnerPropertyCubit>()
-                                  .deleteProperty(property.id),
-                              backgroundColor: AppColors.error,
-                              height: 48 * widthScale,
-                              borderRadius: 9999,
-                              textStyle: TextStyle(
-                                color: AppColors.white,
-                                fontSize: 14 * widthScale,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                            SizedBox(height: 8 * heightScale),
-                            TextButton(
-                              onPressed: () => context.pop(),
-                              child: Text(
-                                AppStrings.cancelAction,
-                                style: TextStyle(
-                                  color: AppColors.textPrimary,
-                                  fontSize: 11 * widthScale,
-                                  fontWeight: FontWeight.w500,
-                                  letterSpacing: 0.44,
-                                ),
-                              ),
-                            ),
-                          ],
-                        );
-                      },
-                    ),
-                  ),
+                      children: [
+                        // Photos (view-only — no edit badge overlay).
+                        SizedBox(
+                          height: 120 * widthScale,
+                          child: ListView.separated(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: 2,
+                            separatorBuilder: (_, __) =>
+                                SizedBox(width: 7 * widthScale),
+                            itemBuilder: (context, index) {
+                              return OwnerPropertyPhotoCard(
+                                widthScale: widthScale,
+                                imageUrl: ImagePath.villa,
+                                showEditBadge: false,
+                              );
+                            },
+                          ),
+                        ),
+
+                        SizedBox(height: 16 * heightScale),
+
+                        OwnerFormInputCard(
+                          label: AppStrings.propertyType,
+                          value: currentProperty.propertyType,
+                          widthScale: widthScale,
+                        ),
+
+                        SizedBox(height: 16 * heightScale),
+
+                        OwnerFormInputCard(
+                          label: AppStrings.location,
+                          value: currentProperty.location,
+                          widthScale: widthScale,
+                        ),
+
+                        SizedBox(height: 16 * heightScale),
+
+                        OwnerFormInputCard(
+                          label: AppStrings.price,
+                          value: currentProperty.price,
+                          suffixText: currentProperty.currency,
+                          widthScale: widthScale,
+                          valueFontSize: 16,
+                          valueFontWeight: FontWeight.w700,
+                        ),
+
+                        SizedBox(height: 16 * heightScale),
+
+                        OwnerFormInputCard(
+                          label: AppStrings.area,
+                          value: '${currentProperty.areaSqm}',
+                          suffixText: 'm²',
+                          widthScale: widthScale,
+                          valueFontSize: 16,
+                          valueFontWeight: FontWeight.w700,
+                        ),
+
+                        SizedBox(height: 16 * heightScale),
+
+                        OwnerFormInputCard(
+                          label: AppStrings.features,
+                          value: '${currentProperty.rooms} Rooms\n'
+                              '${currentProperty.bathrooms} Bathrooms',
+                          widthScale: widthScale,
+                          valueMaxLines: 2,
+                        ),
+
+                        SizedBox(height: 16 * heightScale),
+
+                        OwnerFormInputCard(
+                          label: AppStrings.description,
+                          value: currentProperty.description,
+                          widthScale: widthScale,
+                          valueMaxLines: 3,
+                        ),
+                      ],
+                    );
+                  },
                 ),
               ),
             ],

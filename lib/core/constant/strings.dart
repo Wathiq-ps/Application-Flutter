@@ -353,4 +353,6 @@ class AppStrings {
   static const String featureComingSoon =
       'This feature isn\'t available right now. It will be added soon.';
   static const String currency = 'Currency';
+  static const String sureToDeleteProperty =
+      'Are you sure you\'d like to delete this property?';
 }

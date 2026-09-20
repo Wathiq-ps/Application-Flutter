@@ -70,6 +70,8 @@ class AppIcons {
   static const String bath = 'assets/svg/bathroom.svg';
   static const String area = 'assets/svg/area.svg';
   static const String arrowDownAshen = 'assets/svg/arrow_down_ashen.svg';
+  static const String errorDialog = 'assets/svg/error_dialog.svg';
+
 
 
 // ─────────────────────────────────────────

@@ -170,7 +170,7 @@ class AppDialog extends StatelessWidget {
                 message!,
                 textAlign: TextAlign.center,
                 style: textTheme.labelSmall?.copyWith(
-                  color: AppColors.textSecondary,
+                  color: AppColors.primary,
                   fontSize: 13 * widthScale,
                   fontWeight: FontWeight.w400,
                   height: 18 / 13,
