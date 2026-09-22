@@ -1,23 +1,27 @@
 import 'dart:ui';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mobile/config/routes/routes_names.dart';
+import 'package:mobile/core/constant/images_path.dart';
+import 'package:mobile/core/constant/strings.dart';
 
-class VerifySelfieIdentityScreen extends StatefulWidget {
-  const VerifySelfieIdentityScreen({super.key});
+import 'package:mobile/features/verification/presentation/cubit/verification_cubit.dart';
+import 'package:mobile/features/verification/presentation/widgets/action_button.dart';
+import 'package:mobile/features/verification/presentation/widgets/dashed_border_painter.dart';
+import 'package:mobile/features/verification/presentation/widgets/requirement_item.dart';
+
+class VerifyIdentityScreen extends StatefulWidget {
+  const VerifyIdentityScreen({super.key});
 
   @override
-  State<VerifySelfieIdentityScreen> createState() =>
-      _VerifySelfieIdentityScreenState();
+  State<VerifyIdentityScreen> createState() => _VerifyIdentityScreenState();
 }
 
-class _VerifySelfieIdentityScreenState
-    extends State<VerifySelfieIdentityScreen> {
+class _VerifyIdentityScreenState extends State<VerifyIdentityScreen> {
   final ImagePicker _picker = ImagePicker();
-
-  XFile? _selectedImage;
 
   Future<void> _pickImage(ImageSource source) async {
     try {
@@ -26,36 +30,31 @@ class _VerifySelfieIdentityScreenState
         imageQuality: 90,
       );
 
-      if (image != null) {
-        setState(() {
-          _selectedImage = image;
-        });
-      }
+      if (image == null || !mounted) return;
+
+      context.read<VerificationCubit>().setIdImage(image);
     } catch (e) {
-      debugPrint('Image picker error: $e');
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(AppStrings.somethingWentWrong)));
     }
   }
 
   void _continue() {
-    if (_selectedImage == null) {
+    if (context.read<VerificationCubit>().idImage == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please upload your ID first')),
       );
       return;
     }
-
-    // // انتقل للخطوة الثانية هنا
-    // Navigator.push(
-    //   context,
-    //   MaterialPageRoute(
-    //     builder: (context) => const VerificationPendingScreen(),
-    //   ),
-    // );
-    context.go(RouteNames.verificationPendingScreen);
+    context.go(RouteNames.verifySelfieIdentityScreen);
   }
 
   @override
   Widget build(BuildContext context) {
+    final idImage = context.watch<VerificationCubit>().idImage;
     return Scaffold(
       body: Stack(
         children: [
@@ -63,10 +62,7 @@ class _VerifySelfieIdentityScreenState
           // Background
           // =========================
           Positioned.fill(
-            child: Image.asset(
-              'assets/images/onboarding_background.jpg',
-              fit: BoxFit.cover,
-            ),
+            child: Image.asset(ImagePath.background, fit: BoxFit.cover),
           ),
 
           Positioned.fill(
@@ -108,7 +104,7 @@ class _VerifySelfieIdentityScreenState
 
                           const Expanded(
                             child: Text(
-                              'Verify Your Identity',
+                              AppStrings.verifyYourIdentity,
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 color: Colors.white,
@@ -123,7 +119,7 @@ class _VerifySelfieIdentityScreenState
                       const SizedBox(height: 2),
 
                       const Text(
-                        'Step 2 of 2',
+                        AppStrings.step1Of2,
                         style: TextStyle(
                           color: Colors.white70,
                           fontSize: 16,
@@ -158,7 +154,7 @@ class _VerifySelfieIdentityScreenState
                           child: Column(
                             children: [
                               const Text(
-                                'Take a selfie with your ID',
+                                AppStrings.uploadYourId,
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   color: Colors.white,
@@ -170,7 +166,7 @@ class _VerifySelfieIdentityScreenState
                               const SizedBox(height: 7),
 
                               const Text(
-                                'Hold your ID next to your face',
+                                AppStrings.takeClearPhotoOfId,
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   color: Colors.white,
@@ -204,7 +200,7 @@ class _VerifySelfieIdentityScreenState
                                       color: Colors.white.withOpacity(0.08),
                                       borderRadius: BorderRadius.circular(18),
                                     ),
-                                    child: _selectedImage == null
+                                    child: idImage == null
                                         ? Column(
                                             mainAxisAlignment:
                                                 MainAxisAlignment.center,
@@ -226,7 +222,7 @@ class _VerifySelfieIdentityScreenState
                                               const SizedBox(height: 10),
 
                                               const Text(
-                                                'Tap to upload',
+                                                AppStrings.tapToUpload,
                                                 style: TextStyle(
                                                   color: Colors.white,
                                                   fontSize: 19,
@@ -240,7 +236,7 @@ class _VerifySelfieIdentityScreenState
                                               16,
                                             ),
                                             child: Image.file(
-                                              File(_selectedImage!.path),
+                                              File(idImage!.path),
                                               width: double.infinity,
                                               height: double.infinity,
                                               fit: BoxFit.cover,
@@ -258,9 +254,9 @@ class _VerifySelfieIdentityScreenState
                               Row(
                                 children: [
                                   Expanded(
-                                    child: _ActionButton(
+                                    child: ActionButton(
                                       icon: Icons.camera_alt_outlined,
-                                      text: 'Take Photo',
+                                      text: AppStrings.tapToUpload,
                                       onTap: () {
                                         _pickImage(ImageSource.camera);
                                       },
@@ -270,9 +266,9 @@ class _VerifySelfieIdentityScreenState
                                   const SizedBox(width: 18),
 
                                   Expanded(
-                                    child: _ActionButton(
+                                    child: ActionButton(
                                       icon: Icons.image_outlined,
-                                      text: 'Gallery',
+                                      text: AppStrings.gallery,
                                       onTap: () {
                                         _pickImage(ImageSource.gallery);
                                       },
@@ -289,15 +285,21 @@ class _VerifySelfieIdentityScreenState
                         // =========================
                         // Requirements
                         // =========================
-                        const _RequirementItem(text: 'All 4 corners visible'),
+                        const RequirementItem(
+                          text: AppStrings.faceAndIdClearlyVisible,
+                        ),
 
                         const SizedBox(height: 11),
 
-                        const _RequirementItem(text: 'No glare or blur'),
+                        const RequirementItem(
+                          text: AppStrings.goodLightingNoShadows,
+                        ),
 
                         const SizedBox(height: 11),
 
-                        const _RequirementItem(text: 'Text is readable'),
+                        const RequirementItem(
+                          text: AppStrings.removeSunglassesOrHats,
+                        ),
 
                         const SizedBox(height: 11),
 
@@ -319,7 +321,7 @@ class _VerifySelfieIdentityScreenState
                               ),
                             ),
                             child: const Text(
-                              'Continue',
+                              AppStrings.continueText,
                               style: TextStyle(
                                 fontSize: 19,
                                 fontWeight: FontWeight.w700,
@@ -339,149 +341,5 @@ class _VerifySelfieIdentityScreenState
         ],
       ),
     );
-  }
-}
-
-// ======================================================
-// Action Button
-// ======================================================
-
-class _ActionButton extends StatelessWidget {
-  final IconData icon;
-  final String text;
-  final VoidCallback onTap;
-
-  const _ActionButton({
-    required this.icon,
-    required this.text,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 58,
-      child: OutlinedButton.icon(
-        onPressed: onTap,
-        icon: Icon(icon, color: Colors.white, size: 23),
-        label: Text(
-          text,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 16,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        style: OutlinedButton.styleFrom(
-          side: BorderSide(color: Colors.white.withOpacity(0.35), width: 1.5),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-// ======================================================
-// Requirement Item
-// ======================================================
-
-class _RequirementItem extends StatelessWidget {
-  final String text;
-
-  const _RequirementItem({required this.text});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Container(
-          width: 42,
-          height: 42,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: const Color(0xff173563).withOpacity(0.8),
-          ),
-          child: const Icon(Icons.check, color: Colors.white, size: 24),
-        ),
-
-        const SizedBox(width: 18),
-
-        Expanded(
-          child: Text(
-            text,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 19,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class DashedBorderPainter extends CustomPainter {
-  final Color color;
-  final double strokeWidth;
-  final double dashWidth;
-  final double dashSpace;
-  final double radius;
-
-  DashedBorderPainter({
-    required this.color,
-    this.strokeWidth = 2,
-    this.dashWidth = 8,
-    this.dashSpace = 6,
-    this.radius = 18,
-  });
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = color
-      ..strokeWidth = strokeWidth
-      ..style = PaintingStyle.stroke;
-
-    final path = Path()
-      ..addRRect(
-        RRect.fromRectAndRadius(
-          Rect.fromLTWH(
-            strokeWidth / 2,
-            strokeWidth / 2,
-            size.width - strokeWidth,
-            size.height - strokeWidth,
-          ),
-          Radius.circular(radius),
-        ),
-      );
-
-    for (final metric in path.computeMetrics()) {
-      double distance = 0;
-
-      while (distance < metric.length) {
-        final double nextDistance = distance + dashWidth;
-
-        final Path dash = metric.extractPath(
-          distance,
-          nextDistance.clamp(0, metric.length),
-        );
-
-        canvas.drawPath(dash, paint);
-
-        distance += dashWidth + dashSpace;
-      }
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant DashedBorderPainter oldDelegate) {
-    return oldDelegate.color != color ||
-        oldDelegate.strokeWidth != strokeWidth ||
-        oldDelegate.dashWidth != dashWidth ||
-        oldDelegate.dashSpace != dashSpace ||
-        oldDelegate.radius != radius;
   }
 }

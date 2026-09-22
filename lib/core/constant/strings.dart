@@ -37,14 +37,12 @@ class AppStrings {
   static const String passwordMustHaveLowerChar =
       'Password must contain a lowercase letter';
 
-  static const String passwordMustHaveNum =
-      'Password must contain a number';
+  static const String passwordMustHaveNum = 'Password must contain a number';
 
   static const String passwordMustHaveSpecialChar =
       'Password must contain a special character';
 
-  static const String passwordMismatch =
-      'Passwords do not match';
+  static const String passwordMismatch = 'Passwords do not match';
 
   // ─────────────────────────────────────────────
   // List Your Property
@@ -86,11 +84,9 @@ class AppStrings {
 
   static const String propertyOther = 'Other';
 
-  static const String specifyPropertyType =
-      'Specify property type';
+  static const String specifyPropertyType = 'Specify property type';
 
-  static const String specifyPropertyTypeHint =
-      'e.g. Studio, Farm...';
+  static const String specifyPropertyTypeHint = 'e.g. Studio, Farm...';
 
   static const String continueText = 'Continue';
 
@@ -164,8 +160,7 @@ class AppStrings {
   // Onboarding
   // ─────────────────────────────────────────────
 
-  static const String onboardingTitle =
-      ' Find Your Dream \nHome on the Go';
+  static const String onboardingTitle = ' Find Your Dream \nHome on the Go';
 
   static const String onboardingSubtitle =
       "Scroll, Select, and Let's Settle In!";
@@ -174,32 +169,26 @@ class AppStrings {
   // Authentication
   // ─────────────────────────────────────────────
 
-  static const String continueWithEmail =
-      'Continue with Email';
+  static const String continueWithEmail = 'Continue with Email';
 
-  static const String continueWithPhone =
-      ' With Phone Number';
+  static const String continueWithPhone = ' With Phone Number';
 
-  static const String alreadyHaveAccount =
-      'Already have an account?';
+  static const String alreadyHaveAccount = 'Already have an account?';
 
   static const String signIn = 'Sign in';
 
   static const String enterEmail = 'Enter Email';
 
-  static const String emailHintText =
-      'example@mail.com';
+  static const String emailHintText = 'example@mail.com';
 
   static const String sendCode = 'Send Code';
 
-  static const String getStarted =
-      'Let\'s get started!';
+  static const String getStarted = 'Let\'s get started!';
 
   static const String enterYourEmailAdd =
       'Enter your email address to create your account';
 
-  static const String featureNotAvailable =
-      'Feature Unavailable';
+  static const String featureNotAvailable = 'Feature Unavailable';
 
   static const String featureWillBeAvailbleLater =
       'This feature is currently not available. Please try again later.';
@@ -214,7 +203,8 @@ class AppStrings {
       'Check your Email for the verification code';
 
   static const String welcomeBack = 'Welcome back!';
-  static const String signInToContinueSearch = 'Sign in to continue your search';
+  static const String signInToContinueSearch =
+      'Sign in to continue your search';
   static const String dontHaveAccount = "Don't have an account?";
   static const String signUp = 'Sign up';
 
@@ -226,13 +216,14 @@ class AppStrings {
       'Enter your email address to sign in your account';
   static const String emailHint = 'example@mail.com';
   static const String letGetStarted = "You're in! Let's get started";
-  static const String welcomeToWathiq = 'Welcome to Wathiq' ;
+  static const String welcomeToWathiq = 'Welcome to Wathiq';
   static const String pleaseEnterFullOtp = 'Please enter the full OTP';
-  static const String somethingWentWrong = 'Something went wrong. Please try again.';
+  static const String somethingWentWrong =
+      'Something went wrong. Please try again.';
   static const String verificationFailed = 'Verification failed';
-// ─────────────────────────────────────────────
-// OTP
-// ─────────────────────────────────────────────
+  // ─────────────────────────────────────────────
+  // OTP
+  // ─────────────────────────────────────────────
 
   static const String enterCode = 'Enter Code';
 
@@ -245,9 +236,9 @@ class AppStrings {
 
   static const String resend = 'Resend';
 
-// ─────────────────────────────────────────────
-// Error Messages
-// ─────────────────────────────────────────────
+  // ─────────────────────────────────────────────
+  // Error Messages
+  // ─────────────────────────────────────────────
 
   static const String emailNotRegistered =
       'This email is not registered. Please register first';
@@ -264,15 +255,63 @@ class AppStrings {
   static const String otpExpired =
       'This code has expired. Please request a new one';
 
-  static const String incorrectOtp =
-      'The code you entered is incorrect';
+  static const String incorrectOtp = 'The code you entered is incorrect';
 
-  static const String accountSuspended =
-      'Your account has been suspended';
+  static const String accountSuspended = 'Your account has been suspended';
 
   static const String checkInternetConnection =
       'Check your internet connection and try again';
 
   static String tooManyAttemptsWithRetry(int retryAfter) =>
       'Too many attempts. Please wait ${retryAfter}s before trying again';
+
+  // ─────────────────────────────────────────────
+  // Identity Verification
+  // ─────────────────────────────────────────────
+
+  static const String verifyYourIdentity = 'Verify Your Identity';
+
+  static const String step1Of2 = 'Step 1 of 2';
+
+  static const String step2Of2 = 'Step 2 of 2';
+
+  static const String uploadYourId = 'Upload your ID';
+
+  static const String takeClearPhotoOfId =
+      'Take a clear photo of the front of your ID card';
+
+  static const String takeSelfieWithId = 'Take a selfie with your ID';
+
+  static const String holdIdNextToFace = 'Hold your ID next to your face';
+
+  static const String tapToUpload = 'Tap to upload';
+
+  static const String takePhoto = 'Take Photo';
+
+  static const String gallery = 'Gallery';
+
+  static const String pleaseUploadIdFirst = 'Please upload your ID first';
+
+  // Requirements - ID
+  static const String faceAndIdClearlyVisible =
+      'Face and ID both clearly visible';
+
+  static const String goodLightingNoShadows = 'Good lighting, no shadows';
+
+  static const String removeSunglassesOrHats = 'Remove sunglasses or hats';
+
+  // Requirements - Selfie
+  static const String allFourCornersVisible = 'All 4 corners visible';
+
+  static const String noGlareOrBlur = 'No glare or blur';
+
+  static const String textIsReadable = 'Text is readable';
+
+  // Verification Pending
+  static const String verificationPending = 'Verification Pending';
+
+  static const String verificationPendingDescription =
+      "We're reviewing your documents. This usually takes 1-2 business days. We'll notify you once it's approved.";
+
+  static const String backToHome = 'Back to Home';
 }

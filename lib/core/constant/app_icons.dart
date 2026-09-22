@@ -39,7 +39,4 @@ class AppIcons {
   static const String garden = 'assets/svg/garden.svg';
   static const String addPhoto = 'assets/svg/add_photo.svg';
   static const String remove = 'assets/svg/remove.svg';
-
-
-
 }

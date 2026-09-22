@@ -8,9 +8,9 @@ import 'package:mobile/features/auth/presentation/state_mangement/cubit/auth_cub
 import 'package:mobile/features/property/presentation/pages/add_property_page_four.dart';
 import 'package:mobile/features/property/presentation/pages/proof_of_ownership_page.dart';
 import 'package:mobile/features/property/presentation/pages/review_listing_page.dart';
-import 'package:mobile/features/verification/presentation/verification_pending_screen.dart';
-import 'package:mobile/features/verification/presentation/verify_identity_screen.dart';
-import 'package:mobile/features/verification/presentation/verify_selfie_identity_screen.dart';
+import 'package:mobile/features/verification/presentation/pages/verification_pending_screen.dart';
+import 'package:mobile/features/verification/presentation/pages/verify_identity_screen.dart';
+import 'package:mobile/features/verification/presentation/pages/verify_selfie_identity_screen.dart';
 import 'package:mobile/features/property/presentation/pages/add_property_page_two.dart';
 import '../../features/auth/presentation/pages/email_login_screen.dart';
 import '../../features/auth/presentation/pages/email_registe_screen.dart';
@@ -54,17 +54,10 @@ class AppRoutes {
           return CustomTransitionPage(
             key: state.pageKey,
             child: const OnBoardingScreen(),
-            transitionsBuilder: (
-                context,
-                animation,
-                secondaryAnimation,
-                child,
-                ) {
-              return FadeTransition(
-                opacity: animation,
-                child: child,
-              );
-            },
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+                  return FadeTransition(opacity: animation, child: child);
+                },
           );
         },
       ),
@@ -76,24 +69,17 @@ class AppRoutes {
           return CustomTransitionPage(
             key: state.pageKey,
             child: const OnBoardingLoginScreen(),
-            transitionsBuilder: (
-                context,
-                animation,
-                secondaryAnimation,
-                child,
-                ) {
-              return FadeTransition(
-                opacity: animation,
-                child: child,
-              );
-            },
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+                  return FadeTransition(opacity: animation, child: child);
+                },
           );
         },
       ),
 
-// ─────────────────────────────────────────────
-// Login
-// ─────────────────────────────────────────────
+      // ─────────────────────────────────────────────
+      // Login
+      // ─────────────────────────────────────────────
       GoRoute(
         path: RouteNames.phoneLoginScreen,
         name: 'phoneLoginScreen',
@@ -101,23 +87,16 @@ class AppRoutes {
           return CustomTransitionPage(
             key: state.pageKey,
             child: const PhoneLoginScreen(),
-            transitionsBuilder: (
-                context,
-                animation,
-                secondaryAnimation,
-                child,
-                ) {
-              return FadeTransition(
-                opacity: animation,
-                child: child,
-              );
-            },
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+                  return FadeTransition(opacity: animation, child: child);
+                },
           );
         },
       ),
       // ─────────────────────────────────────────────
-// Email Login
-// ─────────────────────────────────────────────
+      // Email Login
+      // ─────────────────────────────────────────────
       GoRoute(
         path: RouteNames.emailLoginScreen,
         name: 'emailLoginScreen',
@@ -131,24 +110,17 @@ class AppRoutes {
               ),
               child: const EmailLoginScreen(),
             ),
-            transitionsBuilder: (
-                context,
-                animation,
-                secondaryAnimation,
-                child,
-                ) {
-              return FadeTransition(
-                opacity: animation,
-                child: child,
-              );
-            },
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+                  return FadeTransition(opacity: animation, child: child);
+                },
           );
         },
       ),
 
-// ─────────────────────────────────────────────
-// Register
-// ─────────────────────────────────────────────
+      // ─────────────────────────────────────────────
+      // Register
+      // ─────────────────────────────────────────────
       GoRoute(
         path: RouteNames.phoneRegisterScreen,
         name: 'phoneRegisterScreen',
@@ -156,17 +128,10 @@ class AppRoutes {
           return CustomTransitionPage(
             key: state.pageKey,
             child: const PhoneRegisterScreen(),
-            transitionsBuilder: (
-                context,
-                animation,
-                secondaryAnimation,
-                child,
-                ) {
-              return FadeTransition(
-                opacity: animation,
-                child: child,
-              );
-            },
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+                  return FadeTransition(opacity: animation, child: child);
+                },
           );
         },
       ),
@@ -184,17 +149,10 @@ class AppRoutes {
               ),
               child: const EmailRegisterScreen(),
             ),
-            transitionsBuilder: (
-                context,
-                animation,
-                secondaryAnimation,
-                child,
-                ) {
-              return FadeTransition(
-                opacity: animation,
-                child: child,
-              );
-            },
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+                  return FadeTransition(opacity: animation, child: child);
+                },
           );
         },
       ),
