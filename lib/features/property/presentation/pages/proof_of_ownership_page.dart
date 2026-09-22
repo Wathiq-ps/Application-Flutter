@@ -1,8 +1,24 @@
 import 'dart:io';
-
+ 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
+ import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
+import 'package:mobile/core/widget/app_button.dart';
+import 'package:mobile/features/property/presentation/widgets/submit_button_widget.dart';
+
+import '../../../../config/routes/routes_names.dart';
+import '../../../../config/theme/app_colors.dart';
+import '../../../../core/constant/app_icons.dart';
+import '../../../../core/constant/images_path.dart';
+import '../../../../core/constant/strings.dart';
+import '../../../../core/services/file_picker_service.dart';
+import '../../../../core/services/image_picker_service.dart';
+import '../../../../core/widget/dashed_border.dart';
+import '../state_management/create_property_cubit.dart';
+import '../state_management/create_property_state.dart';
+import '../widgets/header_widget.dart';
 
 class ProofOfOwnershipPage extends StatefulWidget {
   const ProofOfOwnershipPage({super.key});
@@ -12,138 +28,181 @@ class ProofOfOwnershipPage extends StatefulWidget {
 }
 
 class _ProofOfOwnershipPageState extends State<ProofOfOwnershipPage> {
-  final ImagePicker _imagePicker = ImagePicker();
+  final List<String> _photos = [];
+  String? _documentTypeError;
+  String? _uploadError;
+  static const int _maxPhotos = 5;
+  final FilePickerService _filePickerService = FilePickerService();
 
-  final List<File> _files = [];
+  final ImagePickerService _imagePickerService = ImagePickerService();
+  String? _selectedDocumentType;
 
-  // ------------------------------------------------------------
-  // Take Photo
-  // ------------------------------------------------------------
+  static const Map<String, String> _documentTypes = {
+    'title_deed': AppStrings.titleDeed,
+    'sale_contract': AppStrings.saleContract,
+    'inheritance_deed': AppStrings.inheritanceDeed,
+    'power_of_attorney': AppStrings.powerOfAttorney,
+    'municipal_record': AppStrings.municipalRecord,
+  };
+
+  @override
+  void initState() {
+    super.initState();
+    final state = context.read<CreatePropertyCubit>().state;
+    if (state.proofPhotos.isNotEmpty) {
+      _photos.addAll(state.proofPhotos);
+    }
+    if (state.proofDocuments.isNotEmpty) {
+      // Exclude files converted from proofPhotos to prevent UI duplication
+      final nonPhotoFiles = state.proofDocuments
+          .where((file) => !state.proofPhotos.contains(file.path))
+          .toList();
+      _files.addAll(nonPhotoFiles);
+    }
+    if (state.ownershipDocumentType.isNotEmpty) {
+      _selectedDocumentType = state.ownershipDocumentType;
+    }
+  }
+
+  Future<void> _pickImages() async {
+    final remainingPhotos = _maxPhotos - _photos.length;
+
+    if (remainingPhotos <= 0) return;
+
+    try {
+      final images = await _imagePickerService.pickImages(
+        limit: remainingPhotos,
+      );
+
+      if (!mounted || images.isEmpty) return;
+
+      setState(() {
+        _photos.addAll(images);
+        _uploadError = null;
+      });
+    } catch (e) {
+      debugPrint('Image picker error: $e');
+    }
+  }
+
   Future<void> _takePhoto() async {
-    final XFile? image = await _imagePicker.pickImage(
-      source: ImageSource.camera,
-      imageQuality: 85,
-    );
+    final remainingPhotos = _maxPhotos - _photos.length;
 
-    if (image == null) return;
+    if (remainingPhotos <= 0) return;
 
-    setState(() {
-      _files.add(File(image.path));
-    });
+    try {
+      final String? photoPath = await _imagePickerService.takePhoto();
+
+      if (!mounted || photoPath == null) return;
+
+      setState(() {
+        _photos.add(photoPath);
+        _uploadError = null;
+      });
+    } catch (e) {
+      debugPrint('Image picker error: $e');
+    }
   }
 
-  // ------------------------------------------------------------
-  // Gallery
-  // ------------------------------------------------------------
-  Future<void> _pickFromGallery() async {
-    final List<XFile> images = await _imagePicker.pickMultiImage(
-      imageQuality: 85,
-    );
+  final List<PlatformFile> _files = [];
+  static const int _maxFiles = 5;
 
-    if (images.isEmpty) return;
-
-    setState(() {
-      _files.addAll(images.map((image) => File(image.path)));
-    });
-  }
-
-  // ------------------------------------------------------------
-  // File
-  // ------------------------------------------------------------
   Future<void> _pickFile() async {
-    final files = await FilePicker.pickFiles(
-      allowMultiple: true,
-      type: FileType.custom,
-      allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png'],
-    );
+    final remainingFiles = _maxFiles - _files.length;
 
-    if (files.isEmpty) return;
+    if (remainingFiles <= 0) return;
 
-    final selectedFiles = files
-        .where((file) => file.path != null)
-        .map((file) => File(file.path!))
-        .toList();
+    try {
+      final List<PlatformFile> selectedFiles = await _filePickerService
+          .pickDocuments();
 
-    setState(() {
-      _files.addAll(selectedFiles);
-    });
+      if (!mounted || selectedFiles.isEmpty) return;
+
+      // Automatically take only up to the remaining slots (first 5 files max)
+      final filesToAdd = selectedFiles.take(remainingFiles).toList();
+
+      if (selectedFiles.length > remainingFiles) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Only the first $remainingFiles file(s) were added. Maximum $_maxFiles files allowed.',
+            ),
+          ),
+        );
+      }
+
+      setState(() {
+        _files.addAll(filesToAdd);
+        _uploadError = null;
+      });
+    } catch (e) {
+      debugPrint('File picker error: $e');
+    }
   }
 
-  // ------------------------------------------------------------
-  // Remove file
-  // ------------------------------------------------------------
   void _removeFile(int index) {
     setState(() {
       _files.removeAt(index);
     });
   }
 
-  // ------------------------------------------------------------
-  // Continue
-  // ------------------------------------------------------------
-  void _continue() {
-    if (_files.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please upload at least one document')),
-      );
-      return;
-    }
-
-    // هنا ترسل الملفات إلى Laravel API
-    //
-    // مثال:
-    // await uploadDocuments(_files);
-
-    debugPrint('Selected files: ${_files.length}');
+  void _deletePhoto(String photo) {
+    setState(() {
+      _photos.remove(photo);
+    });
   }
 
-  // ------------------------------------------------------------
-  // File preview
-  // ------------------------------------------------------------
-  Widget _buildFilePreview(File file, int index) {
-    final extension = file.path.split('.').last.toLowerCase();
+  Widget _buildPhotosGrid() {
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        mainAxisExtent: 95,
+        crossAxisSpacing: 14,
+        mainAxisSpacing: 14,
+      ),
+      itemCount: _photos.length,
+      itemBuilder: (context, index) {
+        final photo = _photos[index];
 
-    final isImage = ['jpg', 'jpeg', 'png', 'webp'].contains(extension);
+        return photoItem(photo);
+      },
+    );
+  }
 
+  Widget photoItem(String photo) {
     return Stack(
-      clipBehavior: Clip.none,
       children: [
-        Container(
-          width: 100,
-          height: 100,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: Colors.white.withOpacity(0.35), width: 1),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: Image.file(
+            File(photo),
+            width: double.infinity,
+            height: double.infinity,
+            fit: BoxFit.cover,
           ),
-          clipBehavior: Clip.antiAlias,
-          child: isImage
-              ? Image.file(file, fit: BoxFit.cover)
-              : Container(
-                  color: Colors.white.withOpacity(0.12),
-                  child: const Center(
-                    child: Icon(
-                      Icons.picture_as_pdf,
-                      color: Colors.white,
-                      size: 42,
-                    ),
-                  ),
-                ),
         ),
 
-        // Remove button
         Positioned(
-          top: -7,
-          right: -7,
+          top: 6,
+          right: 6,
           child: GestureDetector(
-            onTap: () => _removeFile(index),
+            onTap: () => _deletePhoto(photo),
             child: Container(
-              width: 28,
-              height: 28,
+              width: 24,
+              height: 24,
               decoration: const BoxDecoration(
-                color: Color(0xFF6B7280),
                 shape: BoxShape.circle,
+                color: AppColors.iconBg,
               ),
-              child: const Icon(Icons.close, color: Colors.white, size: 18),
+              child: Center(
+                child: SizedBox(
+                  width: 10,
+                  height: 10,
+                  child: SvgPicture.asset(AppIcons.remove, fit: BoxFit.contain),
+                ),
+              ),
             ),
           ),
         ),
@@ -151,367 +210,396 @@ class _ProofOfOwnershipPageState extends State<ProofOfOwnershipPage> {
     );
   }
 
-  // ------------------------------------------------------------
-  // Add file button
-  // ------------------------------------------------------------
-  Widget _buildAddButton() {
-    return GestureDetector(
-      onTap: _showUploadOptions,
-      child: Container(
-        width: 100,
-        height: 100,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: Colors.white.withOpacity(0.25), width: 1),
-        ),
-        child: const Center(
-          child: Icon(Icons.add, color: Colors.white, size: 40),
-        ),
-      ),
-    );
-  }
 
-  // ------------------------------------------------------------
-  // Upload options
-  // ------------------------------------------------------------
-  void _showUploadOptions() {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: const Color(0xFF071C4C),
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      builder: (context) {
-        return SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                ListTile(
-                  leading: const Icon(Icons.camera_alt, color: Colors.white),
-                  title: const Text(
-                    'Take Photo',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  onTap: () {
-                    Navigator.pop(context);
-                    _takePhoto();
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.photo_library, color: Colors.white),
-                  title: const Text(
-                    'Gallery',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  onTap: () {
-                    Navigator.pop(context);
-                    _pickFromGallery();
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(
-                    Icons.insert_drive_file,
-                    color: Colors.white,
-                  ),
-                  title: const Text(
-                    'File',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  onTap: () {
-                    Navigator.pop(context);
-                    _pickFile();
-                  },
-                ),
-              ],
+  Widget _buildDocumentTypeDropdown() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+          decoration: BoxDecoration(
+            color: AppColors.white40,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: _documentTypeError != null
+                  ? AppColors.error
+                  : AppColors.photoBorder,
+              width: 1,
             ),
           ),
-        );
-      },
+          child: DropdownButtonHideUnderline(
+            child: DropdownButton<String>(
+              value: _selectedDocumentType,
+              isExpanded: true,
+              hint: Text(
+                AppStrings.selectDocumentType,
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyMedium?.copyWith(color: AppColors.primary),
+              ),
+              icon: const Icon(
+                Icons.keyboard_arrow_down_rounded,
+                color: AppColors.white,
+              ),
+              dropdownColor: AppColors.white,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: AppColors.primary,
+                fontWeight: FontWeight.w500,
+              ),
+              items: _documentTypes.entries.map((entry) {
+                return DropdownMenuItem<String>(
+                  value: entry.key,
+                  child: Text(entry.value),
+                );
+              }).toList(),
+              onChanged: (value) {
+                setState(() {
+                  _selectedDocumentType = value;
+                  _documentTypeError = null;
+                });
+                if (value != null) {
+                  context
+                      .read<CreatePropertyCubit>()
+                      .ownershipDocumentTypeChanged(
+                        value,
+                      );
+                }
+              },
+            ),
+          ),
+        ),
+        if (_documentTypeError != null) ...[
+          const SizedBox(height: 6),
+          Text(
+            _documentTypeError!,
+            style: Theme.of(context)
+                .textTheme
+                .bodySmall
+                ?.copyWith(color: AppColors.error),
+          ),
+        ],
+      ],
     );
   }
 
-  // ------------------------------------------------------------
-  // Upload button
-  // ------------------------------------------------------------
-  Widget _uploadButton({
-    required IconData icon,
-    required String text,
-    required VoidCallback onTap,
-  }) {
-    return Expanded(
-      child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          height: 58,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(30),
-            border: Border.all(color: Colors.white, width: 1.5),
+  Widget _buildFilesList() {
+    return SizedBox(
+      height: 200,
+      child: ListView.separated(
+        itemBuilder: (_, index) {
+          final file = _files[index];
+
+          return fileItem(file, index);
+        },
+        separatorBuilder: (_, _) => SizedBox(height: 8),
+        itemCount: _files.length,
+      ),
+    );
+  }
+
+  Widget fileItem(PlatformFile file, int index) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey.shade300),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        children: [
+          SvgPicture.asset(AppIcons.uploadFile),
+          SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              file.name,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium!.copyWith(color: AppColors.white),
+            ),
           ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(icon, color: Colors.white, size: 25),
-              const SizedBox(width: 10),
-              Text(
-                text,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 17,
-                  fontWeight: FontWeight.w600,
+          SizedBox(width: 10),
+          GestureDetector(
+            onTap: () {
+              _removeFile(index);
+            },
+            child: Container(
+              width: 24,
+              height: 24,
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                color: AppColors.iconBg,
+              ),
+              child: Center(
+                child: SizedBox(
+                  width: 10,
+                  height: 10,
+                  child: SvgPicture.asset(AppIcons.remove, fit: BoxFit.contain),
                 ),
               ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
 
-  // ------------------------------------------------------------
-  // Build
-  // ------------------------------------------------------------
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: [
-          // Background image
-          Positioned.fill(
-            child: Image.asset(
-              'assets/images/background.png',
-              fit: BoxFit.cover,
+    return BlocListener<CreatePropertyCubit, CreatePropertyState>(
+      listener: (context, state) {
+        if (state.status == CreatePropertyStatus.step5Saved) {
+          context.push(RouteNames.reviewListingPage);
+        }
+      },
+      child: Scaffold(
+        body: Stack(
+          children: [
+            // Background image
+            Positioned.fill(
+              child: Image.asset(ImagePath.background, fit: BoxFit.cover),
             ),
-          ),
 
-          // Blue overlay
-          Positioned.fill(
-            child: Container(color: const Color(0xFF001B55).withOpacity(0.78)),
-          ),
-
-          SafeArea(
-            child: Column(
-              children: [
-                // ------------------------------------------------
-                // Header
-                // ------------------------------------------------
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 18,
+            SafeArea(
+              child: Column(
+                children: [
+                  HeaderWidget(
+                    title: AppStrings.listYourPropertyPage5Title,
+                    subTitle: AppStrings.listYourPropertyStep5,
                   ),
-                  child: Row(
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.pop(context);
-                        },
-                        child: const Icon(
-                          Icons.arrow_back,
-                          color: Colors.white,
-                          size: 32,
-                        ),
-                      ),
 
-                      const SizedBox(width: 20),
-
-                      const Expanded(
+                  Expanded(
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.fromLTRB(20, 80, 20, 20),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 24),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              'Proof of Ownership',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 30,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            SizedBox(height: 5),
-                            Text(
-                              'Step 5 of 6',
-                              style: TextStyle(
-                                color: Color(0xFFD5DDF0),
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                // ------------------------------------------------
-                // Main content
-                // ------------------------------------------------
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.fromLTRB(20, 80, 20, 20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Upload documents',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-
-                        const SizedBox(height: 28),
-
-                        // Upload area
-                        GestureDetector(
-                          onTap: _showUploadOptions,
-                          child: Container(
-                            width: double.infinity,
-                            height: 430,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(30),
-                              border: Border.all(
-                                color: Colors.white,
-                                width: 2,
-                                style: BorderStyle.solid,
-                              ),
-                              color: Colors.white.withOpacity(0.04),
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
+                            Row(
                               children: [
-                                Container(
-                                  width: 58,
-                                  height: 58,
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  child: const Icon(
-                                    Icons.file_upload_outlined,
-                                    color: Color(0xFF1A2E63),
-                                    size: 34,
-                                  ),
-                                ),
-
-                                const SizedBox(height: 20),
-
-                                const Text(
-                                  'Tap to upload',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 23,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-
-                                const SizedBox(height: 20),
-
                                 Text(
-                                  'You can upload photos or PDF files',
+                                  AppStrings.uploadDocuments,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleMedium
+                                      ?.copyWith(color: AppColors.white),
+                                ),
+                                const SizedBox(width: 4),
+                                const Text(
+                                  '*',
                                   style: TextStyle(
-                                    color: Colors.white.withOpacity(0.65),
-                                    fontSize: 16,
+                                    color: AppColors.error,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14,
                                   ),
                                 ),
                               ],
                             ),
-                          ),
-                        ),
 
-                        const SizedBox(height: 24),
+                            const SizedBox(height: 20),
 
-                        // ------------------------------------------------
-                        // Buttons
-                        // ------------------------------------------------
-                        Row(
-                          children: [
-                            _uploadButton(
-                              icon: Icons.camera_alt_outlined,
-                              text: 'Take Photo',
-                              onTap: _takePhoto,
+                            Row(
+                              children: [
+                                Text(
+                                  AppStrings.documentType,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium
+                                      ?.copyWith(
+                                        color: AppColors.white,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                ),
+                                const SizedBox(width: 4),
+                                const Text(
+                                  '*',
+                                  style: TextStyle(
+                                    color: AppColors.error,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 10),
+                            _buildDocumentTypeDropdown(),
+
+                            const SizedBox(height: 24),
+
+                            // Upload area
+                            GestureDetector(
+                              onTap: () {
+                                if (_files.length >= _maxFiles) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                        'You can only upload up to 5 documents.',
+                                      ),
+                                    ),
+                                  );
+                                  return;
+                                }
+                                _pickFile();
+                              },
+                              child: CustomPaint(
+                                painter: DashedBorderPainter(
+                                  color: AppColors.photoBorder,
+                                  strokeWidth: 2,
+                                  dashWidth: 6,
+                                  dashSpace: 4,
+                                  radius: 16,
+                                ),
+                                child: Container(
+                                  width: double.infinity,
+                                  height: 240,
+                                  decoration: BoxDecoration(
+                                    color: AppColors.addPhotoBg,
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Container(
+                                        width: 58,
+                                        height: 58,
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(
+                                            10,
+                                          ),
+                                        ),
+                                        child: SvgPicture.asset(
+                                          AppIcons.uploadFile,
+                                        ),
+                                      ),
+
+                                      const SizedBox(height: 20),
+
+                                      Text(
+                                        AppStrings.taptpUpload,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyMedium
+                                            ?.copyWith(
+                                              color: AppColors.white,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
                             ),
 
-                            const SizedBox(width: 12),
-
-                            _uploadButton(
-                              icon: Icons.image_outlined,
-                              text: 'Gallery',
-                              onTap: _pickFromGallery,
+                            const SizedBox(height: 8),
+                            Text(
+                              AppStrings.uploadDescription,
+                              style: Theme.of(context).textTheme.labelSmall
+                                  ?.copyWith(color: AppColors.white60),
                             ),
 
-                            const SizedBox(width: 12),
-
-                            _uploadButton(
-                              icon: Icons.insert_drive_file_outlined,
-                              text: 'File',
-                              onTap: _pickFile,
+                            const SizedBox(height: 29),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: AppElevatedButton(
+                                    text: AppStrings.takePhoto,
+                                    onPressed: () => _takePhoto(),
+                                    preIcon: SvgPicture.asset(AppIcons.camera),
+                                    borderColor: AppColors.white,
+                                    backgroundColor: AppColors.transparent,
+                                    borderWidth: 1,
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                    ),
+                                    textStyle: Theme.of(context)
+                                        .textTheme
+                                        .bodySmall
+                                        ?.copyWith(color: AppColors.white),
+                                    enableBorder: true,
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: AppElevatedButton(
+                                    text: AppStrings.gallery,
+                                    onPressed: () => _pickImages(),
+                                    preIcon: SvgPicture.asset(
+                                      AppIcons.addPhoto,
+                                    ),
+                                    borderColor: AppColors.white,
+                                    backgroundColor: AppColors.transparent,
+                                    borderWidth: 1,
+                                    enableBorder: true,
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                    ),
+                                    textStyle: Theme.of(context)
+                                        .textTheme
+                                        .bodySmall
+                                        ?.copyWith(color: AppColors.white),
+                                  ),
+                                ),
+                              ],
                             ),
+                            if (_uploadError != null) ...[
+                              const SizedBox(height: 10),
+                              Text(
+                                _uploadError!,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall
+                                    ?.copyWith(color: AppColors.error),
+                              ),
+                            ],
+
+                            const SizedBox(height: 35),
+                            if (_photos.isNotEmpty) _buildPhotosGrid(),
+                            if (_files.isNotEmpty) ...[
+                              const SizedBox(height: 20),
+                              _buildFilesList(),
+                            ],
                           ],
                         ),
-
-                        const SizedBox(height: 35),
-
-                        // ------------------------------------------------
-                        // Files
-                        // ------------------------------------------------
-                        if (_files.isNotEmpty)
-                          SizedBox(
-                            height: 110,
-                            child: ListView.separated(
-                              scrollDirection: Axis.horizontal,
-                              itemCount: _files.length + 1,
-                              separatorBuilder: (_, __) =>
-                                  const SizedBox(width: 16),
-                              itemBuilder: (context, index) {
-                                if (index == _files.length) {
-                                  return _buildAddButton();
-                                }
-
-                                return _buildFilePreview(_files[index], index);
-                              },
-                            ),
-                          )
-                        else
-                          _buildAddButton(),
-
-                        const SizedBox(height: 55),
-
-                        // ------------------------------------------------
-                        // Continue
-                        // ------------------------------------------------
-                        SizedBox(
-                          width: double.infinity,
-                          height: 72,
-                          child: ElevatedButton(
-                            onPressed: _continue,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF00194D),
-                              foregroundColor: Colors.white,
-                              elevation: 0,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(40),
-                              ),
-                            ),
-                            child: const Text(
-                              'Continue',
-                              style: TextStyle(
-                                fontSize: 22,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
                   ),
-                ),
-              ],
+                  SubmitButtonWidget(
+                    onPressed: () {
+                      bool hasError = false;
+                      if (_selectedDocumentType == null ||
+                          _selectedDocumentType!.isEmpty) {
+                        setState(() {
+                          _documentTypeError =
+                              AppStrings.pleaseSelectDocumentType;
+                        });
+                        hasError = true;
+                      }
+
+                      if (_photos.isEmpty && _files.isEmpty) {
+                        setState(() {
+                          _uploadError =
+                              'Please upload at least one document or photo';
+                        });
+                        hasError = true;
+                      }
+
+                      if (hasError) return;
+
+                      context.read<CreatePropertyCubit>().saveStep5(
+                        proofPhotos: _photos,
+                        proofDocuments: _files,
+                        ownershipDocumentType: _selectedDocumentType!,
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 33),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

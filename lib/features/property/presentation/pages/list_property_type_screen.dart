@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile/config/routes/routes_names.dart';
@@ -9,30 +10,49 @@ import '../../../../config/theme/app_colors.dart';
 import '../../../../core/constant/app_icons.dart';
 import '../../../../core/constant/images_path.dart';
 import '../../../../core/constant/strings.dart';
+import '../state_management/create_property_cubit.dart';
+import '../state_management/create_property_state.dart';
 import '../widgets/property_input_field_widget.dart';
 
-class AddPropertyScreenOne extends StatefulWidget {
-  const AddPropertyScreenOne({super.key});
+class ListPropertyTypeScreen extends StatefulWidget {
+  const ListPropertyTypeScreen({super.key});
 
   @override
-  State<AddPropertyScreenOne> createState() => _AddPropertyScreenOneState();
+  State<ListPropertyTypeScreen> createState() => _ListPropertyTypeScreenState();
 }
 
-class _AddPropertyScreenOneState extends State<AddPropertyScreenOne> {
+class _ListPropertyTypeScreenState extends State<ListPropertyTypeScreen> {
+  final _formKey = GlobalKey<FormState>();
+  AutovalidateMode _autoValidateMode = AutovalidateMode.disabled;
+
   bool _isForSaleSelected = true;
   int _selectedPropertyTypeIndex = 0;
   final TextEditingController _customTypeController = TextEditingController();
 
   final List<Map<String, String>> _propertyTypes = const [
-    {'title': AppStrings.propertyApartment, 'icon': AppIcons.apartment},
-    {'title': AppStrings.propertyVilla, 'icon': AppIcons.villa},
-    {'title': AppStrings.propertyLand, 'icon': AppIcons.land},
-    {'title': AppStrings.propertyShop, 'icon': AppIcons.shop},
-    {'title': AppStrings.propertyHouse, 'icon': AppIcons.house},
-
-    {'title': AppStrings.propertyOther, 'icon': AppIcons.other},
+    {
+      'title': AppStrings.propertyApartment,
+      'value': 'apartment',
+      'icon': AppIcons.apartment,
+    },
+    {
+      'title': AppStrings.propertyVilla,
+      'value': 'villa',
+      'icon': AppIcons.villa,
+    },
+    {'title': AppStrings.propertyLand, 'value': 'land', 'icon': AppIcons.land},
+    {'title': AppStrings.propertyShop, 'value': 'shop', 'icon': AppIcons.shop},
+    {
+      'title': AppStrings.propertyHouse,
+      'value': 'house',
+      'icon': AppIcons.house,
+    },
+    {
+      'title': AppStrings.propertyOther,
+      'value': 'other',
+      'icon': AppIcons.other,
+    },
   ];
-
   @override
   void dispose() {
     _customTypeController.dispose();
@@ -41,55 +61,83 @@ class _AddPropertyScreenOneState extends State<AddPropertyScreenOne> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      body: Stack(
-        children: [
-          // Background Image
-          Positioned.fill(
-            child: Image.asset(ImagePath.background, fit: BoxFit.cover),
-          ),
+    return BlocListener<CreatePropertyCubit, CreatePropertyState>(
+      listener: (context, state) {
+        if (state.status == CreatePropertyStatus.step1Saved) {
+          context.push(RouteNames.propertyLocationScreen);
+        }
+      },
+      child: Scaffold(
+        backgroundColor: AppColors.background,
+        body: Stack(
+          children: [
+            // Background Image
+            Positioned.fill(
+              child: Image.asset(ImagePath.background, fit: BoxFit.cover),
+            ),
 
-          // Main Content
-          SafeArea(
-            child: Column(
-              children: [
-                HeaderWidget(
-                  title: AppStrings.listYourPropertyTitle,
-                  subTitle: AppStrings.listYourPropertyStep1,
-                ),
-                Expanded(
-                  child: SingleChildScrollView(
-                    physics: const BouncingScrollPhysics(),
-                    padding: const EdgeInsets.symmetric(vertical: 16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        _buildListingTypeSection(),
-                        const SizedBox(height: 24),
-                        _buildPropertyTypeGrid(),
-                        const SizedBox(height: 24),
-                        if (_selectedPropertyTypeIndex == 5) ...[
-                          _buildCustomTypeInput(),
-                          const SizedBox(height: 33),
-                        ],
-                        if (_selectedPropertyTypeIndex != 5)
-                          const SizedBox(height: 65),
-                        SubmitButtonWidget(
-                          onPressed: () {
-                            context.push(RouteNames.addPropertyScreenTwo);
-                          },
+            // Main Content
+            SafeArea(
+              child: Column(
+                children: [
+                  HeaderWidget(
+                    title: AppStrings.listYourPropertyTitle,
+                    subTitle: AppStrings.listYourPropertyStep1,
+                  ),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      physics: const BouncingScrollPhysics(),
+                      padding: const EdgeInsets.symmetric(vertical: 16.0),
+                      child: Form(
+                        key: _formKey,
+                        autovalidateMode: _autoValidateMode,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            _buildListingTypeSection(),
+                            const SizedBox(height: 24),
+                            _buildPropertyTypeGrid(),
+                            const SizedBox(height: 24),
+                            if (_selectedPropertyTypeIndex == 5) ...[
+                              _buildCustomTypeInput(),
+                              const SizedBox(height: 33),
+                            ],
+                            if (_selectedPropertyTypeIndex != 5)
+                              const SizedBox(height: 65),
+                            SubmitButtonWidget(
+                              onPressed: () {
+                                if (_selectedPropertyTypeIndex == 5) {
+                                  setState(() {
+                                    _autoValidateMode =
+                                        AutovalidateMode.onUserInteraction;
+                                  });
+                                  if (!_formKey.currentState!.validate()) {
+                                    return;
+                                  }
+                                }
+                                context.read<CreatePropertyCubit>().saveStep1(
+                                  listingType:
+                                      _isForSaleSelected ? 'sale' : 'rent',
+                                  type: _propertyTypes[_selectedPropertyTypeIndex]
+                                      ['value']!,
+                                  customType: _selectedPropertyTypeIndex == 5
+                                      ? _customTypeController.text.trim()
+                                      : null,
+                                );
+                              },
+                            ),
+                            const SizedBox(height: 16),
+                          ],
                         ),
-                        const SizedBox(height: 16),
-                      ],
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -200,8 +248,7 @@ class _AddPropertyScreenOneState extends State<AddPropertyScreenOne> {
               final item = _propertyTypes[index];
               return _buildPropertyCard(
                 title: item['title']!,
-                iconPath:   item['icon']!
-                   ,
+                iconPath: item['icon']!,
                 isSelected: isSelected,
                 onTap: () => setState(() => _selectedPropertyTypeIndex = index),
               );
@@ -235,10 +282,13 @@ class _AddPropertyScreenOneState extends State<AddPropertyScreenOne> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SvgPicture.asset(iconPath,colorFilter: ColorFilter.mode(
-                  isSelected ? AppColors.white : AppColors.white60,
-                  BlendMode.srcIn,
-                ),),
+            SvgPicture.asset(
+              iconPath,
+              colorFilter: ColorFilter.mode(
+                isSelected ? AppColors.white : AppColors.white60,
+                BlendMode.srcIn,
+              ),
+            ),
             const SizedBox(height: 8),
             Text(
               title,
@@ -282,6 +332,15 @@ class _AddPropertyScreenOneState extends State<AddPropertyScreenOne> {
           PropertyInputFieldWidget(
             controller: _customTypeController,
             hint: AppStrings.specifyPropertyTypeHint,
+            validator: (value) {
+              if (_selectedPropertyTypeIndex == 5) {
+                final val = value?.trim() ?? '';
+                if (val.isEmpty) {
+                  return 'Please specify property type';
+                }
+              }
+              return null;
+            },
           ),
         ],
       ),

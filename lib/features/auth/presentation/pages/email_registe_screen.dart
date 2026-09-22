@@ -72,7 +72,7 @@ class _EmailRegisterScreenState extends State<EmailRegisterScreen> {
     setState(() => _showOverlay = false);
 
     if (authCubit.state.status == AuthStatus.otpVerified && context.mounted) {
-      context.go(RouteNames.addPropertyScreenOne);
+      context.go(RouteNames.listPropertyTypeScreen);
     }
   }
 

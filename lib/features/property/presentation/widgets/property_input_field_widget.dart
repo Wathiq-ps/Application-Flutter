@@ -13,7 +13,11 @@ class PropertyInputFieldWidget extends StatelessWidget {
     this.suffix,
     this.suffixText,
     this.prefixIcon,
-    this.maxLines,
+    this.maxLines = 1,
+    this.keyboardType,
+    this.textInputAction,
+    this.autovalidateMode,
+    this.onChanged,
   });
 
   final TextEditingController controller;
@@ -28,6 +32,10 @@ class PropertyInputFieldWidget extends StatelessWidget {
 
   final Widget? prefixIcon;
   final int? maxLines;
+  final TextInputType? keyboardType;
+  final TextInputAction? textInputAction;
+  final AutovalidateMode? autovalidateMode;
+  final ValueChanged<String>? onChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -38,6 +46,10 @@ class PropertyInputFieldWidget extends StatelessWidget {
       validator: validator,
       obscureText: obscureText,
       maxLines: maxLines,
+      keyboardType: keyboardType,
+      textInputAction: textInputAction,
+      autovalidateMode: autovalidateMode,
+      onChanged: onChanged,
       style: textTheme.bodyLarge?.copyWith(color: AppColors.white),
 
       decoration: InputDecoration(

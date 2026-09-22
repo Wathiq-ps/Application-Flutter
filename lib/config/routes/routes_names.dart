@@ -23,10 +23,10 @@ class RouteNames {
   static const String verificationPendingScreen = '/verificationPendingScreen';
 
   //propertys
-  static const String addPropertyScreenOne = '/addPropertyScreenOne';
-  static const String addPropertyScreenTwo = '/addPropertyScreenTwo';
-  static const String addPropertyScreenThree = '/addPropertyScreenThree';
-  static const String addPropertyScreenFour = '/addPropertyScreenFour';
+  static const String listPropertyTypeScreen = '/listPropertyTypeScreen';
+  static const String propertyLocationScreen = '/propertyLocationScreen';
+  static const String listPropertyFeaturesScreen = '/listPropertyFeaturesScreen';
+  static const String listPropertyPhotosScreen = '/listPropertyPhotosScreen';
   static const String proofOfOwnershipPage = '/proofOfOwnershipPage';
   static const String reviewListingPage = '/reviewListingPage';
 }
