@@ -24,12 +24,9 @@ class WathiqApp extends StatelessWidget {
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       title: 'Wathiq',
-
       locale: DevicePreview.locale(context),
       builder: DevicePreview.appBuilder,
-
       theme: AppTheme.light,
-
       routerConfig: AppRoutes.router,
     );
   }

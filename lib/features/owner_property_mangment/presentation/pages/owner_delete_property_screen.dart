@@ -106,9 +106,6 @@ class _OwnerDeletePropertyView extends StatelessWidget {
         body: SafeArea(
           child: Column(
             children: [
-              // ─────────────────────────────────────
-              // Header: back • title • delete
-              // ─────────────────────────────────────
               PageHeader(
                 widthScale: widthScale,
                 expandCenter: true,

@@ -68,7 +68,7 @@ class OwnerPropertiesScreen extends StatelessWidget {
                           right: AppElevatedButton(
                             text: AppStrings.addNewProperty,
                             onPressed: () {
-                              // TODO: navigate to add-property flow.
+                              context.push(RouteNames.addPropertyScreenOne);
                             },
                             width: 97 * widthScale,
                             height: 32 * widthScale,

@@ -38,7 +38,7 @@ import '../../features/property/presentation/pages/add_property_page_one.dart';
     // ─────────────────────────────────────────────
 
     static final GoRouter router = GoRouter(
-      initialLocation: RouteNames.ownerPropertiesScreen,
+      initialLocation: RouteNames.mainNavigation,
 
       routes: [
         // ─────────────────────────────────────────────

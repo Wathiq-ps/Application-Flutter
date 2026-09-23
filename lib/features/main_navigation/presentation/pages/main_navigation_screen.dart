@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mobile/features/home/presentation/pages/home_screen.dart';
+import 'package:mobile/features/profile/presentation/pages/profile_screen.dart';
 import '../../../../config/theme/app_colors.dart';
 import '../../../../core/constant/strings.dart';
 import '../../../../core/widget/fade_indexed_stack.dart';
@@ -15,7 +16,7 @@ class MainNavigationScreen extends StatelessWidget {
     HomeScreen(),
     NavigationPlaceholder(title: AppStrings.favourite),
     NavigationPlaceholder(title: AppStrings.search),
-    NavigationPlaceholder(title: AppStrings.profile),
+   ProfileScreen(),
   ];
 
   @override

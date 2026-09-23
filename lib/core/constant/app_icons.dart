@@ -140,4 +140,17 @@ class AppIcons {
 
 // Aliases
   static const String addNew = plus;
+
+  // ─────────────────────────────────────────
+// Profile
+// ─────────────────────────────────────────
+
+  static const String arrowRight = 'assets/svg/arrow_right.svg';
+
+  static const String verified_profile_status =
+      'assets/svg/verified_profile_status.svg';
+
+  static const String requests =
+      'assets/svg/request.svg';
+  static const String properties = 'assets/svg/proprties.svg';
 }

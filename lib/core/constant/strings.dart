@@ -355,4 +355,17 @@ class AppStrings {
   static const String currency = 'Currency';
   static const String sureToDeleteProperty =
       'Are you sure you\'d like to delete this property?';
+  static const String online = 'Online';
+  static const String personalInformation =
+      'Personal Information';
+  static const String personalInformationSubtitle =
+      'Manage your personal information';
+  static const String properties = 'Properties';
+  static const String requests = 'Requests';
+  static const String language = 'Language';
+  static const String settings = 'Settings';
+  static const String logout = 'Logout';
+  static const String editProfile = 'Edit Profile';
+  static const String identityVerification ="Identity Verification";
+  static const String status ="Status:";
 }
