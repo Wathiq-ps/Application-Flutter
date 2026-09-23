@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mobile/config/theme/app_colors.dart';
 import 'package:mobile/core/constant/app_icons.dart';
 import 'package:mobile/core/constant/images_path.dart';
@@ -24,9 +23,14 @@ class ProfileScreen extends StatelessWidget {
     final double widthScale = screenWidth / figmaWidth;
     final double heightScale = screenHeight / figmaHeight;
 
+    final double avatarSize = 112 * widthScale;
+    final double sheetTopOffset = 198 * heightScale;
+    final double avatarTopOffset = sheetTopOffset - (avatarSize / 2);
+
     return SizedBox.expand(
       child: Stack(
         children: [
+          // Background Image
           Positioned.fill(
             child: Image.asset(
               ImagePath.background,
@@ -34,12 +38,14 @@ class ProfileScreen extends StatelessWidget {
             ),
           ),
 
+          // Background Overlay
           Positioned.fill(
             child: Container(
               color: AppColors.primary.withValues(alpha: 0.8),
             ),
           ),
 
+          // Page Header
           SafeArea(
             bottom: false,
             child: Padding(
@@ -57,7 +63,6 @@ class ProfileScreen extends StatelessWidget {
                   iconWidth: 18 * widthScale,
                   iconHeight: 18 * widthScale,
                 ),
-
                 center: Text(
                   AppStrings.profile,
                   textAlign: TextAlign.center,
@@ -71,16 +76,16 @@ class ProfileScreen extends StatelessWidget {
                   width: 36 * widthScale,
                   height: 36 * widthScale,
                 ),
-
                 showRight: true,
                 expandCenter: true,
               ),
             ),
           ),
+
           Positioned(
             left: 0,
             right: 0,
-            top: 198 * heightScale,
+            top: sheetTopOffset,
             bottom: 0,
             child: Container(
               decoration: BoxDecoration(
@@ -92,15 +97,14 @@ class ProfileScreen extends StatelessWidget {
               ),
               child: ListView(
                 padding: EdgeInsets.only(
-                  top: 72 * heightScale,
+                  top: (avatarSize / 2) + (16 * heightScale),
                   left: 20 * widthScale,
                   right: 20 * widthScale,
                   bottom: 24 * heightScale,
                 ),
                 children: [
-                  // Profile name
                   Text(
-                   "Samer Abu Zaina",
+                    "Samer Abu Zaina",
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                       color: AppColors.primary,
@@ -111,37 +115,41 @@ class ProfileScreen extends StatelessWidget {
 
                   SizedBox(height: 8 * heightScale),
 
-                   VerifiedStatusBadge(
+                  VerifiedStatusBadge(
                     isVerified: true,
+                    widthScale: widthScale,
                   ),
 
                   SizedBox(height: 24 * heightScale),
 
-                  // Personal Information
                   ProfileMenuItem(
                     icon: AppIcons.identity,
                     title: AppStrings.identityVerification,
                     subtitle: AppStrings.status,
                     widthScale: widthScale,
                     heightScale: heightScale,
+                    iconWidth: 18 * widthScale,
+                    iconHeight: 19 * widthScale,
                     onTap: () {},
                   ),
 
-                  // Properties
                   ProfileMenuItem(
                     icon: AppIcons.properties,
                     title: AppStrings.properties,
                     widthScale: widthScale,
                     heightScale: heightScale,
+                    iconWidth: 20 * widthScale,
+                    iconHeight: 18 * widthScale,
                     onTap: () {},
                   ),
 
-                  // Requests
                   ProfileMenuItem(
                     icon: AppIcons.requests,
                     title: AppStrings.requests,
                     widthScale: widthScale,
                     heightScale: heightScale,
+                    iconWidth: 24 * widthScale,
+                    iconHeight: 24 * widthScale,
                     onTap: () {},
                   ),
 
@@ -150,22 +158,19 @@ class ProfileScreen extends StatelessWidget {
                     title: AppStrings.editProfile,
                     widthScale: widthScale,
                     heightScale: heightScale,
+                    iconWidth: 16 * widthScale,
+                    iconHeight: 16 * widthScale,
                     onTap: () {},
                   ),
 
-                  // Language
                   ProfileMenuItem(
                     icon: AppIcons.language,
                     title: AppStrings.language,
                     widthScale: widthScale,
                     heightScale: heightScale,
-
                     onTap: () {},
                   ),
 
-
-
-                  // Logout
                   ProfileMenuItem(
                     icon: AppIcons.logout,
                     title: AppStrings.logout,
@@ -179,17 +184,15 @@ class ProfileScreen extends StatelessWidget {
             ),
           ),
 
-          // Avatar
           Positioned(
-            top: 155 * heightScale,
+            top: avatarTopOffset,
             left: 0,
             right: 0,
             child: Center(
               child: AppProfileAvatar(
                 widthScale: widthScale,
-
                 imageAsset: null,
-                size: 112 * widthScale,
+                size: 112,
               ),
             ),
           ),

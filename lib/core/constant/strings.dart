@@ -368,4 +368,7 @@ class AppStrings {
   static const String editProfile = 'Edit Profile';
   static const String identityVerification ="Identity Verification";
   static const String status ="Status:";
+  static const String verifiedID ='Verified ID';
+  static const String notVerifiedID ='Not Verified ID';
+
 }
