@@ -13,7 +13,7 @@ enum AuthStatus {
 
 class AuthState {
   final AuthMode mode;
-  final String emailOrPhone;
+ final String emailOrPhone;
   final String otp;
   final String? errorMessage;
   final AuthStatus status;
@@ -48,4 +48,9 @@ class AuthState {
       user: user ?? this.user,
     );
   }
+}
+
+class AState{
+  String a ;
+  AState(this.a);
 }

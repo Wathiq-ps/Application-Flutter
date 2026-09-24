@@ -16,6 +16,8 @@ class AppColors {
   /// Accent / CTA color
   static const Color accent = Color(0xFFFABD00);
 
+
+  static const Color filterChipUnselectedBorderColor = Color(0xB3C5C6CF);
   // ─────────────────────────────────────────────
   // Basic Colors
   // ─────────────────────────────────────────────
@@ -23,6 +25,8 @@ class AppColors {
   static const Color white = Color(0xFFFFFFFF);
 
   static const Color black = Color(0xFF000000);
+
+  static const Color promoBannerTextColor = Color(0xCCE7E8E9);
 
   // ─────────────────────────────────────────────
   // Semantic Colors
