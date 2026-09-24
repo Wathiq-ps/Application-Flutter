@@ -49,9 +49,14 @@ class CreatePropertyRemoteDataSourceImpl
       formData.fields.add(MapEntry('price_unit', property.priceUnit!));
     }
 
-    formData.fields.add(MapEntry('rooms', property.rooms.toString()));
+    if (property.rooms != null) {
+      formData.fields.add(MapEntry('rooms', property.rooms.toString()));
+    }
 
-    formData.fields.add(MapEntry('bathrooms', property.bathrooms.toString()));
+    if (property.bathrooms != null) {
+      formData.fields.add(MapEntry('bathrooms', property.bathrooms.toString()));
+    }
+
     if (property.floorNumber != null) {
       formData.fields.add(
         MapEntry('floor_number', property.floorNumber.toString()),
@@ -59,17 +64,34 @@ class CreatePropertyRemoteDataSourceImpl
     }
 
     formData.fields.add(
-      MapEntry('is_furnished', property.isFurnished.toString()),
+      MapEntry('is_furnished', (property.isFurnished == true) ? '1' : '0'),
     );
+
+    if (property.description != null && property.description!.isNotEmpty) {
+      formData.fields.add(MapEntry('description', property.description!));
+    }
+
+    if (property.features != null && property.features!.isNotEmpty) {
+      for (final feature in property.features!) {
+        formData.fields.add(MapEntry('features[]', feature));
+      }
+    }
+
+    if (property.ownershipDocumentType.isNotEmpty) {
+      formData.fields.add(
+        MapEntry('ownership_document_type', property.ownershipDocumentType),
+      );
+    }
+
     for (final photo in property.photos) {
       formData.files.add(
-        MapEntry('photos', await MultipartFile.fromFile(photo.path)),
+        MapEntry('photos[]', await MultipartFile.fromFile(photo.path)),
       );
     }
     for (final document in property.ownershipDocuments) {
       formData.files.add(
         MapEntry(
-          'ownership_documents',
+          'ownership_documents[]',
           await MultipartFile.fromFile(document.path),
         ),
       );

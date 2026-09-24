@@ -175,35 +175,55 @@ class AppRoutes {
             path: RouteNames.listPropertyTypeScreen,
             name: 'listPropertyTypeScreen',
             builder: (context, state) {
-              return const ListPropertyTypeScreen();
+              final isEdit = state.extra is bool
+                  ? state.extra as bool
+                  : (state.extra as Map<String, dynamic>?)?['isEdit'] as bool? ??
+                      false;
+              return ListPropertyTypeScreen(isEdit: isEdit);
             },
           ),
           GoRoute(
             path: RouteNames.propertyLocationScreen,
             name: 'propertyLocationScreen',
             builder: (context, state) {
-              return const PropertyLocationScreen();
+              final isEdit = state.extra is bool
+                  ? state.extra as bool
+                  : (state.extra as Map<String, dynamic>?)?['isEdit'] as bool? ??
+                      false;
+              return PropertyLocationScreen(isEdit: isEdit);
             },
           ),
           GoRoute(
             path: RouteNames.listPropertyFeaturesScreen,
             name: 'listPropertyFeaturesScreen',
             builder: (context, state) {
-              return const ListPropertyFeaturesScreen();
+              final isEdit = state.extra is bool
+                  ? state.extra as bool
+                  : (state.extra as Map<String, dynamic>?)?['isEdit'] as bool? ??
+                      false;
+              return ListPropertyFeaturesScreen(isEdit: isEdit);
             },
           ),
           GoRoute(
             path: RouteNames.listPropertyPhotosScreen,
             name: 'listPropertyPhotosScreen',
             builder: (context, state) {
-              return const ListPropertyPhotosScreen();
+              final isEdit = state.extra is bool
+                  ? state.extra as bool
+                  : (state.extra as Map<String, dynamic>?)?['isEdit'] as bool? ??
+                      false;
+              return ListPropertyPhotosScreen(isEdit: isEdit);
             },
           ),
           GoRoute(
             path: RouteNames.proofOfOwnershipPage,
             name: 'proofOfOwnershipPage',
             builder: (context, state) {
-              return const ProofOfOwnershipPage();
+              final isEdit = state.extra is bool
+                  ? state.extra as bool
+                  : (state.extra as Map<String, dynamic>?)?['isEdit'] as bool? ??
+                      false;
+              return ProofOfOwnershipPage(isEdit: isEdit);
             },
           ),
           GoRoute(

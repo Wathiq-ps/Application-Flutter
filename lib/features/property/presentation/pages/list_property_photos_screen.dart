@@ -16,7 +16,8 @@ import '../state_management/create_property_state.dart';
 import '../widgets/submit_button_widget.dart';
 
 class ListPropertyPhotosScreen extends StatefulWidget {
-  const ListPropertyPhotosScreen({super.key});
+  final bool isEdit;
+  const ListPropertyPhotosScreen({super.key, this.isEdit = false});
 
   @override
   State<ListPropertyPhotosScreen> createState() => _ListPropertyPhotosScreenState();
@@ -63,7 +64,11 @@ class _ListPropertyPhotosScreenState extends State<ListPropertyPhotosScreen> {
     return BlocListener<CreatePropertyCubit, CreatePropertyState>(
       listener: (context, state) {
         if (state.status == CreatePropertyStatus.step4Saved) {
-          context.push(RouteNames.proofOfOwnershipPage);
+          if (widget.isEdit) {
+            context.pop();
+          } else {
+            context.push(RouteNames.proofOfOwnershipPage);
+          }
         }
       },
       child: Scaffold(
@@ -139,6 +144,9 @@ class _ListPropertyPhotosScreenState extends State<ListPropertyPhotosScreen> {
                     ),
                   ),
                   SubmitButtonWidget(
+                    text: widget.isEdit
+                        ? AppStrings.saveChanges
+                        : AppStrings.continueText,
                     onPressed: () {
                       if (_photos.isEmpty) {
                         setState(() {

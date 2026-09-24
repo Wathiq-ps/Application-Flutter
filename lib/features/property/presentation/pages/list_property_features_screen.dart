@@ -15,7 +15,8 @@ import '../state_management/create_property_state.dart';
 import '../widgets/submit_button_widget.dart';
 
 class ListPropertyFeaturesScreen extends StatefulWidget {
-  const ListPropertyFeaturesScreen({super.key});
+  final bool isEdit;
+  const ListPropertyFeaturesScreen({super.key, this.isEdit = false});
 
   @override
   State<ListPropertyFeaturesScreen> createState() =>
@@ -45,7 +46,7 @@ class _ListPropertyFeaturesScreenState
       'icon': AppIcons.electricity,
       'value': 'electricity',
     },
-    {'title': AppStrings.wifi, 'icon': AppIcons.wifi},
+    {'title': AppStrings.wifi, 'icon': AppIcons.wifi, 'value': 'wifi'},
   ];
 
   @override
@@ -56,7 +57,8 @@ class _ListPropertyFeaturesScreenState
       _descriptionController.text = state.description;
     }
     for (int i = 0; i < _features.length; i++) {
-      if (state.features.contains(_features[i]['title'])) {
+      final featureValue = _features[i]['value'] ?? _features[i]['title']!;
+      if (state.features.contains(featureValue)) {
         _selectedFeatureIndexes.add(i);
       }
     }
@@ -73,7 +75,11 @@ class _ListPropertyFeaturesScreenState
     return BlocListener<CreatePropertyCubit, CreatePropertyState>(
       listener: (context, state) {
         if (state.status == CreatePropertyStatus.step3Saved) {
-          context.push(RouteNames.listPropertyPhotosScreen);
+          if (widget.isEdit) {
+            context.pop();
+          } else {
+            context.push(RouteNames.listPropertyPhotosScreen);
+          }
         }
       },
       child: Scaffold(
@@ -141,6 +147,9 @@ class _ListPropertyFeaturesScreenState
                     ),
                   ),
                   SubmitButtonWidget(
+                    text: widget.isEdit
+                        ? AppStrings.saveChanges
+                        : AppStrings.continueText,
                     onPressed: () {
                       final selectedFeatures = _selectedFeatureIndexes
                           .map((index) => _features[index]['value']!)

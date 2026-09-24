@@ -17,6 +17,7 @@ enum CreatePropertyStatus {
 class CreatePropertyState {
   final String listingType;
   final String type;
+  final String? customType;
   final String city;
   final String district;
   final String buildingNumber;
@@ -46,6 +47,7 @@ class CreatePropertyState {
   const CreatePropertyState({
     this.listingType = '',
     this.type = '',
+    this.customType,
     this.city = '',
     this.district = '',
     this.buildingNumber = '',
@@ -59,11 +61,11 @@ class CreatePropertyState {
     this.ownershipDocumentType = '',
     this.isFurnished,
     this.price,
-    this.priceCurrency = '',
+    this.priceCurrency = 'JOD',
     this.priceUnit = '',
     this.areaSqm,
-    this.rooms,
-    this.bathrooms,
+    this.rooms = 0,
+    this.bathrooms = 0,
     this.floorNumber,
     this.errorMessage,
     this.status = CreatePropertyStatus.initial,
@@ -73,6 +75,7 @@ class CreatePropertyState {
   CreatePropertyState copyWith({
     String? listingType,
     String? type,
+    String? customType,
     String? city,
     String? district,
     String? buildingNumber,
@@ -99,6 +102,7 @@ class CreatePropertyState {
     return CreatePropertyState(
       listingType: listingType ?? this.listingType,
       type: type ?? this.type,
+      customType: customType ?? this.customType,
       city: city ?? this.city,
       district: district ?? this.district,
       buildingNumber: buildingNumber ?? this.buildingNumber,

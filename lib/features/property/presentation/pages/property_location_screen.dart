@@ -16,7 +16,8 @@ import '../widgets/header_widget.dart';
 import '../widgets/submit_button_widget.dart';
 
 class PropertyLocationScreen extends StatefulWidget {
-  const PropertyLocationScreen({super.key});
+  final bool isEdit;
+  const PropertyLocationScreen({super.key, this.isEdit = false});
 
   @override
   State<PropertyLocationScreen> createState() => _PropertyLocationScreenState();
@@ -36,8 +37,27 @@ class _PropertyLocationScreenState extends State<PropertyLocationScreen> {
   String? _selectedCity = 'Gaza';
   String? _selectedDistrict = 'Al-Wehda';
 
-  int _rooms = 1;
-  int _bathrooms = 1;
+  static const List<Map<String, String>> _cities = [
+    {'value': 'Gaza', 'label': 'Gaza'},
+    {'value': 'option2', 'label': 'Option 2'},
+  ];
+
+  static const List<Map<String, String>> _districts = [
+    {'value': 'Al-Wehda', 'label': 'Al-Wehda'},
+    {'value': 'option2', 'label': 'Option 2'},
+  ];
+
+  int _rooms = 0;
+  int _bathrooms = 0;
+
+  String? _selectedPriceUnit;
+  String? _priceUnitError;
+  static const List<Map<String, String>> _priceUnits = [
+    {'value': 'per_hour', 'label': 'Per Hour'},
+    {'value': 'per_week', 'label': 'Weekly'},
+    {'value': 'per_month', 'label': 'Per Month'},
+    {'value': 'per_year', 'label': 'Per Year'},
+  ];
 
   String _selectedCurrency = 'JOD';
   static const List<String> _currencies = ['JOD', 'USD', 'ILS'];
@@ -46,13 +66,41 @@ class _PropertyLocationScreenState extends State<PropertyLocationScreen> {
   void initState() {
     super.initState();
     final state = context.read<CreatePropertyCubit>().state;
+
+    if (state.latitude.isNotEmpty) _latitudeController.text = state.latitude;
+    if (state.longitude.isNotEmpty) {
+      _longitudeController.text = state.longitude;
+    }
+    if (state.buildingNumber.isNotEmpty) {
+      _buildingNoController.text = state.buildingNumber;
+    }
+    if (state.areaSqm != null && state.areaSqm! > 0) {
+      _areaController.text = state.areaSqm! % 1 == 0
+          ? state.areaSqm!.toInt().toString()
+          : state.areaSqm!.toString();
+    }
+    if (state.price != null && state.price! > 0) {
+      _priceController.text = state.price! % 1 == 0
+          ? state.price!.toInt().toString()
+          : state.price!.toString();
+    }
+    if (state.floorNumber != null) {
+      _floorController.text = state.floorNumber.toString();
+    }
+
+    if (state.city.isNotEmpty) _selectedCity = state.city;
+    if (state.district.isNotEmpty) _selectedDistrict = state.district;
+    if (state.rooms != null) _rooms = state.rooms!;
+    if (state.bathrooms != null) _bathrooms = state.bathrooms!;
+    if (state.priceUnit.isNotEmpty) _selectedPriceUnit = state.priceUnit;
+
     if (state.priceCurrency.isNotEmpty &&
         _currencies.contains(state.priceCurrency)) {
       _selectedCurrency = state.priceCurrency;
     } else {
-      context
-          .read<CreatePropertyCubit>()
-          .priceCurrencyChanged(_selectedCurrency);
+      context.read<CreatePropertyCubit>().priceCurrencyChanged(
+        _selectedCurrency,
+      );
     }
   }
 
@@ -69,10 +117,42 @@ class _PropertyLocationScreenState extends State<PropertyLocationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isRent = context.select<CreatePropertyCubit, bool>(
+      (cubit) => cubit.state.listingType.toLowerCase() == 'rent',
+    );
+
+    final cityItems = [
+      ..._cities,
+      if (_selectedCity != null &&
+          _selectedCity!.isNotEmpty &&
+          !_cities.any((c) => c['value'] == _selectedCity))
+        {'value': _selectedCity!, 'label': _selectedCity!},
+    ];
+
+    final districtItems = [
+      ..._districts,
+      if (_selectedDistrict != null &&
+          _selectedDistrict!.isNotEmpty &&
+          !_districts.any((d) => d['value'] == _selectedDistrict))
+        {'value': _selectedDistrict!, 'label': _selectedDistrict!},
+    ];
+
+    final priceUnitItems = [
+      ..._priceUnits,
+      if (_selectedPriceUnit != null &&
+          _selectedPriceUnit!.isNotEmpty &&
+          !_priceUnits.any((u) => u['value'] == _selectedPriceUnit))
+        {'value': _selectedPriceUnit!, 'label': _selectedPriceUnit!},
+    ];
+
     return BlocListener<CreatePropertyCubit, CreatePropertyState>(
       listener: (context, state) {
         if (state.status == CreatePropertyStatus.step2Saved) {
-          context.push(RouteNames.listPropertyFeaturesScreen);
+          if (widget.isEdit) {
+            context.pop();
+          } else {
+            context.push(RouteNames.listPropertyFeaturesScreen);
+          }
         }
       },
       child: Scaffold(
@@ -113,35 +193,68 @@ class _PropertyLocationScreenState extends State<PropertyLocationScreen> {
                                         padding: const EdgeInsets.symmetric(
                                           horizontal: 8.0,
                                         ),
-                                        child: DropdownButton<String>(
-                                          icon: SvgPicture.asset(
-                                            AppIcons.arrowDown,
+                                        child: DropdownButtonHideUnderline(
+                                          child: DropdownButton<String>(
+                                            borderRadius:
+                                                BorderRadius.circular(12),
+                                            value: _selectedCity,
+                                            dropdownColor:
+                                                AppColors.background,
+                                            isExpanded: true,
+                                            icon: const Icon(
+                                              Icons.keyboard_arrow_down_rounded,
+                                              color: AppColors.white,
+                                              size: 16,
+                                            ),
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyMedium
+                                                ?.copyWith(
+                                                  color: AppColors.white,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 14,
+                                                ),
+                                            selectedItemBuilder:
+                                                (BuildContext context) {
+                                              return cityItems.map<Widget>((
+                                                city,
+                                              ) {
+                                                return Align(
+                                                  alignment:
+                                                      Alignment.centerLeft,
+                                                  child: Text(
+                                                    city['label']!,
+                                                    style: const TextStyle(
+                                                      color: AppColors.white,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 14,
+                                                    ),
+                                                  ),
+                                                );
+                                              }).toList();
+                                            },
+                                            items: cityItems.map((city) {
+                                              return DropdownMenuItem<String>(
+                                                value: city['value'],
+                                                child: Text(
+                                                  city['label']!,
+                                                  style: const TextStyle(
+                                                    color: AppColors.primary,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 14,
+                                                  ),
+                                                ),
+                                              );
+                                            }).toList(),
+                                            onChanged: (value) {
+                                              if (value != null) {
+                                                setState(() {
+                                                  _selectedCity = value;
+                                                });
+                                              }
+                                            },
                                           ),
-                                          value: _selectedCity,
-                                          isExpanded: true,
-                                          underline: const SizedBox(),
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyMedium
-                                              ?.copyWith(
-                                                color: AppColors.white,
-                                                fontSize: 16,
-                                              ),
-                                          items: const [
-                                            DropdownMenuItem(
-                                              value: 'Gaza',
-                                              child: Text('Gaza'),
-                                            ),
-                                            DropdownMenuItem(
-                                              value: 'option2',
-                                              child: Text('Option 2'),
-                                            ),
-                                          ],
-                                          onChanged: (value) {
-                                            setState(() {
-                                              _selectedCity = value;
-                                            });
-                                          },
                                         ),
                                       ),
                                       icon: AppIcons.location,
@@ -157,35 +270,70 @@ class _PropertyLocationScreenState extends State<PropertyLocationScreen> {
                                         padding: const EdgeInsets.symmetric(
                                           horizontal: 8.0,
                                         ),
-                                        child: DropdownButton<String>(
-                                          icon: SvgPicture.asset(
-                                            AppIcons.arrowDown,
+                                        child: DropdownButtonHideUnderline(
+                                          child: DropdownButton<String>(
+                                            borderRadius:
+                                                BorderRadius.circular(12),
+                                            value: _selectedDistrict,
+                                            dropdownColor:
+                                                AppColors.background,
+                                            isExpanded: true,
+                                            icon: const Icon(
+                                              Icons.keyboard_arrow_down_rounded,
+                                              color: AppColors.white,
+                                              size: 16,
+                                            ),
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyMedium
+                                                ?.copyWith(
+                                                  color: AppColors.white,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 14,
+                                                ),
+                                            selectedItemBuilder:
+                                                (BuildContext context) {
+                                              return districtItems.map<Widget>((
+                                                district,
+                                              ) {
+                                                return Align(
+                                                  alignment:
+                                                      Alignment.centerLeft,
+                                                  child: Text(
+                                                    district['label']!,
+                                                    style: const TextStyle(
+                                                      color: AppColors.white,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 14,
+                                                    ),
+                                                  ),
+                                                );
+                                              }).toList();
+                                            },
+                                            items: districtItems.map((
+                                              district,
+                                            ) {
+                                              return DropdownMenuItem<String>(
+                                                value: district['value'],
+                                                child: Text(
+                                                  district['label']!,
+                                                  style: const TextStyle(
+                                                    color: AppColors.primary,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 14,
+                                                  ),
+                                                ),
+                                              );
+                                            }).toList(),
+                                            onChanged: (value) {
+                                              if (value != null) {
+                                                setState(() {
+                                                  _selectedDistrict = value;
+                                                });
+                                              }
+                                            },
                                           ),
-                                          value: _selectedDistrict,
-                                          isExpanded: true,
-                                          underline: const SizedBox(),
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyMedium
-                                              ?.copyWith(
-                                                color: AppColors.white,
-                                                fontSize: 16,
-                                              ),
-                                          items: const [
-                                            DropdownMenuItem(
-                                              value: 'Al-Wehda',
-                                              child: Text('Al-Wehda'),
-                                            ),
-                                            DropdownMenuItem(
-                                              value: 'option2',
-                                              child: Text('Option 2'),
-                                            ),
-                                          ],
-                                          onChanged: (value) {
-                                            setState(() {
-                                              _selectedDistrict = value;
-                                            });
-                                          },
                                         ),
                                       ),
                                       icon: AppIcons.district,
@@ -202,9 +350,9 @@ class _PropertyLocationScreenState extends State<PropertyLocationScreen> {
                                 isRequired: true,
                                 keyboardType:
                                     const TextInputType.numberWithOptions(
-                                  decimal: true,
-                                  signed: true,
-                                ),
+                                      decimal: true,
+                                      signed: true,
+                                    ),
                                 validator: (value) {
                                   final val = value?.trim() ?? '';
                                   if (val.isEmpty) {
@@ -228,9 +376,9 @@ class _PropertyLocationScreenState extends State<PropertyLocationScreen> {
                                 isRequired: true,
                                 keyboardType:
                                     const TextInputType.numberWithOptions(
-                                  decimal: true,
-                                  signed: true,
-                                ),
+                                      decimal: true,
+                                      signed: true,
+                                    ),
                                 validator: (value) {
                                   final val = value?.trim() ?? '';
                                   if (val.isEmpty) {
@@ -262,8 +410,8 @@ class _PropertyLocationScreenState extends State<PropertyLocationScreen> {
                                 isRequired: true,
                                 keyboardType:
                                     const TextInputType.numberWithOptions(
-                                  decimal: true,
-                                ),
+                                      decimal: true,
+                                    ),
                                 validator: (value) {
                                   final val = value?.trim() ?? '';
                                   if (val.isEmpty) {
@@ -309,8 +457,8 @@ class _PropertyLocationScreenState extends State<PropertyLocationScreen> {
                                       hint: AppStrings.priceHint,
                                       keyboardType:
                                           const TextInputType.numberWithOptions(
-                                        decimal: true,
-                                      ),
+                                            decimal: true,
+                                          ),
                                       validator: (value) {
                                         final val = value?.trim() ?? '';
                                         if (val.isEmpty) {
@@ -324,9 +472,14 @@ class _PropertyLocationScreenState extends State<PropertyLocationScreen> {
                                       },
                                       suffixIcon: Container(
                                         padding: const EdgeInsets.symmetric(
-                                            horizontal: 14),
+                                          horizontal: 14,
+                                        ),
                                         child: DropdownButtonHideUnderline(
                                           child: DropdownButton<String>(
+                                            borderRadius: BorderRadius.circular(
+                                              12,
+                                            ),
+
                                             value: _selectedCurrency,
                                             dropdownColor: AppColors.background,
                                             icon: const Icon(
@@ -342,15 +495,30 @@ class _PropertyLocationScreenState extends State<PropertyLocationScreen> {
                                                   fontWeight: FontWeight.bold,
                                                   fontSize: 14,
                                                 ),
+                                            selectedItemBuilder: (BuildContext context) {
+                                              return _currencies.map<Widget>((currency) {
+                                                return Align(
+                                                  alignment: Alignment.centerLeft,
+                                                  child: Text(
+                                                    currency,
+                                                    style: const TextStyle(
+                                                      color: AppColors.white,
+                                                      fontWeight: FontWeight.bold,
+                                                      fontSize: 14,
+                                                    ),
+                                                  ),
+                                                );
+                                              }).toList();
+                                            },
                                             items: _currencies.map((currency) {
                                               return DropdownMenuItem<String>(
                                                 value: currency,
+
                                                 child: Text(
                                                   currency,
                                                   style: const TextStyle(
-                                                    color: AppColors.white,
-                                                    fontWeight:
-                                                        FontWeight.bold,
+                                                    color: AppColors.primary,
+                                                    fontWeight: FontWeight.bold,
                                                     fontSize: 14,
                                                   ),
                                                 ),
@@ -364,7 +532,8 @@ class _PropertyLocationScreenState extends State<PropertyLocationScreen> {
                                                 context
                                                     .read<CreatePropertyCubit>()
                                                     .priceCurrencyChanged(
-                                                        value);
+                                                      value,
+                                                    );
                                               }
                                             },
                                           ),
@@ -374,6 +543,93 @@ class _PropertyLocationScreenState extends State<PropertyLocationScreen> {
                                   ],
                                 ),
                               ),
+
+                              if (isRent) ...[
+                                _buildCustomCardField(
+                                  context,
+                                  AppStrings.priceUnit,
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 8.0,
+                                    ),
+                                    child: DropdownButtonHideUnderline(
+                                      child: DropdownButton<String>(
+                                        borderRadius: BorderRadius.circular(12),
+                                        value: _selectedPriceUnit,
+                                        dropdownColor: AppColors.background,
+                                        isExpanded: true,
+                                        hint: Text(
+                                          AppStrings.selectPriceUnit,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium
+                                              ?.copyWith(
+                                                color: AppColors.white60,
+                                                fontSize: 14,
+                                              ),
+                                        ),
+                                        icon: const Icon(
+                                          Icons.keyboard_arrow_down_rounded,
+                                          color: AppColors.white,
+                                          size: 16,
+                                        ),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyMedium
+                                            ?.copyWith(
+                                              color: AppColors.white,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 14,
+                                            ),
+                                        selectedItemBuilder:
+                                            (BuildContext context) {
+                                          return priceUnitItems.map<Widget>((
+                                            unit,
+                                          ) {
+                                            return Align(
+                                              alignment: Alignment.centerLeft,
+                                              child: Text(
+                                                unit['label']!,
+                                                style: const TextStyle(
+                                                  color: AppColors.white,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 14,
+                                                ),
+                                              ),
+                                            );
+                                          }).toList();
+                                        },
+                                        items: priceUnitItems.map((unit) {
+                                          return DropdownMenuItem<String>(
+                                            value: unit['value'],
+                                            child: Text(
+                                              unit['label']!,
+                                              style: const TextStyle(
+                                                color: AppColors.primary,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 14,
+                                              ),
+                                            ),
+                                          );
+                                        }).toList(),
+                                        onChanged: (value) {
+                                          if (value != null) {
+                                            setState(() {
+                                              _selectedPriceUnit = value;
+                                              _priceUnitError = null;
+                                            });
+                                            context
+                                                .read<CreatePropertyCubit>()
+                                                .priceUnitChanged(value);
+                                          }
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                  isRequired: true,
+                                  errorMessage: _priceUnitError,
+                                ),
+                              ],
 
                               Row(
                                 children: [
@@ -387,7 +643,7 @@ class _PropertyLocationScreenState extends State<PropertyLocationScreen> {
                                         children: [
                                           IconButton(
                                             onPressed: () {
-                                              if (_rooms > 1) {
+                                              if (_rooms > 0) {
                                                 setState(() {
                                                   _rooms--;
                                                 });
@@ -438,7 +694,7 @@ class _PropertyLocationScreenState extends State<PropertyLocationScreen> {
                                         children: [
                                           IconButton(
                                             onPressed: () {
-                                              if (_bathrooms > 1) {
+                                              if (_bathrooms > 0) {
                                                 setState(() {
                                                   _bathrooms--;
                                                 });
@@ -506,22 +762,44 @@ class _PropertyLocationScreenState extends State<PropertyLocationScreen> {
                     ),
                   ),
                   SubmitButtonWidget(
+                    text: widget.isEdit
+                        ? AppStrings.saveChanges
+                        : AppStrings.continueText,
                     onPressed: () {
                       setState(() {
                         _autoValidateMode = AutovalidateMode.onUserInteraction;
                       });
 
-                      if (!_formKey.currentState!.validate()) {
+                      final isRent = context
+                              .read<CreatePropertyCubit>()
+                              .state
+                              .listingType
+                              .toLowerCase() ==
+                          'rent';
+
+                      if (isRent &&
+                          (_selectedPriceUnit == null ||
+                              _selectedPriceUnit!.isEmpty)) {
+                        setState(() {
+                          _priceUnitError = AppStrings.pleaseSelectPriceUnit;
+                        });
+                      }
+
+                      if (!_formKey.currentState!.validate() ||
+                          (isRent &&
+                              (_selectedPriceUnit == null ||
+                                  _selectedPriceUnit!.isEmpty))) {
                         return;
                       }
 
                       final floorText = _floorController.text.trim();
-                      final floorNumber =
-                          floorText.isNotEmpty ? int.tryParse(floorText) : null;
+                      final floorNumber = floorText.isNotEmpty
+                          ? int.tryParse(floorText)
+                          : null;
 
-                      context
-                          .read<CreatePropertyCubit>()
-                          .priceCurrencyChanged(_selectedCurrency);
+                      context.read<CreatePropertyCubit>().priceCurrencyChanged(
+                        _selectedCurrency,
+                      );
                       context.read<CreatePropertyCubit>().saveStep2(
                         city: _selectedCity ?? '',
                         district: _selectedDistrict ?? '',
@@ -533,6 +811,8 @@ class _PropertyLocationScreenState extends State<PropertyLocationScreen> {
                         price: double.tryParse(_priceController.text.trim()),
                         rooms: _rooms,
                         bathrooms: _bathrooms,
+                        priceCurrency: _selectedCurrency,
+                        priceUnit: isRent ? _selectedPriceUnit : null,
                       );
                     },
                   ),
@@ -564,7 +844,10 @@ class _PropertyLocationScreenState extends State<PropertyLocationScreen> {
         children: [
           Row(
             children: [
-              if (icon != null) ...[SvgPicture.asset(icon), const SizedBox(width: 8)],
+              if (icon != null) ...[
+                SvgPicture.asset(icon),
+                const SizedBox(width: 8),
+              ],
               Text(
                 title,
                 style: Theme.of(
@@ -587,9 +870,9 @@ class _PropertyLocationScreenState extends State<PropertyLocationScreen> {
                 Text(
                   '(Optional)',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: AppColors.white60,
-                        fontSize: 12,
-                      ),
+                    color: AppColors.white60,
+                    fontSize: 12,
+                  ),
                 ),
               ],
             ],
@@ -613,6 +896,7 @@ class _PropertyLocationScreenState extends State<PropertyLocationScreen> {
     String? icon,
     bool isRequired = false,
     bool isOptional = false,
+    String? errorMessage,
   }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 10.0),
@@ -621,7 +905,10 @@ class _PropertyLocationScreenState extends State<PropertyLocationScreen> {
         children: [
           Row(
             children: [
-              if (icon != null) ...[SvgPicture.asset(icon), const SizedBox(width: 8)],
+              if (icon != null) ...[
+                SvgPicture.asset(icon),
+                const SizedBox(width: 8),
+              ],
               Text(
                 title,
                 style: Theme.of(
@@ -644,15 +931,28 @@ class _PropertyLocationScreenState extends State<PropertyLocationScreen> {
                 Text(
                   '(Optional)',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: AppColors.white60,
-                        fontSize: 12,
-                      ),
+                    color: AppColors.white60,
+                    fontSize: 12,
+                  ),
                 ),
               ],
             ],
           ),
           const SizedBox(height: 8),
           CardWidget(widget: widget, isSelected: false, onTap: () {}),
+          if (errorMessage != null) ...[
+            const SizedBox(height: 6),
+            Padding(
+              padding: const EdgeInsets.only(left: 4.0),
+              child: Text(
+                errorMessage,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: AppColors.error,
+                  fontSize: 12,
+                ),
+              ),
+            ),
+          ],
         ],
       ),
     );

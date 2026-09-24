@@ -21,7 +21,8 @@ import '../state_management/create_property_state.dart';
 import '../widgets/header_widget.dart';
 
 class ProofOfOwnershipPage extends StatefulWidget {
-  const ProofOfOwnershipPage({super.key});
+  final bool isEdit;
+  const ProofOfOwnershipPage({super.key, this.isEdit = false});
 
   @override
   State<ProofOfOwnershipPage> createState() => _ProofOfOwnershipPageState();
@@ -231,11 +232,12 @@ class _ProofOfOwnershipPageState extends State<ProofOfOwnershipPage> {
             child: DropdownButton<String>(
               value: _selectedDocumentType,
               isExpanded: true,
+              borderRadius: BorderRadius.circular(12),
               hint: Text(
                 AppStrings.selectDocumentType,
                 style: Theme.of(
                   context,
-                ).textTheme.bodyMedium?.copyWith(color: AppColors.primary),
+                ).textTheme.bodyMedium?.copyWith(color: AppColors.white),
               ),
               icon: const Icon(
                 Icons.keyboard_arrow_down_rounded,
@@ -243,13 +245,33 @@ class _ProofOfOwnershipPageState extends State<ProofOfOwnershipPage> {
               ),
               dropdownColor: AppColors.white,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: AppColors.primary,
+                color: AppColors.white,
                 fontWeight: FontWeight.w500,
               ),
+              selectedItemBuilder: (BuildContext context) {
+                return _documentTypes.entries.map<Widget>((entry) {
+                  return Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      entry.value,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: AppColors.white,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  );
+                }).toList();
+              },
               items: _documentTypes.entries.map((entry) {
                 return DropdownMenuItem<String>(
                   value: entry.key,
-                  child: Text(entry.value),
+                  child: Text(
+                    entry.value,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: AppColors.primary,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
                 );
               }).toList(),
               onChanged: (value) {
@@ -350,7 +372,11 @@ class _ProofOfOwnershipPageState extends State<ProofOfOwnershipPage> {
     return BlocListener<CreatePropertyCubit, CreatePropertyState>(
       listener: (context, state) {
         if (state.status == CreatePropertyStatus.step5Saved) {
-          context.push(RouteNames.reviewListingPage);
+          if (widget.isEdit) {
+            context.pop();
+          } else {
+            context.push(RouteNames.reviewListingPage);
+          }
         }
       },
       child: Scaffold(
@@ -566,6 +592,9 @@ class _ProofOfOwnershipPageState extends State<ProofOfOwnershipPage> {
                     ),
                   ),
                   SubmitButtonWidget(
+                    text: widget.isEdit
+                        ? AppStrings.saveChanges
+                        : AppStrings.continueText,
                     onPressed: () {
                       bool hasError = false;
                       if (_selectedDocumentType == null ||

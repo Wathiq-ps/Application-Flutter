@@ -15,7 +15,8 @@ import '../state_management/create_property_state.dart';
 import '../widgets/property_input_field_widget.dart';
 
 class ListPropertyTypeScreen extends StatefulWidget {
-  const ListPropertyTypeScreen({super.key});
+  final bool isEdit;
+  const ListPropertyTypeScreen({super.key, this.isEdit = false});
 
   @override
   State<ListPropertyTypeScreen> createState() => _ListPropertyTypeScreenState();
@@ -54,6 +55,25 @@ class _ListPropertyTypeScreenState extends State<ListPropertyTypeScreen> {
     },
   ];
   @override
+  void initState() {
+    super.initState();
+    final state = context.read<CreatePropertyCubit>().state;
+    if (state.listingType.isNotEmpty) {
+      _isForSaleSelected = state.listingType.toLowerCase() == 'sale';
+    }
+    if (state.type.isNotEmpty) {
+      final index =
+          _propertyTypes.indexWhere((item) => item['value'] == state.type);
+      if (index != -1) {
+        _selectedPropertyTypeIndex = index;
+      }
+    }
+    if (state.customType != null && state.customType!.isNotEmpty) {
+      _customTypeController.text = state.customType!;
+    }
+  }
+
+  @override
   void dispose() {
     _customTypeController.dispose();
     super.dispose();
@@ -64,7 +84,11 @@ class _ListPropertyTypeScreenState extends State<ListPropertyTypeScreen> {
     return BlocListener<CreatePropertyCubit, CreatePropertyState>(
       listener: (context, state) {
         if (state.status == CreatePropertyStatus.step1Saved) {
-          context.push(RouteNames.propertyLocationScreen);
+          if (widget.isEdit) {
+            context.pop();
+          } else {
+            context.push(RouteNames.propertyLocationScreen);
+          }
         }
       },
       child: Scaffold(
@@ -106,6 +130,9 @@ class _ListPropertyTypeScreenState extends State<ListPropertyTypeScreen> {
                             if (_selectedPropertyTypeIndex != 5)
                               const SizedBox(height: 65),
                             SubmitButtonWidget(
+                              text: widget.isEdit
+                                  ? AppStrings.saveChanges
+                                  : AppStrings.continueText,
                               onPressed: () {
                                 if (_selectedPropertyTypeIndex == 5) {
                                   setState(() {

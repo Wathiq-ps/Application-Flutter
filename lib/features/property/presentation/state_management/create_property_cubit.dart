@@ -53,6 +53,7 @@ class CreatePropertyCubit extends Cubit<CreatePropertyState> {
       state.copyWith(
         listingType: listingType,
         type: type,
+        customType: customType,
         errorMessage: null,
         status: CreatePropertyStatus.step1Saved,
       ),
@@ -70,6 +71,8 @@ class CreatePropertyCubit extends Cubit<CreatePropertyState> {
     required double? price,
     int? rooms,
     int? bathrooms,
+    String? priceCurrency,
+    String? priceUnit,
   }) {
     if (city.isEmpty) {
       emit(
@@ -143,6 +146,10 @@ class CreatePropertyCubit extends Cubit<CreatePropertyState> {
         price: price,
         rooms: rooms,
         bathrooms: bathrooms,
+        priceCurrency: (priceCurrency != null && priceCurrency.isNotEmpty)
+            ? priceCurrency
+            : (state.priceCurrency.isNotEmpty ? state.priceCurrency : 'JOD'),
+        priceUnit: priceUnit ?? state.priceUnit,
         errorMessage: null,
         status: CreatePropertyStatus.step2Saved,
       ),
@@ -498,6 +505,10 @@ class CreatePropertyCubit extends Cubit<CreatePropertyState> {
     }
   }
 
+  void reset() {
+    emit(const CreatePropertyState());
+  }
+
   String? _validate() {
     if (state.listingType.isEmpty) {
       return 'Please select listing type';
@@ -541,6 +552,10 @@ class CreatePropertyCubit extends Cubit<CreatePropertyState> {
 
     if (state.photos.isEmpty) {
       return 'Please add at least one photo';
+    }
+
+    if (state.ownershipDocumentType.isEmpty) {
+      return 'Please select ownership document type';
     }
 
     if (state.proofDocuments.isEmpty && state.proofPhotos.isEmpty) {

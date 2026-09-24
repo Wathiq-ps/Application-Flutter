@@ -128,6 +128,9 @@ class AppStrings {
   static const String priceHint = 'e.g. 85000';
 
   static const String floorHint = 'e.g. 3';
+  static const String priceUnit = 'Price Unit';
+  static const String selectPriceUnit = 'Select price unit';
+  static const String pleaseSelectPriceUnit = 'Please select price unit';
 
   // ─────────────────────────────────────────────
   // Property Features
@@ -187,9 +190,9 @@ class AppStrings {
   //Review property
   static const String basicDetailsTitle = 'Basic Details';
   static const String edit = 'Edit';
+  static const String saveChanges = 'Save Changes';
   static const String listingType = 'Listing Type';
   static const String location = 'Location';
-  
 
   // ─────────────────────────────────────────────
   // Onboarding

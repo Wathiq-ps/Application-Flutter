@@ -6,14 +6,20 @@ import '../../../../core/widget/app_button.dart';
 
 class SubmitButtonWidget extends StatelessWidget {
   final VoidCallback onPressed;
-  const SubmitButtonWidget({super.key, required this.onPressed});
+  final String? text;
+
+  const SubmitButtonWidget({
+    super.key,
+    required this.onPressed,
+    this.text,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 25),
       child: AppElevatedButton(
-        text: AppStrings.continueText,
+        text: text ?? AppStrings.continueText,
         height: 56,
         width: double.infinity,
         borderRadius: 999,

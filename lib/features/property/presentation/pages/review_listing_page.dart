@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -22,32 +23,15 @@ class ReviewListingPage extends StatefulWidget {
 }
 
 class _ReviewListingPageState extends State<ReviewListingPage> {
-  final List<String> _photos = [];
-
-  @override
-  void initState() {
-    super.initState();
-    final state = context.read<CreatePropertyCubit>().state;
-    if (state.photos.isNotEmpty) {
-      _photos.addAll(state.photos);
-    }
-  }
-
-  void _deleteImage(String image) {
-    setState(() {
-      _photos.remove(image);
-    });
-    context.read<CreatePropertyCubit>().photosChanged(List.from(_photos));
-  }
-
   void _submitListing(BuildContext context) {
     context.read<CreatePropertyCubit>().createProperty();
   }
 
   String _formatLocation(CreatePropertyState state) {
-    final parts = [state.city, state.district]
-        .where((s) => s.trim().isNotEmpty)
-        .toList();
+    final parts = [
+      state.city,
+      state.district,
+    ].where((s) => s.trim().isNotEmpty).toList();
     if (parts.isEmpty) return '-';
     return parts.join(', ');
   }
@@ -65,8 +49,9 @@ class _ReviewListingPageState extends State<ReviewListingPage> {
     final priceVal = state.price! % 1 == 0
         ? state.price!.toInt().toString()
         : state.price!.toString();
-    final currency =
-        state.priceCurrency.isNotEmpty ? ' ${state.priceCurrency}' : '';
+    final currency = state.priceCurrency.isNotEmpty
+        ? ' ${state.priceCurrency}'
+        : '';
 
     // Prohibited if listing_type is sale
     if (state.listingType.toLowerCase() == 'sale') {
@@ -82,7 +67,8 @@ class _ReviewListingPageState extends State<ReviewListingPage> {
       'per_hour': '/ hour',
     };
 
-    final unit = unitMap[state.priceUnit.toLowerCase()] ??
+    final unit =
+        unitMap[state.priceUnit.toLowerCase()] ??
         (state.priceUnit.isNotEmpty && state.priceUnit.toLowerCase() != 'total'
             ? ' / ${state.priceUnit.replaceAll('_', ' ')}'
             : '');
@@ -126,9 +112,23 @@ class _ReviewListingPageState extends State<ReviewListingPage> {
         feature
             .replaceAll('_', ' ')
             .split(' ')
-            .map((w) =>
-                w.isNotEmpty ? '${w[0].toUpperCase()}${w.substring(1)}' : '')
+            .map(
+              (w) =>
+                  w.isNotEmpty ? '${w[0].toUpperCase()}${w.substring(1)}' : '',
+            )
             .join(' ');
+  }
+
+  String _formatDocumentType(String type) {
+    const documentTypes = {
+      'title_deed': AppStrings.titleDeed,
+      'sale_contract': AppStrings.saleContract,
+      'inheritance_deed': AppStrings.inheritanceDeed,
+      'power_of_attorney': AppStrings.powerOfAttorney,
+      'municipal_record': AppStrings.municipalRecord,
+    };
+    return documentTypes[type.toLowerCase()] ??
+        (type.isNotEmpty ? type : '-');
   }
 
   @override
@@ -139,6 +139,7 @@ class _ReviewListingPageState extends State<ReviewListingPage> {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Listing submitted successfully')),
           );
+          context.read<CreatePropertyCubit>().reset();
           Navigator.of(context).popUntil((route) => route.isFirst);
         }
 
@@ -152,9 +153,7 @@ class _ReviewListingPageState extends State<ReviewListingPage> {
 
         if (state.status == CreatePropertyStatus.validationError) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.errorMessage ?? 'Invalid data'),
-            ),
+            SnackBar(content: Text(state.errorMessage ?? 'Invalid data')),
           );
         }
       },
@@ -186,20 +185,20 @@ class _ReviewListingPageState extends State<ReviewListingPage> {
                             // =========================================
                             // Photos Section
                             // =========================================
-                            if (_photos.isNotEmpty) ...[
+                            if (state.photos.isNotEmpty) ...[
                               Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 24),
-                                child: Text(
-                                  AppStrings.photos,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleMedium
-                                      ?.copyWith(
-                                        color: AppColors.white,
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 18,
-                                      ),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 24,
+                                ),
+                                child: _sectionTitle(
+                                  context: context,
+                                  title: AppStrings.photos,
+                                  onEdit: () {
+                                    context.push(
+                                      RouteNames.listPropertyPhotosScreen,
+                                      extra: {'isEdit': true},
+                                    );
+                                  },
                                 ),
                               ),
                               const SizedBox(height: 14),
@@ -207,14 +206,15 @@ class _ReviewListingPageState extends State<ReviewListingPage> {
                                 height: 140,
                                 child: ListView.separated(
                                   padding: const EdgeInsets.symmetric(
-                                      horizontal: 24),
+                                    horizontal: 24,
+                                  ),
                                   scrollDirection: Axis.horizontal,
                                   physics: const BouncingScrollPhysics(),
-                                  itemCount: _photos.length,
+                                  itemCount: state.photos.length,
                                   separatorBuilder: (_, _) =>
                                       const SizedBox(width: 14),
                                   itemBuilder: (context, index) {
-                                    final photo = _photos[index];
+                                    final photo = state.photos[index];
                                     return _propertyImage(photo);
                                   },
                                 ),
@@ -223,20 +223,23 @@ class _ReviewListingPageState extends State<ReviewListingPage> {
                             ],
 
                             Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 24),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 24,
+                              ),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   // =========================================
-                                  // Basic Details
+                                  // Property Type
                                   // =========================================
                                   _sectionTitle(
                                     context: context,
-                                    title: AppStrings.basicDetailsTitle,
+                                    title: AppStrings.propertyType,
                                     onEdit: () {
                                       context.push(
-                                          RouteNames.propertyLocationScreen);
+                                        RouteNames.listPropertyTypeScreen,
+                                        extra: {'isEdit': true},
+                                      );
                                     },
                                   ),
 
@@ -253,7 +256,25 @@ class _ReviewListingPageState extends State<ReviewListingPage> {
                                     AppStrings.propertyType,
                                     _formatPropertyType(state.type),
                                   ),
-                                  _divider(),
+
+                                  const SizedBox(height: 28),
+
+                                  // =========================================
+                                  // Basic Details
+                                  // =========================================
+                                  _sectionTitle(
+                                    context: context,
+                                    title: AppStrings.basicDetailsTitle,
+                                    onEdit: () {
+                                      context.push(
+                                        RouteNames.propertyLocationScreen,
+                                        extra: {'isEdit': true},
+                                      );
+                                    },
+                                  ),
+
+                                  const SizedBox(height: 10),
+
                                   _detailRow(
                                     context,
                                     AppStrings.location,
@@ -306,9 +327,10 @@ class _ReviewListingPageState extends State<ReviewListingPage> {
                                     context: context,
                                     title: AppStrings.features,
                                     onEdit: () {
-                                       context.push(
-                                          RouteNames.listPropertyFeaturesScreen);
-                                  
+                                      context.push(
+                                        RouteNames.listPropertyFeaturesScreen,
+                                        extra: {'isEdit': true},
+                                      );
                                     },
                                   ),
 
@@ -325,9 +347,10 @@ class _ReviewListingPageState extends State<ReviewListingPage> {
                                     context: context,
                                     title: AppStrings.description,
                                     onEdit: () {
-                                       context.push(
-                                          RouteNames.listPropertyFeaturesScreen);
-                                  
+                                      context.push(
+                                        RouteNames.listPropertyFeaturesScreen,
+                                        extra: {'isEdit': true},
+                                      );
                                     },
                                   ),
 
@@ -349,6 +372,49 @@ class _ReviewListingPageState extends State<ReviewListingPage> {
                                           fontWeight: FontWeight.w400,
                                         ),
                                   ),
+
+                                  const SizedBox(height: 28),
+
+                                  // =========================================
+                                  // Proof of Ownership
+                                  // =========================================
+                                  _sectionTitle(
+                                    context: context,
+                                    title: AppStrings.listYourPropertyPage5Title,
+                                    onEdit: () {
+                                      context.push(
+                                        RouteNames.proofOfOwnershipPage,
+                                        extra: {'isEdit': true},
+                                      );
+                                    },
+                                  ),
+
+                                  const SizedBox(height: 10),
+
+                                  _detailRow(
+                                    context,
+                                    AppStrings.documentType,
+                                    _formatDocumentType(
+                                        state.ownershipDocumentType),
+                                  ),
+
+                                  if (state.proofPhotos.isNotEmpty) ...[
+                                    const SizedBox(height: 14),
+                                    _buildProofPhotosGrid(state.proofPhotos),
+                                  ],
+
+                                  if (state.proofDocuments
+                                      .where((file) => !state.proofPhotos
+                                          .contains(file.path))
+                                      .isNotEmpty) ...[
+                                    const SizedBox(height: 14),
+                                    _buildProofFilesList(
+                                      state.proofDocuments
+                                          .where((file) => !state.proofPhotos
+                                              .contains(file.path))
+                                          .toList(),
+                                    ),
+                                  ],
 
                                   const SizedBox(height: 20),
                                 ],
@@ -376,9 +442,7 @@ class _ReviewListingPageState extends State<ReviewListingPage> {
                   child: Container(
                     color: Colors.black54,
                     child: const Center(
-                      child: CircularProgressIndicator(
-                        color: AppColors.white,
-                      ),
+                      child: CircularProgressIndicator(color: AppColors.white),
                     ),
                   ),
                 ),
@@ -392,50 +456,23 @@ class _ReviewListingPageState extends State<ReviewListingPage> {
   // =============================================================
   Widget _propertyImage(String image) {
     final file = File(image);
-    return Stack(
-      children: [
-        ClipRRect(
-          borderRadius: BorderRadius.circular(16),
-          child: SizedBox(
-            width: 210,
-            height: 140,
-            child: file.existsSync()
-                ? Image.file(
-                    file,
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => _imagePlaceholder(),
-                  )
-                : Image.asset(
-                    image,
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => _imagePlaceholder(),
-                  ),
-          ),
-        ),
-
-        Positioned(
-          top: 6,
-          right: 6,
-          child: GestureDetector(
-            onTap: () => _deleteImage(image),
-            child: Container(
-              width: 24,
-              height: 24,
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-                color: AppColors.iconBg,
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(16),
+      child: SizedBox(
+        width: 210,
+        height: 140,
+        child: file.existsSync()
+            ? Image.file(
+                file,
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => _imagePlaceholder(),
+              )
+            : Image.asset(
+                image,
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => _imagePlaceholder(),
               ),
-              child: Center(
-                child: SizedBox(
-                  width: 10,
-                  height: 10,
-                  child: SvgPicture.asset(AppIcons.remove, fit: BoxFit.contain),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ],
+      ),
     );
   }
 
@@ -526,9 +563,9 @@ class _ReviewListingPageState extends State<ReviewListingPage> {
       return Text(
         '-',
         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: AppColors.white70,
-              fontSize: 15,
-            ),
+          color: AppColors.white70,
+          fontSize: 15,
+        ),
       );
     }
     return GridView.builder(
@@ -548,6 +585,71 @@ class _ReviewListingPageState extends State<ReviewListingPage> {
             color: AppColors.white,
             fontSize: 15,
             fontWeight: FontWeight.w500,
+          ),
+        );
+      },
+    );
+  }
+
+  // =============================================================
+  Widget _buildProofPhotosGrid(List<String> photos) {
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        mainAxisExtent: 95,
+        crossAxisSpacing: 14,
+        mainAxisSpacing: 14,
+      ),
+      itemCount: photos.length,
+      itemBuilder: (context, index) {
+        final photo = photos[index];
+        return ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: Image.file(
+            File(photo),
+            width: double.infinity,
+            height: double.infinity,
+            fit: BoxFit.cover,
+            errorBuilder: (_, __, ___) => _imagePlaceholder(),
+          ),
+        );
+      },
+    );
+  }
+
+  // =============================================================
+  Widget _buildProofFilesList(List<PlatformFile> files) {
+    return ListView.separated(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: files.length,
+      separatorBuilder: (_, _) => const SizedBox(height: 8),
+      itemBuilder: (context, index) {
+        final file = files[index];
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.grey.shade300),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Row(
+            children: [
+              SvgPicture.asset(AppIcons.uploadFile),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  file.name,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyMedium
+                      ?.copyWith(color: AppColors.white),
+                ),
+              ),
+            ],
           ),
         );
       },
