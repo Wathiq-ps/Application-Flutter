@@ -4,7 +4,7 @@ class PageHeader extends StatelessWidget {
   const PageHeader({
     super.key,
     required this.widthScale,
-    required this.left,
+    this.left,
     this.center,
     this.right,
     this.showCenter = true,
@@ -18,7 +18,7 @@ class PageHeader extends StatelessWidget {
   });
 
   final double widthScale;
-  final Widget left;
+  final Widget? left;
   final Widget? center;
   final Widget? right;
   final bool showCenter;
@@ -32,6 +32,7 @@ class PageHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool hasLeft = left != null;
     final bool hasCenter = showCenter && center != null;
     final bool hasRight = showRight && right != null;
 
@@ -41,9 +42,9 @@ class PageHeader extends StatelessWidget {
         mainAxisAlignment: mainAxisAlignment,
         crossAxisAlignment: crossAxisAlignment,
         children: [
-          left,
+          if (hasLeft) left!,
           if (hasCenter) ...[
-            if (leftGap > 0) SizedBox(width: leftGap * widthScale),
+            if (hasLeft && leftGap > 0) SizedBox(width: leftGap * widthScale),
             if (expandCenter) Expanded(child: center!) else Flexible(child: center!),
             if (hasRight && rightGap > 0) SizedBox(width: rightGap * widthScale),
           ],

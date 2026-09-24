@@ -153,4 +153,6 @@ class AppIcons {
   static const String requests =
       'assets/svg/request.svg';
   static const String properties = 'assets/svg/proprties.svg';
+  static const String unVerified_profile_status =
+      'assets/svg/unVerified_profile_status.svg';
 }

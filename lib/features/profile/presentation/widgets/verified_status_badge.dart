@@ -24,6 +24,10 @@ class VerifiedStatusBadge extends StatelessWidget {
         ? AppColors.verifiedStatusBg
         : AppColors.unverifiedStatusBg;
 
+    final String icon = isVerified
+        ? AppIcons.verified_profile_status
+        : AppIcons.unVerified_profile_status;
+
     return Center(
       child: Container(
         padding: EdgeInsets.symmetric(
@@ -38,7 +42,7 @@ class VerifiedStatusBadge extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             SvgPicture.asset(
-              AppIcons.verified_profile_status,
+            icon,
               width: 16 * widthScale,
               height: 16 * widthScale,
               colorFilter: ColorFilter.mode(

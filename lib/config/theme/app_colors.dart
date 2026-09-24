@@ -146,8 +146,8 @@ class AppColors {
   static const Color destructiveBg = Color(0x33FFDAD6); // ~20% opacity
   static const Color verifiedStatusText = Color(0xFF007146);
   static const Color verifiedStatusBg = Color(0x1F007146); // ~12% opacity
-  static const Color unverifiedStatusText = Color(0xFFB3261E);
-  static const Color unverifiedStatusBg = Color(0x1FB3261E);
+  static const Color unverifiedStatusText = Color(0xff464646);
+  static  Color unverifiedStatusBg = Color(0xff819389).withValues(alpha: 0.2);
   static const Color profileItemText = Color(0xFF1A1C1E);
   static const Color profileItemIconBg = Color(0xFFD3D5DA);
   static const Color profileItemSubtitleText = Color(0xFF006D43);

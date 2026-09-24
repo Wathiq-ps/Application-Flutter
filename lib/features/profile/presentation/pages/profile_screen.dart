@@ -54,15 +54,6 @@ class ProfileScreen extends StatelessWidget {
               ),
               child: PageHeader(
                 widthScale: widthScale,
-                left: AppCircularIconButton(
-                  icon: AppIcons.back,
-                  onPressed: () {
-                    // TODO: handle back
-                  },
-                  size: 36 * widthScale,
-                  iconWidth: 18 * widthScale,
-                  iconHeight: 18 * widthScale,
-                ),
                 center: Text(
                   AppStrings.profile,
                   textAlign: TextAlign.center,
@@ -72,13 +63,7 @@ class ProfileScreen extends StatelessWidget {
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-                right: SizedBox(
-                  width: 36 * widthScale,
-                  height: 36 * widthScale,
-                ),
-                showRight: true,
-                expandCenter: true,
-              ),
+              )
             ),
           ),
 
@@ -116,7 +101,7 @@ class ProfileScreen extends StatelessWidget {
                   SizedBox(height: 8 * heightScale),
 
                   VerifiedStatusBadge(
-                    isVerified: true,
+                    isVerified: false,
                     widthScale: widthScale,
                   ),
 
