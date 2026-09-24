@@ -308,6 +308,68 @@ class AppStrings {
 
   static const String threeRooms = '3 rooms';
   static const String eightyFiveThousandJod = '85,000 JOD';
+  static const String myProperties = 'My Properties';
+  static const String addNewProperty = 'Add New';
+  static const String propertiesListedCount = 'Properties Listed';
+  static const String allStatus = 'All Status';
+  static const String editProperty = 'Edit Property';
+  static const String deleteProperty = 'Delete Property';
+  static const String editAction = 'Edit';
+  static const String deleteAction = 'Delete';
+  static const String saveAction = 'Save';
+  static const String discardChanges = 'Discard';
+  static const String deleteThisProperty = 'Delete this property';
+  static const String cancelAction = 'Cancel';
+  static const String viewDetails = 'View Details';
+  static const String listingType = 'Listing Type';
+  static const String propertyEditedSuccessfully =
+      'Property Edited Successfully';
+  static const String propertyDeletedSuccessfully =
+      'Property Deleted Successfully';
+  static const String listingActive = 'Active';
+  static const String listingInactive = 'Inactive';
+  static const String statusActive = 'Active';
+  static const String statusReview = 'Review';
+  static const String statusRejected = 'Rejected';
+  static const String statusSuspended = 'Suspended';
+  static const String deletePropertyWarning =
+      'This action cannot be undone. Are you sure you want to delete this property?';
+  static const String beds = ' Beds';
+  static const String baths = ' Baths';
+  static const String sqm = ' m²';
+  static const String perWeek = ' / week';
+  static const String cancel = 'Cancel';
+  static const String discardChangesMessage =
+      'Your changes will be lost if you leave this page.';
+  static const String saveChanges = 'Save Changes?';
+
+  static const String saveChangesMessage =
+      'Are you sure you want to save the changes made to this property?';
+  static const String photo = "Photos" ;
+  static const String statusProperty = "Status Property";
+  static const String location = "Location";
+  static const String changeOnMap = "Change On Map";
+  static const String sureToEditProperty =  "Are you sure you’d like to edit this property?";
+  static const String featureComingSoon =
+      'This feature isn\'t available right now. It will be added soon.';
+  static const String currency = 'Currency';
+  static const String sureToDeleteProperty =
+      'Are you sure you\'d like to delete this property?';
+  static const String online = 'Online';
+  static const String personalInformation =
+      'Personal Information';
+  static const String personalInformationSubtitle =
+      'Manage your personal information';
+  static const String properties = 'Properties';
+  static const String requests = 'Requests';
+  static const String language = 'Language';
+  static const String settings = 'Settings';
+  static const String logout = 'Logout';
+  static const String editProfile = 'Edit Profile';
+  static const String identityVerification ="Identity Verification";
+  static const String status ="Status:";
+  static const String verifiedID ='Verified ID';
+  static const String notVerifiedID ='Not Verified';
   static const String showingSavedData = 'Showing saved data';
 
   static const String all = 'All';

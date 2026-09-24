@@ -44,8 +44,36 @@ class HomeScreen extends StatelessWidget {
                   children: [
                     SizedBox(height: 15 * heightScale),
 
-                    PageHeader(widthScale: widthScale),
+                    PageHeader(
+                      widthScale: widthScale,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      leftGap: 10,
+                      rightGap: 8,
+                      left: AppProfileAvatar(
+                        widthScale: widthScale,
+                        size: 36,
+                        initialsSource: 'samer',
+                        showInitialsFallback: false,
+                        onTap: () {
+                          // TODO: open profile
+                        },
+                      ),
+                      center: HomeGreeting(
+                        widthScale: widthScale,
+                        userName: 'Samer',
+                      ),
+                      right: AppSvgIconButton(
+                        widthScale: widthScale,
+                        icon: AppIcons.notifications,
+                        boxSize: 24,
+                        iconWidth: 16,
+                        iconHeight: 20,
+                        onTap: () {
+                          // TODO: open notifications
+                        },
+                      ),
 
+                    ),
                     SizedBox(height: 25 * heightScale),
 
                     // Search bar -> Search tab + open the field

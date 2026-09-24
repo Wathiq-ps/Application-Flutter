@@ -24,72 +24,20 @@ class AppCircularIconButton extends StatelessWidget {
     this.shadowBlurRadius = 2,
   });
 
-  /// SVG icon displayed inside the button.
+
   final String icon;
-
-  /// Whether the button is currently selected.
-  ///
-  /// Example:
-  /// - Favorite = true
-  /// - Not favorite = false
   final bool isSelected;
-
-  /// Called when the button is pressed.
   final VoidCallback? onPressed;
-
-  /// Button size.
-  ///
-  /// Figma default: 36 x 36.
   final double size;
-
-  /// SVG icon width.
-  ///
-  /// Figma default: 18.
   final double iconWidth;
-
-  /// SVG icon height.
-  ///
-  /// Figma default: 16.
   final double iconHeight;
-
-  /// Background color shown when selected.
-  ///
-  /// Figma default: #B5C4FF.
   final Color selectedBackgroundColor;
-
-  /// Background opacity shown when selected.
-  ///
-  /// Figma default: 50%.
   final double selectedBackgroundOpacity;
-
-  /// Backdrop blur amount.
-  ///
-  /// Figma default: 6px.
   final double blur;
-
-  /// Border radius.
-  ///
-  /// Defaults to a fully circular shape.
   final double? borderRadius;
-
-  /// Shadow color.
-  ///
-  /// Figma default: black.
   final Color shadowColor;
-
-  /// Shadow opacity.
-  ///
-  /// Figma default: 5%.
   final double shadowOpacity;
-
-  /// Shadow offset.
-  ///
-  /// Figma default: 0px 1px.
   final Offset shadowOffset;
-
-  /// Shadow blur radius.
-  ///
-  /// Figma default: 2px.
   final double shadowBlurRadius;
 
   @override

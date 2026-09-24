@@ -30,7 +30,7 @@ class PropertyFilterChips extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 44 * widthScale,
+      height: 38 * widthScale,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         physics: const BouncingScrollPhysics(),
@@ -44,7 +44,7 @@ class PropertyFilterChips extends StatelessWidget {
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 200),
               curve: Curves.easeInOut,
-              height: 36 * widthScale,
+              height: 32 * widthScale,
               padding: EdgeInsets.symmetric(horizontal: 20 * widthScale),
               decoration: BoxDecoration(
                 color: selected ? AppColors.primary : AppColors.white,
