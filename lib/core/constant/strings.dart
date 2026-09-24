@@ -308,5 +308,13 @@ class AppStrings {
 
   static const String threeRooms = '3 rooms';
   static const String eightyFiveThousandJod = '85,000 JOD';
+  static const String showingSavedData = 'Showing saved data';
+
+  static const String all = 'All';
+  static const String viewDetails = 'View details';
+  static const String searchHint = 'Search properties';
+  static const String noPropertiesFound = 'No properties found';
+  static const String retry = 'Retry';
+
 
 }

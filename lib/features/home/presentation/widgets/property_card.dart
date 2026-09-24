@@ -1,249 +1,223 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import '../../../../config/theme/app_colors.dart';
-import '../../../../core/constant/app_icons.dart';
-import '../../../../core/extensions/media_query_extensions.dart';
-import '../../../../core/widget/app_circular_icon_button.dart';
+import 'package:mobile/config/theme/app_colors.dart';
+import 'package:mobile/core/utils/price_formatter.dart';
+import 'package:mobile/features/property/domain/entities/property_entity.dart';
+
+import '../../../../core/constant/strings.dart';
 
 class PropertyCard extends StatelessWidget {
-   PropertyCard({
+  const PropertyCard({
     super.key,
-    required this.imagePath,
-    required this.title,
-    required this.location,
-    required this.price,
-    required this.type,
-    required this.rooms,
+    required this.property,
+    required this.widthScale,
     this.onTap,
-    this.isFavorite = false,
-    this.onFavoritePressed,
   });
 
-  final String imagePath;
-  final String title;
-  final String location;
-  final String price;
-  final String type;
-  final String rooms;
+  final PropertyEntity property;
+  final double widthScale;
   final VoidCallback? onTap;
-   bool isFavorite;
-  final VoidCallback? onFavoritePressed;
 
   @override
   Widget build(BuildContext context) {
-    const double figmaWidth = 393.0;
+    final ws = widthScale;
+    final theme = Theme.of(context);
+    final muted = theme.colorScheme.onSurface.withValues(alpha: 0.6);
+    final isRent = property.listingType == PropertyListingType.rent;
 
-    final double widthScale =
-        context.screenWidth / figmaWidth;
-
-    return Padding(
-      padding: EdgeInsetsGeometry.only(bottom: 12 * widthScale),
-      child: GestureDetector(
+    return Material(
+      color: theme.colorScheme.surface,
+      borderRadius: BorderRadius.circular(20 * ws),
+      clipBehavior: Clip.antiAlias,
+      elevation: 1,
+      child: InkWell(
         onTap: onTap,
-        child: Container(
-          width: double.infinity,
-          height: 118 * widthScale,
-          padding: EdgeInsets.all(10 * widthScale),
-          decoration: BoxDecoration(
-            color: AppColors.white,
-            borderRadius: BorderRadius.circular(
-              16 * widthScale,
-            ),
-            border: Border.all(
-              color: AppColors.primary.withValues(alpha: 0.3),
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.black.withValues(alpha: 0.05),
-                offset: const Offset(0, 1),
-                blurRadius: 2,
-              ),
-            ],
-          ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-
-              ClipRRect(
-                borderRadius: BorderRadius.circular(
-                  12 * widthScale,
-                ),
-                child: SizedBox(
-                  width: 96 * widthScale,
-                  height: 96 * widthScale,
-                  child: Image.asset(
-                    imagePath,
-                    fit: BoxFit.cover,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+              height: 170 * ws,
+              width: double.infinity,
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  _Cover(url: property.coverPhoto, widthScale: ws),
+                  PositionedDirectional(
+                    top: 12 * ws,
+                    start: 12 * ws,
+                    child: _Pill(
+                      text: isRent ? AppStrings.forRent : AppStrings.forSale,
+                      background: AppColors.primary,
+                      foreground: AppColors.white,
+                      widthScale: ws,
+                    ),
                   ),
-                ),
+                  if (property.averageRating != null)
+                    PositionedDirectional(
+                      top: 12 * ws,
+                      end: 12 * ws,
+                      child: _Pill(
+                        icon: Icons.star_rounded,
+                        text: property.averageRating!.toStringAsFixed(1),
+                        background: AppColors.white,
+                        foreground: AppColors.black,
+                        widthScale: ws,
+                      ),
+                    ),
+                ],
               ),
-
-              SizedBox(
-                width: 12 * widthScale,
-              ),
-
-              Expanded(
-                child: SizedBox(
-                  height: 96 * widthScale,
-                  child: Stack(
+            ),
+            Padding(
+              padding: EdgeInsets.all(14 * ws),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    property.title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontSize: 16 * ws,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  SizedBox(height: 4 * ws),
+                  Row(
                     children: [
-                      Positioned(
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        child: Column(
-                          crossAxisAlignment:
-                          CrossAxisAlignment.start,
-                          children: [
-                            // Title
-                            Text(
-                              title,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                color: const Color(0xFF0A1F44),
-                                fontSize: 14 * widthScale,
-                                fontWeight: FontWeight.w600,
-                                height: 19 / 14,
-                              ),
-                            ),
-
-                            SizedBox(
-                              height: 2 * widthScale,
-                            ),
-
-                            // Location / rooms
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    location,
-                                    overflow:
-                                    TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                      color:
-                                      const Color(0xFF44464E),
-                                      fontSize: 12 * widthScale,
-                                      fontWeight:
-                                      FontWeight.w400,
-                                      height: 16 / 12,
-                                    ),
-                                  ),
-                                ),
-
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      Positioned(
-                          top: 50 * widthScale,
-                          right: 0,
-                          child: Row(
-                            children: [
-                              GestureDetector(
-                                onTap: onFavoritePressed,
-                                child: SvgPicture.asset(
-                                  isFavorite
-                                      ? AppIcons.rateStar
-                                      : AppIcons.rateStar,
-                                  width: 18 * widthScale,
-                                  height: 16 * widthScale,
-                                ),
-                              ),
-                              SizedBox(width: 4 * widthScale,),
-                              Text(
-                                '4.9',
-                                overflow:
-                                TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  color:AppColors.primary,
-                                  fontSize: 12 * widthScale,
-                                  fontWeight:
-                                  FontWeight.w400,
-                                  height: 16 / 12,
-                                ),
-                              ),
-                            ],
-                          )
-                      ),
-
-                Positioned(
-                top: 0,
-                right: 0,
-                child: AppCircularIconButton(
-                isSelected: true,
-                borderRadius: 99,
-                shadowBlurRadius: 0,
-                blur: isFavorite ? 0: 6,
-                selectedBackgroundOpacity: isFavorite ? 0 : 0.5,
-                shadowColor:isFavorite ? Colors.transparent : AppColors.black,
-                shadowOpacity:isFavorite ? 0: 0.05,
-                selectedBackgroundColor: isFavorite ? Colors.white :  Color(0xFFB5C4FF),
-                icon: AppIcons.favouriteSelected,
-                onPressed: (){
-                  isFavorite = true;
-                  },
-                size: (isFavorite ? 20 : 36) * widthScale,
-                iconWidth: 18 * widthScale,
-                iconHeight: 16 * widthScale,
-                ),
-              ),
-
-
-               Positioned(
-                        left: 0,
-                        right: 0,
-                        bottom: 0,
-                        child: Row(
-                          crossAxisAlignment:
-                          CrossAxisAlignment.center,
-                          children: [
-                            Text(
-                              price,
-                              style: TextStyle(
-                                color: const Color(0xFF0A1F44),
-                                fontSize: 14 * widthScale,
-                                fontWeight: FontWeight.w700,
-                                height: 24 / 14,
-                              ),
-                            ),
-
-                            const Spacer(),
-
-                            Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 8 * widthScale,
-                                vertical: 2 * widthScale,
-                              ),
-                              decoration: BoxDecoration(
-                                color: const Color(0x80DAE2FF),
-                                borderRadius:
-                                BorderRadius.circular(6),
-                              ),
-                              child: Text(
-                                type,
-                                style: TextStyle(
-                                  color: AppColors.primary,
-                                  fontSize: 11 * widthScale,
-                                  fontWeight: FontWeight.w600,
-                                  height: 14 / 11,
-                                  letterSpacing: 0.44,
-                                ),
-                              ),
-                            ),
-                          ],
+                      Icon(Icons.location_on_outlined, size: 15 * ws, color: muted),
+                      SizedBox(width: 4 * ws),
+                      Expanded(
+                        child: Text(
+                          property.locationLabel,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: theme.textTheme.bodySmall
+                              ?.copyWith(fontSize: 13 * ws, color: muted),
                         ),
                       ),
                     ],
                   ),
-                ),
+                  SizedBox(height: 12 * ws),
+                  Row(
+                    children: [
+                      _Spec(icon: Icons.bed_outlined, label: '${property.rooms}', ws: ws, color: muted),
+                      SizedBox(width: 16 * ws),
+                      _Spec(icon: Icons.bathtub_outlined, label: '${property.bathrooms}', ws: ws, color: muted),
+                      SizedBox(width: 16 * ws),
+                      _Spec(icon: Icons.square_foot_rounded, label: '${property.areaSqm.round()} m²', ws: ws, color: muted),
+                    ],
+                  ),
+                  SizedBox(height: 12 * ws),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          PriceFormatter.display(
+                            price: property.price,
+                            currency: property.priceCurrency,
+                            unit: property.priceUnit,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontSize: 16 * ws,
+                            fontWeight: FontWeight.w800,
+                            color: AppColors.primary,
+                          ),
+                        ),
+                      ),
+                      if (property.isFurnished)
+                        Text(
+                          AppStrings.furnished,
+                          style: theme.textTheme.bodySmall
+                              ?.copyWith(fontSize: 12 * ws, color: muted),
+                        ),
+                    ],
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
+    );
+  }
+}
+
+class _Cover extends StatelessWidget {
+  const _Cover({required this.url, required this.widthScale});
+  final String? url;
+  final double widthScale;
+
+  @override
+  Widget build(BuildContext context) {
+    final placeholder = ColoredBox(
+      color: AppColors.primary.withValues(alpha: 0.08),
+      child: Center(
+        child: Icon(Icons.home_work_outlined,
+            size: 48 * widthScale, color: AppColors.primary.withValues(alpha: 0.4)),
+      ),
+    );
+    if (url == null) return placeholder;
+    return Image.network(
+      url!,
+      fit: BoxFit.cover,
+      loadingBuilder: (_, child, progress) => progress == null ? child : placeholder,
+      errorBuilder: (_, __, ___) => placeholder,
+    );
+  }
+}
+
+class _Pill extends StatelessWidget {
+  const _Pill({
+    required this.text,
+    required this.background,
+    required this.foreground,
+    required this.widthScale,
+    this.icon,
+  });
+
+  final String text;
+  final Color background;
+  final Color foreground;
+  final double widthScale;
+  final IconData? icon;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 10 * widthScale, vertical: 5 * widthScale),
+      decoration: BoxDecoration(color: background, borderRadius: BorderRadius.circular(999)),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (icon != null) ...[
+            Icon(icon, size: 14 * widthScale, color: const Color(0xFFFFB400)),
+            SizedBox(width: 3 * widthScale),
+          ],
+          Text(text,
+              style: TextStyle(
+                  color: foreground, fontSize: 12 * widthScale, fontWeight: FontWeight.w600)),
+        ],
+      ),
+    );
+  }
+}
+
+class _Spec extends StatelessWidget {
+  const _Spec({required this.icon, required this.label, required this.ws, required this.color});
+  final IconData icon;
+  final String label;
+  final double ws;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Icon(icon, size: 16 * ws, color: color),
+        SizedBox(width: 4 * ws),
+        Text(label, style: TextStyle(fontSize: 13 * ws, color: color)),
+      ],
     );
   }
 }

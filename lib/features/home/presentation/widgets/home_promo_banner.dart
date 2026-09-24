@@ -1,266 +1,271 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:mobile/core/constant/images_path.dart';
-import '../../../../config/theme/app_colors.dart';
+import 'package:mobile/config/theme/app_colors.dart';
+import 'package:mobile/core/utils/price_formatter.dart';
+import 'package:mobile/features/property/domain/entities/property_entity.dart';
 import '../../../../core/constant/strings.dart';
-import '../../../../core/extensions/media_query_extensions.dart';
-import '../../../../core/widget/app_button.dart';
 import 'promo_indicator.dart';
-
-class PromoBannerData {
-  const PromoBannerData({
-    required this.image,
-    required this.title,
-    required this.subtitle,
-  });
-
-  final String image;
-  final String title;
-  final String subtitle;
-}
 
 class HomePromoBanner extends StatefulWidget {
   const HomePromoBanner({
     super.key,
-    this.onGetStarted,
-  });
+    required this.properties,
+    required this.widthScale,
+    this.onPropertyTap,
+    this.autoPlayInterval = const Duration(seconds: 5),
+  }) : assert(properties.length > 0);
 
-  final VoidCallback? onGetStarted;
+  final List<PropertyEntity> properties;
+  final double widthScale;
+  final ValueChanged<PropertyEntity>? onPropertyTap;
+  final Duration autoPlayInterval;
 
   @override
-  State<HomePromoBanner> createState() => HomePromoBannerState();
+  State<HomePromoBanner> createState() => _HomePromoBannerState();
 }
 
-class HomePromoBannerState extends State<HomePromoBanner> {
-  final PageController pageController = PageController();
+class _HomePromoBannerState extends State<HomePromoBanner> {
+  static const _slideDuration = Duration(milliseconds: 800);
 
-  final List<PromoBannerData> banners = const [
-    PromoBannerData(
-      image: ImagePath.villa,
-      title: AppStrings.findYourPerfectProperty,
-      subtitle: AppStrings.buySellOrRent,
-    ),
-    PromoBannerData(
-      image: ImagePath.villa,
-      title: AppStrings.findYourPerfectProperty,
-      subtitle: AppStrings.buySellOrRent,
-    ),
-    PromoBannerData(
-      image: ImagePath.villa,
-      title: AppStrings.findYourPerfectProperty,
-      subtitle: AppStrings.buySellOrRent,
-    ),
-  ];
+  final PageController _controller = PageController();
+  final ValueNotifier<int> _currentIndex = ValueNotifier<int>(0);
+  Timer? _timer;
+  bool _tickersEnabled = true;
+  bool _userDragging = false;
+
+  int get _count => widget.properties.length;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Pauses auto-play when this tab is hidden (IndexedStack disables tickers).
+    _tickersEnabled = TickerMode.of(context);
+    _tickersEnabled ? _startAutoPlay() : _stopAutoPlay();
+  }
+
+  @override
+  void didUpdateWidget(covariant HomePromoBanner oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.properties.length != _count) {
+      _currentIndex.value = _currentIndex.value % _count;
+      _startAutoPlay();
+    }
+  }
 
   @override
   void dispose() {
-    pageController.dispose();
+    _stopAutoPlay();
+    _controller.dispose();
+    _currentIndex.dispose();
     super.dispose();
+  }
+
+  void _startAutoPlay() {
+    _stopAutoPlay();
+    if (_count < 2 || !_tickersEnabled) return;
+    _timer = Timer.periodic(widget.autoPlayInterval, (_) {
+      if (!mounted || !_controller.hasClients) return;
+      _controller.nextPage(duration: _slideDuration, curve: Curves.easeInOutCubic);
+    });
+  }
+
+  void _stopAutoPlay() {
+    _timer?.cancel();
+    _timer = null;
+  }
+
+  bool _onScroll(ScrollNotification n) {
+    if (n is ScrollStartNotification && n.dragDetails != null) {
+      _userDragging = true;
+      _stopAutoPlay();
+    } else if (n is ScrollEndNotification && _userDragging) {
+      _userDragging = false;
+      _startAutoPlay();
+    }
+    return false;
   }
 
   @override
   Widget build(BuildContext context) {
-    const double figmaWidth = 393.0;
+    final ws = widget.widthScale;
 
-    final double widthScale = context.screenWidth / figmaWidth;
-    final double bannerHeight = 184 * widthScale;
-
-    return SizedBox(
-      height: bannerHeight,
-      child: PageView.builder(
-        controller: pageController,
-        physics: const BouncingScrollPhysics(),
-        itemCount: banners.length,
-        itemBuilder: (context, index) {
-          return PromoBannerCard(
-            data: banners[index],
-            widthScale: widthScale,
-            onGetStarted: widget.onGetStarted,
-            pageController: pageController,
-            pageCount: banners.length,
-          );
-        },
-      ),
+    return Column(
+      children: [
+        SizedBox(
+          height: 190 * ws,
+          child: NotificationListener<ScrollNotification>(
+            onNotification: _onScroll,
+            child: PageView.builder(
+              controller: _controller,
+              itemCount: _count > 1 ? null : 1, // null = endless loop
+              onPageChanged: (i) => _currentIndex.value = i % _count,
+              itemBuilder: (context, index) {
+                final property = widget.properties[index % _count];
+                return AnimatedBuilder(
+                  animation: _controller,
+                  child: _PromoSlide(
+                    property: property,
+                    widthScale: ws,
+                    onTap: widget.onPropertyTap == null
+                        ? null
+                        : () => widget.onPropertyTap!(property),
+                  ),
+                  builder: (context, child) {
+                    double delta = 0;
+                    if (_controller.hasClients && _controller.position.haveDimensions) {
+                      delta = ((_controller.page ?? index.toDouble()) - index)
+                          .abs()
+                          .clamp(0.0, 1.0);
+                    }
+                    return Opacity(
+                      opacity: 1 - delta * 0.4,
+                      child: Transform.scale(scale: 1 - delta * 0.06, child: child),
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+        ),
+        SizedBox(height: 10 * ws),
+        ValueListenableBuilder<int>(
+          valueListenable: _currentIndex,
+          builder: (_, index, __) =>
+              PromoIndicator(count: _count, currentIndex: index, widthScale: ws),
+        ),
+      ],
     );
   }
 }
 
-class PromoBannerCard extends StatelessWidget {
-  const PromoBannerCard({
-    super.key,
-    required this.data,
-    required this.widthScale,
-    required this.pageController,
-    required this.pageCount,
-    this.onGetStarted,
-  });
+class _PromoSlide extends StatelessWidget {
+  const _PromoSlide({required this.property, required this.widthScale, this.onTap});
 
-  final PromoBannerData data;
+  final PropertyEntity property;
   final double widthScale;
-  final PageController pageController;
-  final int pageCount;
-  final VoidCallback? onGetStarted;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(
-        16 * widthScale,
-      ),
-      child: Container(
-        width: double.infinity,
-        decoration: BoxDecoration(
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.black.withValues(alpha: 0.10),
-              offset: Offset(
-                0,
-                4 * widthScale,
-              ),
-              blurRadius: 6 * widthScale,
-              spreadRadius: 3 * widthScale,
-            ),
-          ],
-        ),
+    final ws = widthScale;
+    final textTheme = Theme.of(context).textTheme;
+    final coverUrl = property.coverPhoto;
+    final isRent = property.listingType == PropertyListingType.rent;
+
+    return GestureDetector(
+      onTap: onTap,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(24 * ws),
         child: Stack(
           fit: StackFit.expand,
           children: [
-            Image.asset(
-              data.image,
-              fit: BoxFit.cover,
+            const DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [AppColors.primary, AppColors.primaryDark],
+                ),
+              ),
             ),
-
+            if (coverUrl != null)
+              Image.network(coverUrl, fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) => const SizedBox.shrink()),
             DecoratedBox(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
                   colors: [
-                    const Color(0xF20A1F44),
-                    const Color(0xCC0A1F44),
-                    const Color(0x000A1F44),
-                  ],
-                  stops: const [
-                    0.0,
-                    0.5,
-                    1.0,
+                    AppColors.black.withValues(alpha: 0.05),
+                    AppColors.black.withValues(alpha: 0.55),
                   ],
                 ),
               ),
             ),
-
             Padding(
-              padding: EdgeInsets.fromLTRB(
-                20 * widthScale,
-                20 * widthScale,
-                20 * widthScale,
-                20 * widthScale,
-              ),
+              padding: EdgeInsets.all(18 * ws),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    data.title,
-                    style: TextStyle(
-                      color: AppColors.white,
-                      fontSize: 20 * widthScale,
-                      fontWeight: FontWeight.w600,
-                      height: 25 / 20,
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 12 * ws, vertical: 5 * ws),
+                    decoration: BoxDecoration(
+                      color: AppColors.white.withValues(alpha: 0.22),
+                      borderRadius: BorderRadius.circular(999),
                     ),
-                  ),
-
-                  SizedBox(
-                    height: 7 * widthScale,
-                  ),
-
-                  SizedBox(
-                    width: 195 * widthScale,
                     child: Text(
-                      data.subtitle,
-                      style: TextStyle(
-                        color: AppColors.promoBannerTextColor,
-                        fontSize: 12 * widthScale,
-                        fontWeight: FontWeight.w400,
-                        height: 16 / 12,
+                      isRent ? AppStrings.forRent : AppStrings.forSale,
+                      style: textTheme.labelMedium?.copyWith(
+                        color: AppColors.white,
+                        fontSize: 12 * ws,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ),
-
                   const Spacer(),
-
+                  Text(
+                    property.title,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: textTheme.titleLarge?.copyWith(
+                      color: AppColors.white,
+                      fontSize: 20 * ws,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  SizedBox(height: 4 * ws),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(9999),
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppColors.black.withValues(
-                                alpha: 0.10,
-                              ),
-                              offset: const Offset(0, 1),
-                              blurRadius: 3,
-                            ),
-                          ],
-                        ),
-                        child: AppElevatedButton(
-                          text: AppStrings.getStartedHome,
-                          onPressed: onGetStarted ?? () {},
-                          width: 116 * widthScale,
-                          height: 24 * widthScale,
-                          backgroundColor: AppColors.white,
-                          borderRadius: 9999,
-                          elevation: 0,
-                          textStyle: TextStyle(
-                            color: AppColors.primary,
-                            fontSize: 13 * widthScale,
-                            fontWeight: FontWeight.w600,
+                      Icon(Icons.location_on_outlined,
+                          size: 15 * ws, color: AppColors.white.withValues(alpha: 0.85)),
+                      SizedBox(width: 4 * ws),
+                      Expanded(
+                        child: Text(
+                          property.locationLabel,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: textTheme.bodySmall?.copyWith(
+                            color: AppColors.white.withValues(alpha: 0.85),
+                            fontSize: 13 * ws,
                           ),
                         ),
                       ),
-
-                      AnimatedBuilder(
-                        animation: pageController,
-                        builder: (context, _) {
-                          double currentPageValue = 0;
-
-                          if (pageController.hasClients &&
-                              pageController.page != null) {
-                            currentPageValue = pageController.page!;
-                          }
-
-                          return Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: List.generate(
-                              pageCount,
-                                  (index) {
-                                final double distance =
-                                (currentPageValue - index)
-                                    .abs()
-                                    .clamp(0.0, 1.0);
-                                final double dotWidth =
-                                    (16 - (10 * distance)) * widthScale;
-                                final double dotOpacity =
-                                    1 - (0.6 * distance);
-
-                                return Padding(
-                                  padding: EdgeInsets.only(
-                                    left: index == 0
-                                        ? 0
-                                        : 6 * widthScale,
-                                  ),
-                                  child: PromoIndicator(
-                                    width: dotWidth,
-                                    widthScale: widthScale,
-                                    opacity: dotOpacity,
-                                  ),
-                                );
-                              },
-                            ),
-                          );
-                        },
+                    ],
+                  ),
+                  SizedBox(height: 12 * ws),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          PriceFormatter.display(
+                            price: property.price,
+                            currency: property.priceCurrency,
+                            unit: property.priceUnit,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: textTheme.titleMedium?.copyWith(
+                            color: AppColors.white,
+                            fontSize: 16 * ws,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 16 * ws, vertical: 8 * ws),
+                        decoration: BoxDecoration(
+                          color: AppColors.white,
+                          borderRadius: BorderRadius.circular(999),
+                        ),
+                        child: Text(
+                          AppStrings.viewDetails,
+                          style: textTheme.labelMedium?.copyWith(
+                            color: AppColors.primary,
+                            fontSize: 13 * ws,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                       ),
                     ],
                   ),

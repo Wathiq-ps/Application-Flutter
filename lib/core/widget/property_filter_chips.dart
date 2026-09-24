@@ -2,51 +2,45 @@ import 'package:flutter/material.dart';
 import '../../config/theme/app_colors.dart';
 import '../constant/strings.dart';
 
-class PropertyFilterChips extends StatefulWidget {
+class PropertyFilterChips extends StatelessWidget {
   const PropertyFilterChips({
     super.key,
     required this.widthScale,
-    this.initialIndex = 0,
+    this.selectedIndex,
     this.onChanged,
+    this.labels = const [
+      AppStrings.forSale,
+      AppStrings.forRent,
+    ],
+    this.allowDeselect = true,
   });
 
   final double widthScale;
-  final int initialIndex;
-  final ValueChanged<int>? onChanged;
+  final int? selectedIndex;
+  final ValueChanged<int?>? onChanged;
+  final List<String> labels;
+  final bool allowDeselect;
 
-  @override
-  State<PropertyFilterChips> createState() => _PropertyFilterChipsState();
-}
-
-class _PropertyFilterChipsState extends State<PropertyFilterChips> {
-  late int _selectedIndex = widget.initialIndex;
-
-  final List<String> _filters = const [
-    AppStrings.forSale,
-    AppStrings.forRent,
-  ];
+  void _handleTap(int index) {
+    final bool isSelected = index == selectedIndex;
+    if (isSelected && !allowDeselect) return;
+    onChanged?.call(isSelected ? null : index);
+  }
 
   @override
   Widget build(BuildContext context) {
-    final widthScale = widget.widthScale;
-
     return SizedBox(
       height: 44 * widthScale,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         physics: const BouncingScrollPhysics(),
-        itemCount: _filters.length,
+        itemCount: labels.length,
         separatorBuilder: (_, __) => SizedBox(width: 7 * widthScale),
         itemBuilder: (context, index) {
-          final bool selected = index == _selectedIndex;
+          final bool selected = index == selectedIndex;
 
           return GestureDetector(
-            onTap: () {
-              setState(() {
-                _selectedIndex = index;
-              });
-              widget.onChanged?.call(index);
-            },
+            onTap: () => _handleTap(index),
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 200),
               curve: Curves.easeInOut,
@@ -72,7 +66,7 @@ class _PropertyFilterChipsState extends State<PropertyFilterChips> {
               ),
               alignment: Alignment.center,
               child: Text(
-                _filters[index],
+                labels[index],
                 style: TextStyle(
                   color: selected ? AppColors.white : AppColors.primary,
                   fontSize: 12 * widthScale,
