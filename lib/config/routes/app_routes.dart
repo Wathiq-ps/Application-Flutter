@@ -20,7 +20,8 @@ import 'package:mobile/features/owner_property_mangment/presentation/pages/owner
   import '../../features/auth/presentation/pages/email_registe_screen.dart';
   import '../../features/auth/presentation/pages/phone_login_screen.dart';
   import '../../features/auth/presentation/pages/phone_register_screen.dart';
-  import '../../features/main_navigation/presentation/pages/main_navigation_screen.dart';
+  import '../../features/home/presentation/state_mangement/home_cubit.dart';
+import '../../features/main_navigation/presentation/pages/main_navigation_screen.dart';
 import '../../features/main_navigation/presentation/state_mangment/navigation_cubit.dart';
 import '../../features/onboarding/presentation/onboardin_screen.dart';
   import '../../features/onboarding/presentation/onboarding_login_screen.dart';
@@ -288,8 +289,11 @@ import '../../features/property/presentation/pages/add_property_page_one.dart';
         GoRoute(
           path: RouteNames.mainNavigation,
           builder: (context, state) {
-            return BlocProvider(
-              create: (_) => NavigationCubit(),
+            return MultiBlocProvider(
+              providers: [
+                BlocProvider(create: (_) => NavigationCubit()),
+                BlocProvider(create: (_) => HomeCubit(Injector.homeRepository)..loadHome()),
+              ],
               child: const MainNavigationScreen(),
             );
           },

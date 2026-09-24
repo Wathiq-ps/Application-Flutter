@@ -6,6 +6,7 @@ import '../../../../config/theme/app_colors.dart';
 import '../../../../core/constant/strings.dart';
 import '../../../../core/widget/fade_indexed_stack.dart';
 import '../state_mangment/navigation_cubit.dart';
+import '../state_mangment/navigation_state.dart';
 import '../widgets/main_bottom_navigation_bar.dart';
 import '../widgets/navigation_placeholder.dart';
 
