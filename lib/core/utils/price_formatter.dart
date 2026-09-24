@@ -1,17 +1,24 @@
 class PriceFormatter {
   PriceFormatter._();
 
+  static String displayWithCode({
+    required double price,
+    required String currency,
+    String? unit,
+  }) =>
+      '${_group(price)} ${currency.toUpperCase()}${_unitSuffix(unit)}';
+
   static String display({
     required double price,
     required String currency,
     String? unit,
-  }) {
-    final number = price.round().toString().replaceAllMapped(
-      RegExp(r'\B(?=(\d{3})+(?!\d))'),
-          (_) => ',',
-    );
-    return '${_symbol(currency)} $number${_unitSuffix(unit)}';
-  }
+  }) =>
+      '${_symbol(currency)} ${_group(price)}${_unitSuffix(unit)}';
+
+  static String _group(double price) => price.round().toString().replaceAllMapped(
+    RegExp(r'\B(?=(\d{3})+(?!\d))'),
+        (_) => ',',
+  );
 
   static String _symbol(String currency) => switch (currency.toUpperCase()) {
     'ILS' => '₪',

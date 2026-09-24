@@ -1,9 +1,12 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mobile/config/theme/app_colors.dart';
-import 'package:mobile/core/utils/price_formatter.dart';
-import 'package:mobile/features/property/domain/entities/property_entity.dart';
+import '../../../../core/constant/app_icons.dart';
 import '../../../../core/constant/strings.dart';
+import '../../../../core/utils/price_formatter.dart';
+import '../../../../core/widget/property_image.dart';
+import 'package:mobile/features/property/domain/entities/property_entity.dart';
 import 'promo_indicator.dart';
 
 class HomePromoBanner extends StatefulWidget {
@@ -65,7 +68,10 @@ class _HomePromoBannerState extends State<HomePromoBanner> {
     if (_count < 2 || !_tickersEnabled) return;
     _timer = Timer.periodic(widget.autoPlayInterval, (_) {
       if (!mounted || !_controller.hasClients) return;
-      _controller.nextPage(duration: _slideDuration, curve: Curves.easeInOutCubic);
+      _controller.nextPage(
+        duration: _slideDuration,
+        curve: Curves.easeInOutCubic,
+      );
     });
   }
 
@@ -112,14 +118,18 @@ class _HomePromoBannerState extends State<HomePromoBanner> {
                   ),
                   builder: (context, child) {
                     double delta = 0;
-                    if (_controller.hasClients && _controller.position.haveDimensions) {
+                    if (_controller.hasClients &&
+                        _controller.position.haveDimensions) {
                       delta = ((_controller.page ?? index.toDouble()) - index)
                           .abs()
                           .clamp(0.0, 1.0);
                     }
                     return Opacity(
                       opacity: 1 - delta * 0.4,
-                      child: Transform.scale(scale: 1 - delta * 0.06, child: child),
+                      child: Transform.scale(
+                        scale: 1 - delta * 0.06,
+                        child: child,
+                      ),
                     );
                   },
                 );
@@ -130,8 +140,11 @@ class _HomePromoBannerState extends State<HomePromoBanner> {
         SizedBox(height: 10 * ws),
         ValueListenableBuilder<int>(
           valueListenable: _currentIndex,
-          builder: (_, index, __) =>
-              PromoIndicator(count: _count, currentIndex: index, widthScale: ws),
+          builder: (_, index, __) => PromoIndicator(
+            count: _count,
+            currentIndex: index,
+            widthScale: ws,
+          ),
         ),
       ],
     );
@@ -139,7 +152,11 @@ class _HomePromoBannerState extends State<HomePromoBanner> {
 }
 
 class _PromoSlide extends StatelessWidget {
-  const _PromoSlide({required this.property, required this.widthScale, this.onTap});
+  const _PromoSlide({
+    required this.property,
+    required this.widthScale,
+    this.onTap,
+  });
 
   final PropertyEntity property;
   final double widthScale;
@@ -149,28 +166,21 @@ class _PromoSlide extends StatelessWidget {
   Widget build(BuildContext context) {
     final ws = widthScale;
     final textTheme = Theme.of(context).textTheme;
-    final coverUrl = property.coverPhoto;
     final isRent = property.listingType == PropertyListingType.rent;
+    final rating = property.averageRating ?? 0.0; // not rated -> 0.0
 
     return GestureDetector(
       onTap: onTap,
+      behavior: HitTestBehavior.opaque,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(24 * ws),
         child: Stack(
           fit: StackFit.expand,
           children: [
-            const DecoratedBox(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [AppColors.primary, AppColors.primaryDark],
-                ),
-              ),
-            ),
-            if (coverUrl != null)
-              Image.network(coverUrl, fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => const SizedBox.shrink()),
+            // Backend image, or the default villa when null / empty / broken
+            PropertyImage(path: property.coverPhoto, fit: BoxFit.cover),
+
+            // Dark overlay so the text stays readable
             DecoratedBox(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
@@ -178,32 +188,74 @@ class _PromoSlide extends StatelessWidget {
                   end: Alignment.bottomCenter,
                   colors: [
                     AppColors.black.withValues(alpha: 0.05),
-                    AppColors.black.withValues(alpha: 0.55),
+                    AppColors.black.withValues(alpha: 0.60),
                   ],
                 ),
               ),
             ),
+
             Padding(
               padding: EdgeInsets.all(18 * ws),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 12 * ws, vertical: 5 * ws),
-                    decoration: BoxDecoration(
-                      color: AppColors.white.withValues(alpha: 0.22),
-                      borderRadius: BorderRadius.circular(999),
-                    ),
-                    child: Text(
-                      isRent ? AppStrings.forRent : AppStrings.forSale,
-                      style: textTheme.labelMedium?.copyWith(
-                        color: AppColors.white,
-                        fontSize: 12 * ws,
-                        fontWeight: FontWeight.w600,
+                  // Top row: listing type + rating
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 12 * ws,
+                          vertical: 5 * ws,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.white.withValues(alpha: 0.22),
+                          borderRadius: BorderRadius.circular(999),
+                        ),
+                        child: Text(
+                          isRent ? AppStrings.forRent : AppStrings.forSale,
+                          style: textTheme.labelMedium?.copyWith(
+                            color: AppColors.white,
+                            fontSize: 12 * ws,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                       ),
-                    ),
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 10 * ws,
+                          vertical: 5 * ws,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.white.withValues(alpha: 0.22),
+                          borderRadius: BorderRadius.circular(999),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            SvgPicture.asset(
+                              AppIcons.rateStar,
+                              width: 14 * ws,
+                              height: 14 * ws,
+                              excludeFromSemantics: true,
+                            ),
+                            SizedBox(width: 4 * ws),
+                            Text(
+                              rating.toStringAsFixed(1),
+                              style: textTheme.labelMedium?.copyWith(
+                                color: AppColors.white,
+                                fontSize: 12 * ws,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
+
                   const Spacer(),
+
                   Text(
                     property.title,
                     maxLines: 2,
@@ -217,8 +269,11 @@ class _PromoSlide extends StatelessWidget {
                   SizedBox(height: 4 * ws),
                   Row(
                     children: [
-                      Icon(Icons.location_on_outlined,
-                          size: 15 * ws, color: AppColors.white.withValues(alpha: 0.85)),
+                      Icon(
+                        Icons.location_on_outlined,
+                        size: 15 * ws,
+                        color: AppColors.white.withValues(alpha: 0.85),
+                      ),
                       SizedBox(width: 4 * ws),
                       Expanded(
                         child: Text(
@@ -234,11 +289,13 @@ class _PromoSlide extends StatelessWidget {
                     ],
                   ),
                   SizedBox(height: 12 * ws),
+
+                  // Price + View details button
                   Row(
                     children: [
                       Expanded(
                         child: Text(
-                          PriceFormatter.display(
+                          PriceFormatter.displayWithCode(
                             price: property.price,
                             currency: property.priceCurrency,
                             unit: property.priceUnit,
@@ -252,8 +309,12 @@ class _PromoSlide extends StatelessWidget {
                           ),
                         ),
                       ),
+                      SizedBox(width: 8 * ws),
                       Container(
-                        padding: EdgeInsets.symmetric(horizontal: 16 * ws, vertical: 8 * ws),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 16 * ws,
+                          vertical: 8 * ws,
+                        ),
                         decoration: BoxDecoration(
                           color: AppColors.white,
                           borderRadius: BorderRadius.circular(999),
