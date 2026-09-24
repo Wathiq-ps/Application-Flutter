@@ -2,12 +2,12 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mobile/config/theme/app_colors.dart';
+import 'package:mobile/features/home/presentation/widgets/promo_indicator.dart';
 import '../../../../core/constant/app_icons.dart';
 import '../../../../core/constant/strings.dart';
-import '../../../../core/utils/price_formatter.dart';
+import '../../../../core/widget/app_button.dart';
 import '../../../../core/widget/property_image.dart';
 import 'package:mobile/features/property/domain/entities/property_entity.dart';
-import 'promo_indicator.dart';
 
 class HomePromoBanner extends StatefulWidget {
   const HomePromoBanner({
@@ -41,7 +41,6 @@ class _HomePromoBannerState extends State<HomePromoBanner> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // Pauses auto-play when this tab is hidden (IndexedStack disables tickers).
     _tickersEnabled = TickerMode.of(context);
     _tickersEnabled ? _startAutoPlay() : _stopAutoPlay();
   }
@@ -95,15 +94,16 @@ class _HomePromoBannerState extends State<HomePromoBanner> {
   Widget build(BuildContext context) {
     final ws = widget.widthScale;
 
-    return Column(
-      children: [
-        SizedBox(
-          height: 190 * ws,
-          child: NotificationListener<ScrollNotification>(
-            onNotification: _onScroll,
-            child: PageView.builder(
+    return SizedBox(
+      height: 190 * ws,
+      child: NotificationListener<ScrollNotification>(
+        onNotification: _onScroll,
+        child: ValueListenableBuilder<int>(
+          valueListenable: _currentIndex,
+          builder: (context, currentIdx, _) {
+            return PageView.builder(
               controller: _controller,
-              itemCount: _count > 1 ? null : 1, // null = endless loop
+              itemCount: _count > 1 ? null : 1,
               onPageChanged: (i) => _currentIndex.value = i % _count,
               itemBuilder: (context, index) {
                 final property = widget.properties[index % _count];
@@ -112,6 +112,8 @@ class _HomePromoBannerState extends State<HomePromoBanner> {
                   child: _PromoSlide(
                     property: property,
                     widthScale: ws,
+                    count: _count,
+                    currentIndex: currentIdx,
                     onTap: widget.onPropertyTap == null
                         ? null
                         : () => widget.onPropertyTap!(property),
@@ -134,19 +136,10 @@ class _HomePromoBannerState extends State<HomePromoBanner> {
                   },
                 );
               },
-            ),
-          ),
+            );
+          },
         ),
-        SizedBox(height: 10 * ws),
-        ValueListenableBuilder<int>(
-          valueListenable: _currentIndex,
-          builder: (_, index, __) => PromoIndicator(
-            count: _count,
-            currentIndex: index,
-            widthScale: ws,
-          ),
-        ),
-      ],
+      ),
     );
   }
 }
@@ -155,19 +148,21 @@ class _PromoSlide extends StatelessWidget {
   const _PromoSlide({
     required this.property,
     required this.widthScale,
+    required this.count,
+    required this.currentIndex,
     this.onTap,
   });
 
   final PropertyEntity property;
   final double widthScale;
+  final int count;
+  final int currentIndex;
   final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     final ws = widthScale;
     final textTheme = Theme.of(context).textTheme;
-    final isRent = property.listingType == PropertyListingType.rent;
-    final rating = property.averageRating ?? 0.0; // not rated -> 0.0
 
     return GestureDetector(
       onTap: onTap,
@@ -177,85 +172,30 @@ class _PromoSlide extends StatelessWidget {
         child: Stack(
           fit: StackFit.expand,
           children: [
-            // Backend image, or the default villa when null / empty / broken
+            // Backend image
             PropertyImage(path: property.coverPhoto, fit: BoxFit.cover),
 
-            // Dark overlay so the text stays readable
+            // Left-half shadow gradient
             DecoratedBox(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
                   colors: [
-                    AppColors.black.withValues(alpha: 0.05),
-                    AppColors.black.withValues(alpha: 0.60),
+                    AppColors.primary.withValues(alpha: 0.95),
+                    AppColors.primary.withValues(alpha: 0.80),
+                    AppColors.primary.withValues(alpha: 0.0),
                   ],
+                  stops: const [0.0, 0.55, 1.0],
                 ),
               ),
             ),
 
             Padding(
-              padding: EdgeInsets.all(18 * ws),
+              padding: EdgeInsets.only(top: 34 * ws , bottom: 34 * ws ,left: 26 * ws,right: 26 * ws ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Top row: listing type + rating
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 12 * ws,
-                          vertical: 5 * ws,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColors.white.withValues(alpha: 0.22),
-                          borderRadius: BorderRadius.circular(999),
-                        ),
-                        child: Text(
-                          isRent ? AppStrings.forRent : AppStrings.forSale,
-                          style: textTheme.labelMedium?.copyWith(
-                            color: AppColors.white,
-                            fontSize: 12 * ws,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 10 * ws,
-                          vertical: 5 * ws,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColors.white.withValues(alpha: 0.22),
-                          borderRadius: BorderRadius.circular(999),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            SvgPicture.asset(
-                              AppIcons.rateStar,
-                              width: 14 * ws,
-                              height: 14 * ws,
-                              excludeFromSemantics: true,
-                            ),
-                            SizedBox(width: 4 * ws),
-                            Text(
-                              rating.toStringAsFixed(1),
-                              style: textTheme.labelMedium?.copyWith(
-                                color: AppColors.white,
-                                fontSize: 12 * ws,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  const Spacer(),
-
                   Text(
                     property.title,
                     maxLines: 2,
@@ -263,16 +203,21 @@ class _PromoSlide extends StatelessWidget {
                     style: textTheme.titleLarge?.copyWith(
                       color: AppColors.white,
                       fontSize: 20 * ws,
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
-                  SizedBox(height: 4 * ws),
+                  SizedBox(height: 6 * ws),
+
                   Row(
                     children: [
-                      Icon(
-                        Icons.location_on_outlined,
-                        size: 15 * ws,
-                        color: AppColors.white.withValues(alpha: 0.85),
+                      SvgPicture.asset(
+                        AppIcons.location,
+                        width: 12 * ws,
+                        height: 12 * ws,
+                        colorFilter: ColorFilter.mode(
+                          AppColors.white.withValues(alpha: 0.85),
+                          BlendMode.srcIn,
+                        ),
                       ),
                       SizedBox(width: 4 * ws),
                       Expanded(
@@ -281,52 +226,37 @@ class _PromoSlide extends StatelessWidget {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: textTheme.bodySmall?.copyWith(
-                            color: AppColors.white.withValues(alpha: 0.85),
-                            fontSize: 13 * ws,
+                            color:   Color(0xffE7E8E9CC).withValues(alpha: 0.8),
+                            fontSize: 12 * ws,
                           ),
                         ),
                       ),
                     ],
                   ),
-                  SizedBox(height: 12 * ws),
 
-                  // Price + View details button
+                  const Spacer(),
+
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Expanded(
-                        child: Text(
-                          PriceFormatter.displayWithCode(
-                            price: property.price,
-                            currency: property.priceCurrency,
-                            unit: property.priceUnit,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: textTheme.titleMedium?.copyWith(
-                            color: AppColors.white,
-                            fontSize: 16 * ws,
-                            fontWeight: FontWeight.w700,
-                          ),
+                      AppElevatedButton(
+                        text: AppStrings.viewDetails,
+                        onPressed: onTap,
+                        backgroundColor: AppColors.white,
+                        width: 116 * ws,
+                        height: 24 * ws,
+                        borderRadius: 999 * ws,
+                        textStyle: textTheme.labelMedium?.copyWith(
+                          color: AppColors.primary,
+                          fontSize: 13 * ws,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
-                      SizedBox(width: 8 * ws),
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 16 * ws,
-                          vertical: 8 * ws,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColors.white,
-                          borderRadius: BorderRadius.circular(999),
-                        ),
-                        child: Text(
-                          AppStrings.viewDetails,
-                          style: textTheme.labelMedium?.copyWith(
-                            color: AppColors.primary,
-                            fontSize: 13 * ws,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
+                      PromoIndicator(
+                        count: count,
+                        currentIndex: currentIndex,
+                        widthScale: ws,
                       ),
                     ],
                   ),
@@ -339,3 +269,4 @@ class _PromoSlide extends StatelessWidget {
     );
   }
 }
+

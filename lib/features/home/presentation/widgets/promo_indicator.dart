@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:mobile/config/theme/app_colors.dart';
+import 'package:flutter/cupertino.dart';
+import '../../../../config/theme/app_colors.dart';
 
 class PromoIndicator extends StatelessWidget {
   const PromoIndicator({
@@ -16,7 +16,7 @@ class PromoIndicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisSize: MainAxisSize.min,
       children: List.generate(count, (i) {
         final active = i == currentIndex;
         return AnimatedContainer(
@@ -27,8 +27,8 @@ class PromoIndicator extends StatelessWidget {
           width: (active ? 22 : 6) * widthScale,
           decoration: BoxDecoration(
             color: active
-                ? AppColors.primary
-                : AppColors.primary.withValues(alpha: 0.25),
+                ? AppColors.white
+                : AppColors.white.withValues(alpha: 0.35),
             borderRadius: BorderRadius.circular(3 * widthScale),
           ),
         );
