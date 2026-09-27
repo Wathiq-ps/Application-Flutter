@@ -323,10 +323,8 @@ class AppStrings {
 
   static const String tapToUpload = 'Tap to upload';
 
-  static const String takePhoto = 'Take Photo';
-
-  static const String gallery = 'Gallery';
-
+ 
+ 
   static const String pleaseUploadIdFirst = 'Please upload your ID first';
 
   // Requirements - ID
@@ -351,7 +349,7 @@ class AppStrings {
       "We're reviewing your documents. This usually takes 1-2 business days. We'll notify you once it's approved.";
 
   static const String backToHome = 'Back to Home';
-}
+
   static const String home = 'Home';
 
   static const String search = 'Search';

@@ -34,7 +34,7 @@ class _VerificationPendingScreenState extends State<VerificationPendingScreen> {
 
           if (kycStatus == VerificationStatus.approved) {
             // TODO: عدّل الراوت حسب اسم شاشة الـ Home/Dashboard عندك
-            context.go(RouteNames.addPropertyScreenOne);
+            context.go(RouteNames.listPropertyTypeScreen);
           } else if (kycStatus == VerificationStatus.rejected) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
@@ -163,7 +163,7 @@ class _VerificationPendingScreenState extends State<VerificationPendingScreen> {
                                       );
                                     }
                                   : () => context.go(
-                                      RouteNames.addPropertyScreenOne,
+                                      RouteNames.listPropertyTypeScreen,
                                     ),
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: const Color(0xff001B4D),
