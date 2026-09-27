@@ -17,6 +17,7 @@ class AppElevatedButton extends StatelessWidget {
     this.postIcon,
     this.width,
     this.height,
+    this.padding,
     this.borderRadius,
     this.iconGap,
     this.textStyle,
@@ -38,6 +39,8 @@ class AppElevatedButton extends StatelessWidget {
   final Widget? preIcon;
   final Widget? postIcon;
   final double? width;
+    final EdgeInsetsGeometry? padding;
+
   final double? height;
   final double? borderRadius;
   final double? iconGap;
@@ -137,13 +140,14 @@ class AppElevatedButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: isEnabled ? onPressed : null,
         style: ElevatedButton.styleFrom(
+          
           backgroundColor: effectiveBackgroundColor,
           disabledBackgroundColor:
           disabledBackgroundColor ?? AppColors.disabled,
           foregroundColor: effectiveTextColor,
           elevation: elevation ?? 0,
           minimumSize: Size.zero,
-          padding: EdgeInsets.zero,
+          padding: padding?? EdgeInsets.zero,
           textStyle: effectiveTextStyle,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(

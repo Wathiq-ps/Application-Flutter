@@ -54,11 +54,17 @@ class AppStrings {
 
   static const String listYourPropertyPage2Title = 'Location Details';
 
+  static const String listYourPropertyPage5Title = 'Proof of Ownership';
+  static const String listYourPropertyPage6Title = 'Review your listing';
+
   static const String listYourPropertyStep2 = 'Step 2 of 6';
 
   static const String listYourPropertyStep3 = 'Step 3 of 6';
 
   static const String listYourPropertyStep4 = 'Step 4 of 6';
+
+  static const String listYourPropertyStep5 = 'Step 5 of 6';
+  static const String listYourPropertyStep6 = 'Step 6 of 6';
 
   // ─────────────────────────────────────────────
   // Property Type
@@ -97,6 +103,8 @@ class AppStrings {
   static const String city = 'City';
 
   static const String district = 'District';
+  static const String latitude = 'Latitude';
+  static const String longitude = 'Longitude';
 
   static const String buildingNumber = 'Building Number';
 
@@ -110,6 +118,9 @@ class AppStrings {
 
   static const String bathrooms = 'Bathrooms';
 
+  static const String latitudeHint = 'latitude';
+  static const String longitudeHint = 'longitude';
+
   static const String buildingNumberHint = 'e.g. 12';
 
   static const String areaHint = 'e.g. 150';
@@ -117,6 +128,9 @@ class AppStrings {
   static const String priceHint = 'e.g. 85000';
 
   static const String floorHint = 'e.g. 3';
+  static const String priceUnit = 'Price Unit';
+  static const String selectPriceUnit = 'Select price unit';
+  static const String pleaseSelectPriceUnit = 'Please select price unit';
 
   // ─────────────────────────────────────────────
   // Property Features
@@ -155,6 +169,29 @@ class AppStrings {
   static const String add = 'Add';
 
   static const String jod = 'JOD';
+
+  static const String uploadDocuments = 'Upload documents';
+  static const String taptpUpload = 'Tap to upload';
+  static const String uploadDescription = 'You can upload photos or PDF files';
+  static const String takePhoto = 'Take a photo';
+  static const String gallery = 'Gallery';
+  static const String photos = 'Photos';
+
+  // Ownership Document Types
+  static const String documentType = 'Document Type';
+  static const String selectDocumentType = 'Select document type';
+  static const String pleaseSelectDocumentType = 'Please select document type';
+  static const String titleDeed = 'Title Deed / سند ملكية';
+  static const String saleContract = 'Sale Contract / عقد بيع';
+  static const String inheritanceDeed = 'Inheritance Deed / حصر إرث';
+  static const String powerOfAttorney = 'Power of Attorney / وكالة دورية';
+  static const String municipalRecord = 'Municipal Record / سجل بلدية';
+
+  //Review property
+  static const String basicDetailsTitle = 'Basic Details';
+  static const String edit = 'Edit';
+  static const String saveChangesBtn = 'Save Changes';
+   static const String location = 'Location';
 
   // ─────────────────────────────────────────────
   // Onboarding
@@ -386,7 +423,6 @@ class AppStrings {
       'Are you sure you want to save the changes made to this property?';
   static const String photo = "Photos" ;
   static const String statusProperty = "Status Property";
-  static const String location = "Location";
   static const String changeOnMap = "Change On Map";
   static const String sureToEditProperty =  "Are you sure you’d like to edit this property?";
   static const String featureComingSoon =
@@ -412,8 +448,7 @@ class AppStrings {
   static const String showingSavedData = 'Showing saved data';
 
   static const String all = 'All';
-  static const String viewDetails = 'View details';
-  static const String searchHint = 'Search properties';
+   static const String searchHint = 'Search properties';
   static const String noPropertiesFound = 'No properties found';
   static const String retry = 'Retry';
 
