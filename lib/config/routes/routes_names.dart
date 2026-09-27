@@ -29,4 +29,9 @@ class RouteNames {
   static const String addPropertyScreenFour = '/addPropertyScreenFour';
   static const String proofOfOwnershipPage = '/proofOfOwnershipPage';
   static const String reviewListingPage = '/reviewListingPage';
+
+  static const String mainNavigation = '/main-navigation';
+  static const String ownerPropertiesScreen = '/ownerPropertiesScreen';
+  static const String ownerEditPropertyScreen = '/ownerEditPropertyScreen';
+  static const String ownerDeletePropertyScreen = '/ownerDeletePropertyScreen';
 }
