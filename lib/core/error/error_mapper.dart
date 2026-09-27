@@ -5,10 +5,10 @@ class AppErrorMapper {
   AppErrorMapper._();
 
   static String mapCode(
-      String? errorCode, {
-        int? retryAfter,
-        String? fallbackMessage,
-      }) {
+    String? errorCode, {
+    int? retryAfter,
+    String? fallbackMessage,
+  }) {
     switch (errorCode) {
       case 'email_not_registered':
         return AppStrings.emailNotRegistered;
@@ -48,8 +48,7 @@ class AppErrorMapper {
       return AppStrings.incorrectOtp;
     }
 
-    if (message.contains('blocked') ||
-        message.contains('suspended')) {
+    if (message.contains('blocked') || message.contains('suspended')) {
       return AppStrings.accountSuspended;
     }
 

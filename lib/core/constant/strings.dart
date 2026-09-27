@@ -302,6 +302,56 @@ class AppStrings {
   static String tooManyAttemptsWithRetry(int retryAfter) =>
       'Too many attempts. Please wait ${retryAfter}s before trying again';
 
+  // ─────────────────────────────────────────────
+  // Identity Verification
+  // ─────────────────────────────────────────────
+
+  static const String verifyYourIdentity = 'Verify Your Identity';
+
+  static const String step1Of2 = 'Step 1 of 2';
+
+  static const String step2Of2 = 'Step 2 of 2';
+
+  static const String uploadYourId = 'Upload your ID';
+
+  static const String takeClearPhotoOfId =
+      'Take a clear photo of the front of your ID card';
+
+  static const String takeSelfieWithId = 'Take a selfie with your ID';
+
+  static const String holdIdNextToFace = 'Hold your ID next to your face';
+
+  static const String tapToUpload = 'Tap to upload';
+
+  static const String takePhoto = 'Take Photo';
+
+  static const String gallery = 'Gallery';
+
+  static const String pleaseUploadIdFirst = 'Please upload your ID first';
+
+  // Requirements - ID
+  static const String faceAndIdClearlyVisible =
+      'Face and ID both clearly visible';
+
+  static const String goodLightingNoShadows = 'Good lighting, no shadows';
+
+  static const String removeSunglassesOrHats = 'Remove sunglasses or hats';
+
+  // Requirements - Selfie
+  static const String allFourCornersVisible = 'All 4 corners visible';
+
+  static const String noGlareOrBlur = 'No glare or blur';
+
+  static const String textIsReadable = 'Text is readable';
+
+  // Verification Pending
+  static const String verificationPending = 'Verification Pending';
+
+  static const String verificationPendingDescription =
+      "We're reviewing your documents. This usually takes 1-2 business days. We'll notify you once it's approved.";
+
+  static const String backToHome = 'Back to Home';
+}
   static const String home = 'Home';
 
   static const String search = 'Search';
