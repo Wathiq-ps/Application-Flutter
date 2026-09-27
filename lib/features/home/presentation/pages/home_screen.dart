@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mobile/core/extensions/media_query_extensions.dart';
+import '../../../../core/constant/app_icons.dart';
 import '../../../../core/constant/strings.dart';
+import '../../../../core/widget/app_profile_avatar.dart';
+import '../../../../core/widget/app_svg_button.dart';
 import '../../../../core/widget/cached_data_banner.dart';
 import '../../../../core/widget/error_retry_view.dart';
 import '../../../../core/widget/page_header.dart';
@@ -11,6 +14,7 @@ import '../../../main_navigation/presentation/state_mangment/navigation_cubit.da
 import '../state_mangement/home_cubit.dart';
 import '../state_mangement/home_state.dart';
 import '../widgets/all_properties_section.dart';
+import '../widgets/home_greeting.dart';
 import '../widgets/home_loading_view.dart';
 import '../widgets/home_promo_banner.dart';
 

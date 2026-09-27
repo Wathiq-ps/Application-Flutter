@@ -5,7 +5,7 @@
   import 'package:mobile/core/di/injector.dart';
   import 'package:mobile/features/auth/domain/entities/auth_mode.dart';
   import 'package:mobile/features/auth/presentation/state_mangement/cubit/auth_cubit.dart';
-import 'package:mobile/features/home/presentation/widgets/property_card.dart';
+import 'package:mobile/features/home/presentation/widgets/property_home_card.dart';
 import 'package:mobile/features/owner_property_mangment/presentation/pages/owner_delete_property_screen.dart';
 import 'package:mobile/features/owner_property_mangment/presentation/pages/owner_edit_property_screen.dart';
 import 'package:mobile/features/owner_property_mangment/presentation/pages/owner_properties_screen.dart';
@@ -30,6 +30,7 @@ import '../../features/onboarding/presentation/onboardin_screen.dart';
 import '../../features/owner_property_mangment/presentation/state_management/owner_property_state.dart';
 import '../../features/property/presentation/pages/add_property_page_one.dart';
   import '../../features/property/presentation/pages/add_property_page_three.dart';
+import '../../features/saved/presentations/state_management/saved_cubit.dart';
 
   class AppRoutes {
     AppRoutes._();
@@ -293,6 +294,7 @@ import '../../features/property/presentation/pages/add_property_page_one.dart';
               providers: [
                 BlocProvider(create: (_) => NavigationCubit()),
                 BlocProvider(create: (_) => HomeCubit(Injector.homeRepository)..loadHome()),
+                BlocProvider(create: (_) => SavedCubit(Injector.favoritesRepository)),
               ],
               child: const MainNavigationScreen(),
             );

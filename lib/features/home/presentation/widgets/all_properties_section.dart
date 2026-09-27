@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/config/theme/app_colors.dart';
+import 'package:mobile/features/home/presentation/widgets/property_home_card.dart';
 import 'package:mobile/features/property/domain/entities/property_entity.dart';
 import '../../../../core/constant/strings.dart';
 import '../../../../core/utils/price_formatter.dart';
-import 'property_card.dart';
 
 class AllPropertiesSection extends StatelessWidget {
   const AllPropertiesSection({
@@ -58,9 +58,7 @@ class AllPropertiesSection extends StatelessWidget {
             ),
           ],
         ),
-
         SizedBox(height: 12 * widthScale),
-
         AnimatedSwitcher(
           duration: const Duration(milliseconds: 300),
           switchInCurve: Curves.easeOut,
@@ -82,8 +80,8 @@ class AllPropertiesSection extends StatelessWidget {
             key: ValueKey(properties.map((p) => p.id).join()),
             children: [
               for (final property in properties)
-                PropertyCard(
-                  // null / empty -> default villa (handled by PropertyImage)
+                PropertyHomeCard(
+                  property: property,
                   imagePath: property.coverPhoto,
                   title:
                   '${_capitalize(property.type)} — ${_roomsLabel(property.rooms)}',
@@ -94,8 +92,7 @@ class AllPropertiesSection extends StatelessWidget {
                     unit: property.priceUnit,
                   ),
                   rooms: _roomsLabel(property.rooms),
-                  // no For Sale / For Rent badge here
-                  rating: property.averageRating, // null -> 0.0
+                  rating: property.averageRating,
                   onTap: onPropertyTap == null
                       ? null
                       : () => onPropertyTap!(property),

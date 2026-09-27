@@ -5,6 +5,7 @@ import 'package:mobile/features/profile/presentation/pages/profile_screen.dart';
 import '../../../../config/theme/app_colors.dart';
 import '../../../../core/constant/strings.dart';
 import '../../../../core/widget/fade_indexed_stack.dart';
+import '../../../saved/presentations/pages/saved_screen.dart';
 import '../state_mangment/navigation_cubit.dart';
 import '../state_mangment/navigation_state.dart';
 import '../widgets/main_bottom_navigation_bar.dart';
@@ -15,7 +16,7 @@ class MainNavigationScreen extends StatelessWidget {
 
   static const List<Widget> pages = [
     HomeScreen(),
-    NavigationPlaceholder(title: AppStrings.favourite),
+    SavedScreen(),
     NavigationPlaceholder(title: AppStrings.search),
    ProfileScreen(),
   ];

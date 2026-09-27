@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import '../../../../config/theme/app_colors.dart';
-import '../../../../core/constant/app_icons.dart';
-import '../../../../core/constant/images_path.dart';
-import '../../../../core/constant/strings.dart';
-import '../../../../core/widget/app_button.dart';
-import '../../../../core/widget/property_card_action.dart';
-import '../../../../core/widget/property_spec_chip.dart';
+import '../../config/theme/app_colors.dart';
+import '../../core/constant/app_icons.dart';
+import '../../core/constant/images_path.dart';
+import '../../core/constant/strings.dart';
+import '../../core/widget/app_button.dart';
+import '../../core/widget/favorite_button.dart';
+import '../../core/widget/property_card_action.dart';
+import '../../core/widget/property_spec_chip.dart';
 import '../../features/owner_property_mangment/domain/entities/owner_property_list_item.dart';
 import '../../features/owner_property_mangment/presentation/widgets/owner_property_status.dart';
 
@@ -21,6 +22,9 @@ class PropertyCard extends StatelessWidget {
     this.onViewDetails,
     this.onEdit,
     this.onDelete,
+    this.showFavorite = false,
+    this.isFavorite = false,
+    this.onFavoritePressed,
   });
 
   final OwnerPropertyListItem property;
@@ -31,7 +35,9 @@ class PropertyCard extends StatelessWidget {
   final VoidCallback? onViewDetails;
   final VoidCallback? onEdit;
   final VoidCallback? onDelete;
-
+  final bool showFavorite;
+  final bool isFavorite;
+  final VoidCallback? onFavoritePressed;
 
   String get _resolvedImagePath {
     if (localImagePath != null && localImagePath!.trim().isNotEmpty) {
@@ -117,10 +123,25 @@ class PropertyCard extends StatelessWidget {
                     widthScale: widthScale,
                   ),
                 ),
+              if (showFavorite)
+                Positioned(
+                  right: 12 * widthScale,
+                  top: 12 * widthScale,
+                  child: FavoriteButton(
+                    isFavorite: isFavorite,
+                    widthScale: widthScale,
+                    onPressed: onFavoritePressed,
+                  ),
+                ),
             ],
           ),
           Padding(
-            padding: EdgeInsets.only(top: 16 * widthScale, left: 16 * widthScale,right: 16 * widthScale,bottom: 23 * widthScale),
+            padding: EdgeInsets.only(
+              top: 16 * widthScale,
+              left: 16 * widthScale,
+              right: 16 * widthScale,
+              bottom: 23 * widthScale,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -249,20 +270,19 @@ class PropertyCard extends StatelessWidget {
                         ],
                       ),
 
-
-            AppElevatedButton(
-            text: AppStrings.viewDetails,
-            onPressed: onViewDetails ?? () {},
-            width: 104 * widthScale,
-            height: 32 * widthScale,
-            backgroundColor: theme.colorScheme.primary,
-            borderRadius: 9999,
-            elevation: 0,
-            textStyle: theme.textTheme.labelSmall?.copyWith(
-              color: theme.colorScheme.onPrimary,
-              fontSize: 12 * widthScale
-            ),
-          )
+                      AppElevatedButton(
+                        text: AppStrings.viewDetails,
+                        onPressed: onViewDetails ?? () {},
+                        width: 104 * widthScale,
+                        height: 32 * widthScale,
+                        backgroundColor: theme.colorScheme.primary,
+                        borderRadius: 9999,
+                        elevation: 0,
+                        textStyle: theme.textTheme.labelSmall?.copyWith(
+                          color: theme.colorScheme.onPrimary,
+                          fontSize: 12 * widthScale,
+                        ),
+                      ),
                     ],
                   ),
                 ),

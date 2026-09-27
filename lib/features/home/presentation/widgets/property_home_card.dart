@@ -3,13 +3,16 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../config/theme/app_colors.dart';
 import '../../../../core/constant/app_icons.dart';
 import '../../../../core/constant/strings.dart';
+import '../../../../core/di/injector.dart';
 import '../../../../core/extensions/media_query_extensions.dart';
-import '../../../../core/widget/app_circular_icon_button.dart';
+import '../../../../core/widget/favorite_button.dart';
 import '../../../../core/widget/property_image.dart';
+import '../../../property/domain/entities/property_entity.dart';
 
-class PropertyCard extends StatelessWidget {
-  const PropertyCard({
+class PropertyHomeCard extends StatelessWidget {
+  const PropertyHomeCard({
     super.key,
+    required this.property,
     required this.imagePath,
     required this.title,
     required this.location,
@@ -18,20 +21,18 @@ class PropertyCard extends StatelessWidget {
     this.rating,
     this.onTap,
     this.onViewDetails,
-    this.isFavorite = false,
-    this.onFavoritePressed,
   });
-  /// Backend URL, asset path, or null/empty (falls back to the default villa).
+
+
+  final PropertyEntity property;
   final String? imagePath;
   final String title;
   final String location;
   final String price;
   final String rooms;
-  final VoidCallback? onViewDetails;
   final double? rating;
   final VoidCallback? onTap;
-  final bool isFavorite;
-  final VoidCallback? onFavoritePressed;
+  final VoidCallback? onViewDetails;
 
   @override
   Widget build(BuildContext context) {
@@ -51,9 +52,7 @@ class PropertyCard extends StatelessWidget {
           decoration: BoxDecoration(
             color: AppColors.white,
             borderRadius: BorderRadius.circular(16 * widthScale),
-            border: Border.all(
-              color: AppColors.primary.withValues(alpha: 0.3),
-            ),
+            border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
             boxShadow: [
               BoxShadow(
                 color: AppColors.black.withValues(alpha: 0.05),
@@ -65,28 +64,20 @@ class PropertyCard extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // ── Image ───────────────────────────────
               ClipRRect(
                 borderRadius: BorderRadius.circular(12 * widthScale),
                 child: SizedBox(
                   width: 96 * widthScale,
                   height: 96 * widthScale,
-                  child: PropertyImage(
-                    path: imagePath,
-                    fit: BoxFit.cover,
-                  ),
+                  child: PropertyImage(path: imagePath, fit: BoxFit.cover),
                 ),
               ),
-
               SizedBox(width: 12 * widthScale),
-
-              // ── Details ─────────────────────────────
               Expanded(
                 child: SizedBox(
                   height: 96 * widthScale,
                   child: Stack(
                     children: [
-                      // Title + location
                       Positioned(
                         top: 0,
                         left: 0,
@@ -120,7 +111,6 @@ class PropertyCard extends StatelessWidget {
                         ),
                       ),
 
-                      // Rating (always visible, 0.0 when not rated yet)
                       Positioned(
                         top: 44 * widthScale,
                         right: 0,
@@ -146,31 +136,24 @@ class PropertyCard extends StatelessWidget {
                         ),
                       ),
 
-                      // Favorite button
+
                       Positioned(
                         top: 0,
                         right: 0,
-                        child: AppCircularIconButton(
-                          isSelected: true,
-                          borderRadius: 99,
-                          shadowBlurRadius: 0,
-                          blur: isFavorite ? 0 : 6,
-                          selectedBackgroundOpacity: isFavorite ? 0 : 0.5,
-                          shadowColor:
-                          isFavorite ? Colors.transparent : AppColors.black,
-                          shadowOpacity: isFavorite ? 0 : 0.05,
-                          selectedBackgroundColor: isFavorite
-                              ? Colors.white
-                              : const Color(0xFFB5C4FF),
-                          icon: AppIcons.favouriteSelected,
-                          onPressed: onFavoritePressed ?? () {},
-                          size: (isFavorite ? 20 : 36) * widthScale,
-                          iconWidth: 18 * widthScale,
-                          iconHeight: 16 * widthScale,
+                        child: ValueListenableBuilder<Set<String>>(
+                          valueListenable:
+                          Injector.favoritesRepository.favoriteIdsListenable,
+                          builder: (context, favoriteIds, _) {
+                            return FavoriteButton(
+                              isFavorite: favoriteIds.contains(property.id),
+                              widthScale: widthScale,
+                              onPressed: () => Injector.favoritesRepository
+                                  .toggleFavorite(property),
+                            );
+                          },
                         ),
                       ),
 
-                      // Price + View Details button
                       Positioned(
                         left: 0,
                         right: 0,
