@@ -40,6 +40,13 @@ class AppTheme {
           fontWeight: FontWeight.w600,
           height: 1.4,
         ),
+
+        labelSmall: TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.w500,
+          height: 1.33, // 16px line height / 12px font size = 1.33
+          letterSpacing: 0.24,
+        ),
       ),
     );
 

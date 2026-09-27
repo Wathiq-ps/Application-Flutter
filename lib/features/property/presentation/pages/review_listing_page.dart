@@ -127,8 +127,7 @@ class _ReviewListingPageState extends State<ReviewListingPage> {
       'power_of_attorney': AppStrings.powerOfAttorney,
       'municipal_record': AppStrings.municipalRecord,
     };
-    return documentTypes[type.toLowerCase()] ??
-        (type.isNotEmpty ? type : '-');
+    return documentTypes[type.toLowerCase()] ?? (type.isNotEmpty ? type : '-');
   }
 
   @override
@@ -380,7 +379,8 @@ class _ReviewListingPageState extends State<ReviewListingPage> {
                                   // =========================================
                                   _sectionTitle(
                                     context: context,
-                                    title: AppStrings.listYourPropertyPage5Title,
+                                    title:
+                                        AppStrings.listYourPropertyPage5Title,
                                     onEdit: () {
                                       context.push(
                                         RouteNames.proofOfOwnershipPage,
@@ -395,7 +395,8 @@ class _ReviewListingPageState extends State<ReviewListingPage> {
                                     context,
                                     AppStrings.documentType,
                                     _formatDocumentType(
-                                        state.ownershipDocumentType),
+                                      state.ownershipDocumentType,
+                                    ),
                                   ),
 
                                   if (state.proofPhotos.isNotEmpty) ...[
@@ -404,14 +405,19 @@ class _ReviewListingPageState extends State<ReviewListingPage> {
                                   ],
 
                                   if (state.proofDocuments
-                                      .where((file) => !state.proofPhotos
-                                          .contains(file.path))
+                                      .where(
+                                        (file) => !state.proofPhotos.contains(
+                                          file.path,
+                                        ),
+                                      )
                                       .isNotEmpty) ...[
                                     const SizedBox(height: 14),
                                     _buildProofFilesList(
                                       state.proofDocuments
-                                          .where((file) => !state.proofPhotos
-                                              .contains(file.path))
+                                          .where(
+                                            (file) => !state.proofPhotos
+                                                .contains(file.path),
+                                          )
                                           .toList(),
                                     ),
                                   ],
@@ -507,7 +513,12 @@ class _ReviewListingPageState extends State<ReviewListingPage> {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              SvgPicture.asset(AppIcons.edit, width: 16, height: 16),
+              SvgPicture.asset(
+                AppIcons.edit,
+                width: 16,
+                height: 16,
+                colorFilter: ColorFilter.mode(AppColors.white, BlendMode.srcIn),
+              ),
               const SizedBox(width: 5),
               Text(
                 AppStrings.edit,
@@ -643,10 +654,9 @@ class _ReviewListingPageState extends State<ReviewListingPage> {
                   file.name,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyMedium
-                      ?.copyWith(color: AppColors.white),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium?.copyWith(color: AppColors.white),
                 ),
               ),
             ],

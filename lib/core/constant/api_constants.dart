@@ -7,5 +7,6 @@ class ApiConstants {
   static const String otpRequestEndpoint = '/api/v1/auth/otp/request';
   static const String otpVerifyEndpoint = '/api/v1/auth/otp/verify';
   static const String refreshTokenEndpoint = '/auth/refresh';
+  static const String homeEndpoint = '/api/v1/properties/home';
   static const String createPropertyEndPoint = '/api/v1/properties';
 }
