@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../config/theme/app_colors.dart';
+import '../extensions/media_query_extensions.dart';
 
 class AppElevatedButton extends StatelessWidget {
   const AppElevatedButton({
@@ -16,6 +17,7 @@ class AppElevatedButton extends StatelessWidget {
     this.postIcon,
     this.width,
     this.height,
+    this.padding,
     this.borderRadius,
     this.iconGap,
     this.textStyle,
@@ -37,6 +39,8 @@ class AppElevatedButton extends StatelessWidget {
   final Widget? preIcon;
   final Widget? postIcon;
   final double? width;
+    final EdgeInsetsGeometry? padding;
+
   final double? height;
   final double? borderRadius;
   final double? iconGap;
@@ -52,15 +56,11 @@ class AppElevatedButton extends StatelessWidget {
     const double figmaWidth = 393;
     const double figmaHeight = 852;
 
-    final double screenWidth = MediaQuery.sizeOf(context).width;
-    final double screenHeight = MediaQuery.sizeOf(context).height;
+    final double screenWidth = context.screenWidth;
+    final double screenHeight = context.screenHeight;
 
     final double widthScale = screenWidth / figmaWidth;
     final double heightScale = screenHeight / figmaHeight;
-
-    // ------------------------------------------------------------
-    // Responsive defaults based on the Figma design.
-    // ------------------------------------------------------------
 
     const double figmaButtonHeight = 56;
     const double figmaBorderRadius = 50;
@@ -87,11 +87,9 @@ class AppElevatedButton extends StatelessWidget {
 
     final bool isEnabled = enabled && onPressed != null;
 
-    final Color effectiveBackgroundColor =
-        backgroundColor ?? theme.colorScheme.primary;
-
-    final Color effectiveDisabledBackgroundColor =
-        disabledBackgroundColor ?? AppColors.disabled;
+    final Color effectiveBackgroundColor = isEnabled
+        ? (backgroundColor ?? theme.colorScheme.primary)
+        : (disabledBackgroundColor ?? AppColors.disabled);
 
     final Color effectiveTextColor = isEnabled
         ? (textStyle?.color ?? theme.colorScheme.onPrimary)
@@ -116,8 +114,6 @@ class AppElevatedButton extends StatelessWidget {
         .copyWith(
       color: effectiveTextColor,
     );
-
-
 
     Widget? buildIcon(Widget? icon) {
       if (icon == null) {
@@ -144,12 +140,14 @@ class AppElevatedButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: isEnabled ? onPressed : null,
         style: ElevatedButton.styleFrom(
+          
           backgroundColor: effectiveBackgroundColor,
-          disabledBackgroundColor: effectiveDisabledBackgroundColor,
+          disabledBackgroundColor:
+          disabledBackgroundColor ?? AppColors.disabled,
           foregroundColor: effectiveTextColor,
           elevation: elevation ?? 0,
           minimumSize: Size.zero,
-          padding: EdgeInsets.zero,
+          padding: padding?? EdgeInsets.zero,
           textStyle: effectiveTextStyle,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(

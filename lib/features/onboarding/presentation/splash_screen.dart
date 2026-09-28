@@ -134,9 +134,6 @@ class _SplashScreenState extends State<SplashScreen>
         ? widthScale
         : heightScale;
 
-    final firstLogoStartSize =
-        _firstLogoStartSize * scale;
-
     final firstLogoEndSize =
         _firstLogoEndSize * scale;
 
