@@ -1,3 +1,21 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:mobile/config/routes/routes_names.dart';
+import 'package:mobile/core/di/injector.dart';
+import 'package:mobile/features/auth/domain/entities/auth_mode.dart';
+import 'package:mobile/features/auth/presentation/state_mangement/cubit/auth_cubit.dart';
+import 'package:mobile/features/property/presentation/pages/add_property_page_four.dart';
+import 'package:mobile/features/property/presentation/pages/proof_of_ownership_page.dart';
+import 'package:mobile/features/property/presentation/pages/review_listing_page.dart';
+import 'package:mobile/features/verification/presentation/pages/verification_pending_screen.dart';
+import 'package:mobile/features/verification/presentation/pages/verify_identity_screen.dart';
+import 'package:mobile/features/verification/presentation/pages/verify_selfie_identity_screen.dart';
+import 'package:mobile/features/property/presentation/pages/add_property_page_two.dart';
+import '../../features/auth/presentation/pages/email_login_screen.dart';
+import '../../features/auth/presentation/pages/email_registe_screen.dart';
+import '../../features/auth/presentation/pages/phone_login_screen.dart';
+import '../../features/auth/presentation/pages/phone_register_screen.dart';
   import 'package:flutter/material.dart';
   import 'package:flutter_bloc/flutter_bloc.dart';
   import 'package:go_router/go_router.dart';
@@ -9,13 +27,13 @@ import 'package:mobile/features/home/presentation/widgets/property_home_card.dar
 import 'package:mobile/features/owner_property_mangment/presentation/pages/owner_delete_property_screen.dart';
 import 'package:mobile/features/owner_property_mangment/presentation/pages/owner_edit_property_screen.dart';
 import 'package:mobile/features/owner_property_mangment/presentation/pages/owner_properties_screen.dart';
-  import 'package:mobile/features/property/presentation/pages/add_property_page_four.dart';
+  import 'package:mobile/features/property/presentation/pages/list_property_photos_screen.dart';
   import 'package:mobile/features/property/presentation/pages/proof_of_ownership_page.dart';
   import 'package:mobile/features/property/presentation/pages/review_listing_page.dart';
   import 'package:mobile/features/verification/presentation/verification_pending_screen.dart';
   import 'package:mobile/features/verification/presentation/verify_identity_screen.dart';
   import 'package:mobile/features/verification/presentation/verify_selfie_identity_screen.dart';
-  import 'package:mobile/features/property/presentation/pages/add_property_page_two.dart';
+  import 'package:mobile/features/property/presentation/pages/property_location_screen.dart';
   import '../../features/auth/presentation/pages/email_login_screen.dart';
   import '../../features/auth/presentation/pages/email_registe_screen.dart';
   import '../../features/auth/presentation/pages/phone_login_screen.dart';
@@ -31,6 +49,9 @@ import '../../features/owner_property_mangment/presentation/state_management/own
 import '../../features/property/presentation/pages/add_property_page_one.dart';
   import '../../features/property/presentation/pages/add_property_page_three.dart';
 import '../../features/saved/presentations/state_management/saved_cubit.dart';
+import '../../features/property/presentation/pages/list_property_type_screen.dart';
+  import '../../features/property/presentation/pages/list_property_features_screen.dart';
+import '../../features/property/presentation/state_management/create_property_cubit.dart';
 
   class AppRoutes {
     AppRoutes._();
@@ -54,6 +75,97 @@ import '../../features/saved/presentations/state_management/saved_cubit.dart';
           },
         ),
 
+      // ─────────────────────────────────────────────
+      // Onboarding
+      // ─────────────────────────────────────────────
+      GoRoute(
+        path: RouteNames.onboardingScreen,
+        name: 'onboardingScreen',
+        pageBuilder: (context, state) {
+          return CustomTransitionPage(
+            key: state.pageKey,
+            child: const OnBoardingScreen(),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+                  return FadeTransition(opacity: animation, child: child);
+                },
+          );
+        },
+      ),
+
+      GoRoute(
+        path: RouteNames.onboardingLoginScreen,
+        name: 'onboardingLoginScreen',
+        pageBuilder: (context, state) {
+          return CustomTransitionPage(
+            key: state.pageKey,
+            child: const OnBoardingLoginScreen(),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+                  return FadeTransition(opacity: animation, child: child);
+                },
+          );
+        },
+      ),
+
+      // ─────────────────────────────────────────────
+      // Login
+      // ─────────────────────────────────────────────
+      GoRoute(
+        path: RouteNames.phoneLoginScreen,
+        name: 'phoneLoginScreen',
+        pageBuilder: (context, state) {
+          return CustomTransitionPage(
+            key: state.pageKey,
+            child: const PhoneLoginScreen(),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+                  return FadeTransition(opacity: animation, child: child);
+                },
+          );
+        },
+      ),
+      // ─────────────────────────────────────────────
+      // Email Login
+      // ─────────────────────────────────────────────
+      GoRoute(
+        path: RouteNames.emailLoginScreen,
+        name: 'emailLoginScreen',
+        pageBuilder: (context, state) {
+          return CustomTransitionPage(
+            key: state.pageKey,
+            child: BlocProvider(
+              create: (_) => AuthCubit(
+                mode: AuthMode.login,
+                authRepository: Injector.authRepository,
+              ),
+              child: const EmailLoginScreen(),
+            ),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+                  return FadeTransition(opacity: animation, child: child);
+                },
+          );
+        },
+      ),
+
+      // ─────────────────────────────────────────────
+      // Register
+      // ─────────────────────────────────────────────
+      GoRoute(
+        path: RouteNames.phoneRegisterScreen,
+        name: 'phoneRegisterScreen',
+        pageBuilder: (context, state) {
+          return CustomTransitionPage(
+            key: state.pageKey,
+            child: const PhoneRegisterScreen(),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+                  return FadeTransition(opacity: animation, child: child);
+                },
+          );
+        },
+      ),
         // ─────────────────────────────────────────────
         // Onboarding
         // ─────────────────────────────────────────────
@@ -209,56 +321,83 @@ import '../../features/saved/presentations/state_management/saved_cubit.dart';
           },
         ),
 
-        // ─────────────────────────────────────────────
-        // Property
-        // ─────────────────────────────────────────────
-        GoRoute(
-          path: RouteNames.addPropertyScreenOne,
-          name: 'addPropertScreenOne',
-          builder: (context, state) {
-            return const AddPropertyScreenOne();
-          },
-        ),
-
-        GoRoute(
-          path: RouteNames.addPropertyScreenTwo,
-          name: 'addPropertScreenTwo',
-          builder: (context, state) {
-            return const AddPropertyScreenTwo();
-          },
-        ),
-
-        GoRoute(
-          path: RouteNames.addPropertyScreenThree,
-          name: 'addPropertScreenThree',
-          builder: (context, state) {
-            return const AddPropertyScreenThree();
-          },
-        ),
-
-        GoRoute(
-          path: RouteNames.addPropertyScreenFour,
-          name: 'addPropertScreenFour',
-          builder: (context, state) {
-            return const AddPropertyScreenFour();
-          },
-        ),
-
-        GoRoute(
-          path: RouteNames.proofOfOwnershipPage,
-          name: 'proofOfOwnershipPage',
-          builder: (context, state) {
-            return const ProofOfOwnershipPage();
-          },
-        ),
-
-        GoRoute(
-          path: RouteNames.reviewListingPage,
-          name: 'reviewListingPage',
-          builder: (context, state) {
-            return const ReviewListingPage();
-          },
-        ),
+      // ─────────────────────────────────────────────
+      // Property
+      // ─────────────────────────────────────────────
+      ShellRoute(
+        builder: (context, state, child) {
+          return BlocProvider<CreatePropertyCubit>(
+            create: (_) => CreatePropertyCubit(
+              createPropertyUseCase: Injector.createPropertyUseCase,
+            ),
+            child: child,
+          );
+        },
+        routes: [
+          GoRoute(
+            path: RouteNames.listPropertyTypeScreen,
+            name: 'listPropertyTypeScreen',
+            builder: (context, state) {
+              final isEdit = state.extra is bool
+                  ? state.extra as bool
+                  : (state.extra as Map<String, dynamic>?)?['isEdit'] as bool? ??
+                      false;
+              return ListPropertyTypeScreen(isEdit: isEdit);
+            },
+          ),
+          GoRoute(
+            path: RouteNames.propertyLocationScreen,
+            name: 'propertyLocationScreen',
+            builder: (context, state) {
+              final isEdit = state.extra is bool
+                  ? state.extra as bool
+                  : (state.extra as Map<String, dynamic>?)?['isEdit'] as bool? ??
+                      false;
+              return PropertyLocationScreen(isEdit: isEdit);
+            },
+          ),
+          GoRoute(
+            path: RouteNames.listPropertyFeaturesScreen,
+            name: 'listPropertyFeaturesScreen',
+            builder: (context, state) {
+              final isEdit = state.extra is bool
+                  ? state.extra as bool
+                  : (state.extra as Map<String, dynamic>?)?['isEdit'] as bool? ??
+                      false;
+              return ListPropertyFeaturesScreen(isEdit: isEdit);
+            },
+          ),
+          GoRoute(
+            path: RouteNames.listPropertyPhotosScreen,
+            name: 'listPropertyPhotosScreen',
+            builder: (context, state) {
+              final isEdit = state.extra is bool
+                  ? state.extra as bool
+                  : (state.extra as Map<String, dynamic>?)?['isEdit'] as bool? ??
+                      false;
+              return ListPropertyPhotosScreen(isEdit: isEdit);
+            },
+          ),
+          GoRoute(
+            path: RouteNames.proofOfOwnershipPage,
+            name: 'proofOfOwnershipPage',
+            builder: (context, state) {
+              final isEdit = state.extra is bool
+                  ? state.extra as bool
+                  : (state.extra as Map<String, dynamic>?)?['isEdit'] as bool? ??
+                      false;
+              return ProofOfOwnershipPage(isEdit: isEdit);
+            },
+          ),
+          GoRoute(
+            path: RouteNames.reviewListingPage,
+            name: 'reviewListingPage',
+            builder: (context, state) {
+              return const ReviewListingPage();
+            },
+          ),
+        ],
+      ),
 
         // ─────────────────────────────────────────────
         // Verification
@@ -287,6 +426,16 @@ import '../../features/saved/presentations/state_management/saved_cubit.dart';
           },
         ),
 
+      GoRoute(
+        path: RouteNames.verificationPendingScreen,
+        name: 'verificationPendingScreen',
+        builder: (context, state) {
+          return const VerificationPendingScreen();
+        },
+      ),
+    ],
+  );
+}
         GoRoute(
           path: RouteNames.mainNavigation,
           builder: (context, state) {

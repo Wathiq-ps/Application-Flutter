@@ -65,6 +65,9 @@ class AppIcons {
   static const String water = 'assets/svg/water.svg';
   static const String furnished = 'assets/svg/furnished.svg';
   static const String garden = 'assets/svg/garden.svg';
+   static const String uploadFile = 'assets/svg/upload_file.svg';
+    
+
 
   static const String bed = 'assets/svg/bed.svg';
   static const String bath = 'assets/svg/bathroom.svg';

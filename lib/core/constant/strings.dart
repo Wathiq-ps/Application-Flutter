@@ -37,14 +37,12 @@ class AppStrings {
   static const String passwordMustHaveLowerChar =
       'Password must contain a lowercase letter';
 
-  static const String passwordMustHaveNum =
-      'Password must contain a number';
+  static const String passwordMustHaveNum = 'Password must contain a number';
 
   static const String passwordMustHaveSpecialChar =
       'Password must contain a special character';
 
-  static const String passwordMismatch =
-      'Passwords do not match';
+  static const String passwordMismatch = 'Passwords do not match';
 
   // ─────────────────────────────────────────────
   // List Your Property
@@ -56,11 +54,17 @@ class AppStrings {
 
   static const String listYourPropertyPage2Title = 'Location Details';
 
+  static const String listYourPropertyPage5Title = 'Proof of Ownership';
+  static const String listYourPropertyPage6Title = 'Review your listing';
+
   static const String listYourPropertyStep2 = 'Step 2 of 6';
 
   static const String listYourPropertyStep3 = 'Step 3 of 6';
 
   static const String listYourPropertyStep4 = 'Step 4 of 6';
+
+  static const String listYourPropertyStep5 = 'Step 5 of 6';
+  static const String listYourPropertyStep6 = 'Step 6 of 6';
 
   // ─────────────────────────────────────────────
   // Property Type
@@ -86,11 +90,9 @@ class AppStrings {
 
   static const String propertyOther = 'Other';
 
-  static const String specifyPropertyType =
-      'Specify property type';
+  static const String specifyPropertyType = 'Specify property type';
 
-  static const String specifyPropertyTypeHint =
-      'e.g. Studio, Farm...';
+  static const String specifyPropertyTypeHint = 'e.g. Studio, Farm...';
 
   static const String continueText = 'Continue';
 
@@ -101,6 +103,8 @@ class AppStrings {
   static const String city = 'City';
 
   static const String district = 'District';
+  static const String latitude = 'Latitude';
+  static const String longitude = 'Longitude';
 
   static const String buildingNumber = 'Building Number';
 
@@ -114,6 +118,9 @@ class AppStrings {
 
   static const String bathrooms = 'Bathrooms';
 
+  static const String latitudeHint = 'latitude';
+  static const String longitudeHint = 'longitude';
+
   static const String buildingNumberHint = 'e.g. 12';
 
   static const String areaHint = 'e.g. 150';
@@ -121,6 +128,9 @@ class AppStrings {
   static const String priceHint = 'e.g. 85000';
 
   static const String floorHint = 'e.g. 3';
+  static const String priceUnit = 'Price Unit';
+  static const String selectPriceUnit = 'Select price unit';
+  static const String pleaseSelectPriceUnit = 'Please select price unit';
 
   // ─────────────────────────────────────────────
   // Property Features
@@ -160,12 +170,34 @@ class AppStrings {
 
   static const String jod = 'JOD';
 
+  static const String uploadDocuments = 'Upload documents';
+  static const String taptpUpload = 'Tap to upload';
+  static const String uploadDescription = 'You can upload photos or PDF files';
+  static const String takePhoto = 'Take a photo';
+  static const String gallery = 'Gallery';
+  static const String photos = 'Photos';
+
+  // Ownership Document Types
+  static const String documentType = 'Document Type';
+  static const String selectDocumentType = 'Select document type';
+  static const String pleaseSelectDocumentType = 'Please select document type';
+  static const String titleDeed = 'Title Deed / سند ملكية';
+  static const String saleContract = 'Sale Contract / عقد بيع';
+  static const String inheritanceDeed = 'Inheritance Deed / حصر إرث';
+  static const String powerOfAttorney = 'Power of Attorney / وكالة دورية';
+  static const String municipalRecord = 'Municipal Record / سجل بلدية';
+
+  //Review property
+  static const String basicDetailsTitle = 'Basic Details';
+  static const String edit = 'Edit';
+  static const String saveChangesBtn = 'Save Changes';
+   static const String location = 'Location';
+
   // ─────────────────────────────────────────────
   // Onboarding
   // ─────────────────────────────────────────────
 
-  static const String onboardingTitle =
-      ' Find Your Dream \nHome on the Go';
+  static const String onboardingTitle = ' Find Your Dream \nHome on the Go';
 
   static const String onboardingSubtitle =
       "Scroll, Select, and Let's Settle In!";
@@ -174,32 +206,26 @@ class AppStrings {
   // Authentication
   // ─────────────────────────────────────────────
 
-  static const String continueWithEmail =
-      'Continue with Email';
+  static const String continueWithEmail = 'Continue with Email';
 
-  static const String continueWithPhone =
-      ' With Phone Number';
+  static const String continueWithPhone = ' With Phone Number';
 
-  static const String alreadyHaveAccount =
-      'Already have an account?';
+  static const String alreadyHaveAccount = 'Already have an account?';
 
   static const String signIn = 'Sign in';
 
   static const String enterEmail = 'Enter Email';
 
-  static const String emailHintText =
-      'example@mail.com';
+  static const String emailHintText = 'example@mail.com';
 
   static const String sendCode = 'Send Code';
 
-  static const String getStarted =
-      'Let\'s get started!';
+  static const String getStarted = 'Let\'s get started!';
 
   static const String enterYourEmailAdd =
       'Enter your email address to create your account';
 
-  static const String featureNotAvailable =
-      'Feature Unavailable';
+  static const String featureNotAvailable = 'Feature Unavailable';
 
   static const String featureWillBeAvailbleLater =
       'This feature is currently not available. Please try again later.';
@@ -214,7 +240,8 @@ class AppStrings {
       'Check your Email for the verification code';
 
   static const String welcomeBack = 'Welcome back!';
-  static const String signInToContinueSearch = 'Sign in to continue your search';
+  static const String signInToContinueSearch =
+      'Sign in to continue your search';
   static const String dontHaveAccount = "Don't have an account?";
   static const String signUp = 'Sign up';
 
@@ -226,13 +253,14 @@ class AppStrings {
       'Enter your email address to sign in your account';
   static const String emailHint = 'example@mail.com';
   static const String letGetStarted = "You're in! Let's get started";
-  static const String welcomeToWathiq = 'Welcome to Wathiq' ;
+  static const String welcomeToWathiq = 'Welcome to Wathiq';
   static const String pleaseEnterFullOtp = 'Please enter the full OTP';
-  static const String somethingWentWrong = 'Something went wrong. Please try again.';
+  static const String somethingWentWrong =
+      'Something went wrong. Please try again.';
   static const String verificationFailed = 'Verification failed';
-// ─────────────────────────────────────────────
-// OTP
-// ─────────────────────────────────────────────
+  // ─────────────────────────────────────────────
+  // OTP
+  // ─────────────────────────────────────────────
 
   static const String enterCode = 'Enter Code';
 
@@ -245,9 +273,9 @@ class AppStrings {
 
   static const String resend = 'Resend';
 
-// ─────────────────────────────────────────────
-// Error Messages
-// ─────────────────────────────────────────────
+  // ─────────────────────────────────────────────
+  // Error Messages
+  // ─────────────────────────────────────────────
 
   static const String emailNotRegistered =
       'This email is not registered. Please register first';
@@ -264,11 +292,9 @@ class AppStrings {
   static const String otpExpired =
       'This code has expired. Please request a new one';
 
-  static const String incorrectOtp =
-      'The code you entered is incorrect';
+  static const String incorrectOtp = 'The code you entered is incorrect';
 
-  static const String accountSuspended =
-      'Your account has been suspended';
+  static const String accountSuspended = 'Your account has been suspended';
 
   static const String checkInternetConnection =
       'Check your internet connection and try again';
@@ -276,6 +302,56 @@ class AppStrings {
   static String tooManyAttemptsWithRetry(int retryAfter) =>
       'Too many attempts. Please wait ${retryAfter}s before trying again';
 
+  // ─────────────────────────────────────────────
+  // Identity Verification
+  // ─────────────────────────────────────────────
+
+  static const String verifyYourIdentity = 'Verify Your Identity';
+
+  static const String step1Of2 = 'Step 1 of 2';
+
+  static const String step2Of2 = 'Step 2 of 2';
+
+  static const String uploadYourId = 'Upload your ID';
+
+  static const String takeClearPhotoOfId =
+      'Take a clear photo of the front of your ID card';
+
+  static const String takeSelfieWithId = 'Take a selfie with your ID';
+
+  static const String holdIdNextToFace = 'Hold your ID next to your face';
+
+  static const String tapToUpload = 'Tap to upload';
+
+  static const String takePhoto = 'Take Photo';
+
+  static const String gallery = 'Gallery';
+
+  static const String pleaseUploadIdFirst = 'Please upload your ID first';
+
+  // Requirements - ID
+  static const String faceAndIdClearlyVisible =
+      'Face and ID both clearly visible';
+
+  static const String goodLightingNoShadows = 'Good lighting, no shadows';
+
+  static const String removeSunglassesOrHats = 'Remove sunglasses or hats';
+
+  // Requirements - Selfie
+  static const String allFourCornersVisible = 'All 4 corners visible';
+
+  static const String noGlareOrBlur = 'No glare or blur';
+
+  static const String textIsReadable = 'Text is readable';
+
+  // Verification Pending
+  static const String verificationPending = 'Verification Pending';
+
+  static const String verificationPendingDescription =
+      "We're reviewing your documents. This usually takes 1-2 business days. We'll notify you once it's approved.";
+
+  static const String backToHome = 'Back to Home';
+}
   static const String home = 'Home';
 
   static const String search = 'Search';
@@ -347,7 +423,6 @@ class AppStrings {
       'Are you sure you want to save the changes made to this property?';
   static const String photo = "Photos" ;
   static const String statusProperty = "Status Property";
-  static const String location = "Location";
   static const String changeOnMap = "Change On Map";
   static const String sureToEditProperty =  "Are you sure you’d like to edit this property?";
   static const String featureComingSoon =
@@ -373,7 +448,7 @@ class AppStrings {
   static const String showingSavedData = 'Showing saved data';
   static const String saved = 'Saved';
   static const String all = 'All';
-  static const String searchHint = 'Search properties';
+   static const String searchHint = 'Search properties';
   static const String noPropertiesFound = 'No properties found';
   static const String retry = 'Retry';
   static const String myFavorites = 'My Favorites';
