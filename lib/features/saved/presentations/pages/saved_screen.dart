@@ -8,7 +8,6 @@ import 'package:mobile/core/extensions/media_query_extensions.dart';
 import 'package:mobile/core/widget/app_icon_label_trigger.dart';
 import 'package:mobile/core/widget/empty_state_view.dart';
 import 'package:mobile/core/widget/page_header.dart';
-
 import '../../../../core/di/injector.dart';
 import '../../../../core/widget/app_section_row.dart';
 import '../../../../core/widget/property_card.dart';
@@ -95,7 +94,6 @@ class SavedScreen extends StatelessWidget {
                           child: Center(
                             child: EmptyStateView(
                               widthScale: widthScale,
-                             // icon: Icons.favorite_border_rounded,
                               title: AppStrings.noSavedPropertiesTitle,
                               subtitle: AppStrings.noSavedPropertiesSubtitle,
                             ),
@@ -105,15 +103,19 @@ class SavedScreen extends StatelessWidget {
                         SliverList(
                           delegate: SliverChildListDelegate([
                             for (final property in favorites)
-                              PropertyCard(
-                                property: toDisplayItem(property),
-                                widthScale: widthScale,
-                                showStatus: false,
-                                showFavorite: true,
-                                isFavorite: true,
-                                onFavoritePressed: () => Injector.favoritesRepository.removeFavorite(property.id),
-                                onViewDetails: () { /* TODO: navigate */ },
+                              Padding(
+                                padding:  EdgeInsets.only(bottom:16 * widthScale),
+                                child: PropertyCard(
+                                  property: toDisplayItem(property),
+                                  widthScale: widthScale,
+                                  showStatus: false,
+                                  showFavorite: true,
+                                  isFavorite: true,
+                                  onFavoritePressed: () => Injector.favoritesRepository.removeFavorite(property.id),
+                                  onViewDetails: () { /* TODO: navigate */ },
+                                ),
                               ),
+
                           ]),
                         ),
                     ],

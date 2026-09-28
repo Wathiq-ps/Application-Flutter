@@ -41,9 +41,10 @@ class MainBottomNavigationBar extends StatelessWidget {
         top: false,
         bottom: false,
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 34 * scale, vertical: 14 * scale),
+          padding: EdgeInsets.symmetric(horizontal: 20 * scale),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               NavigationItem(
                 isSelected: selectedIndex == 0,
@@ -57,7 +58,7 @@ class MainBottomNavigationBar extends StatelessWidget {
                 isSelected: selectedIndex == 1,
                 selectedIcon: AppIcons.favouriteSelected,
                 unselectedIcon: AppIcons.favouriteUnselected,
-                label: AppStrings.favourite,
+                label: AppStrings.saved,
                 scale: scale,
                 onTap: () => onTabSelected(1),
               ),

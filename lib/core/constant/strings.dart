@@ -371,7 +371,7 @@ class AppStrings {
   static const String verifiedID ='Verified ID';
   static const String notVerifiedID ='Not Verified';
   static const String showingSavedData = 'Showing saved data';
-
+  static const String saved = 'Saved';
   static const String all = 'All';
   static const String searchHint = 'Search properties';
   static const String noPropertiesFound = 'No properties found';
