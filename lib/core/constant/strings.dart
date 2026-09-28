@@ -446,11 +446,17 @@ class AppStrings {
   static const String verifiedID ='Verified ID';
   static const String notVerifiedID ='Not Verified';
   static const String showingSavedData = 'Showing saved data';
-
+  static const String saved = 'Saved';
   static const String all = 'All';
    static const String searchHint = 'Search properties';
   static const String noPropertiesFound = 'No properties found';
   static const String retry = 'Retry';
-
+  static const String myFavorites = 'My Favorites';
+  static const String recentlySaved = 'Recently Saved';
+  static const String onePropertySaved = '1 Property Saved';
+  static String propertiesSavedCount(int count) => '$count Properties Saved';
+  static const String noSavedPropertiesTitle = 'No Properties Found';
+  static const String noSavedPropertiesSubtitle =
+      'Properties you save will appear here. Tap the heart icon on any listing to save it.';
 
 }

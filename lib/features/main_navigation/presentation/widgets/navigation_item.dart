@@ -27,57 +27,69 @@ class NavigationItem extends StatelessWidget {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 250),
-        curve: Curves.easeInOutCubic,
-        height: isSelected
-            ? (34 * scale).clamp(30.0, 80.0)
-            : (24 * scale).clamp(20.0, 28.0),
-        padding: EdgeInsets.symmetric(horizontal: isSelected ? 20 * scale : 0),
-        decoration: BoxDecoration(
-          color: isSelected ? AppColors.white : Colors.transparent,
-          borderRadius: BorderRadius.circular(9999),
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          minWidth: 48,
+          minHeight: 48,
         ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            AnimatedSwitcher(
-              duration: const Duration(milliseconds: 220),
-              transitionBuilder: (child, animation) =>
-                  FadeTransition(opacity: animation, child: child),
-              child: SvgPicture.asset(
-                isSelected ? selectedIcon : unselectedIcon,
-                key: ValueKey(isSelected),
-                width: iconSize,
-                height: iconSize,
-                colorFilter: ColorFilter.mode(
-                  isSelected ? AppColors.primary : AppColors.white,
-                  BlendMode.srcIn,
-                ),
-                excludeFromSemantics: true,
-              ),
+        child: Center(
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 250),
+            curve: Curves.easeInOutCubic,
+            height: isSelected
+                ? (34 * scale).clamp(30.0, 80.0)
+                : (24 * scale).clamp(20.0, 28.0),
+            padding:
+            EdgeInsets.symmetric(horizontal: isSelected ? 20 * scale : 0),
+            decoration: BoxDecoration(
+              color: isSelected ? AppColors.white : Colors.transparent,
+              borderRadius: BorderRadius.circular(9999),
             ),
-            AnimatedSize(
-              duration: const Duration(milliseconds: 250),
-              curve: Curves.easeInOutCubic,
-              child: isSelected
-                  ? Padding(
-                padding: EdgeInsets.only(left: 8 * scale),
-                child: Text(
-                  label,
-                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                    color: AppColors.primary,
-                    fontSize: (14 * scale),
-                    fontWeight: FontWeight.w700,
-                    height: 20 / 14,
-                    letterSpacing: 0.14,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 220),
+                  transitionBuilder: (child, animation) =>
+                      FadeTransition(opacity: animation, child: child),
+                  child: SvgPicture.asset(
+                    isSelected ? selectedIcon : unselectedIcon,
+                    key: ValueKey(isSelected),
+                    width: iconSize,
+                    height: iconSize,
+                    colorFilter: ColorFilter.mode(
+                      isSelected ? AppColors.primary : AppColors.white,
+                      BlendMode.srcIn,
+                    ),
+                    excludeFromSemantics: true,
                   ),
                 ),
-              )
-                  : const SizedBox.shrink(),
+                AnimatedSize(
+                  duration: const Duration(milliseconds: 250),
+                  curve: Curves.easeInOutCubic,
+                  child: isSelected
+                      ? Padding(
+                    padding: EdgeInsets.only(left: 8 * scale),
+                    child: Text(
+                      label,
+                      style: Theme.of(context)
+                          .textTheme
+                          .labelMedium
+                          ?.copyWith(
+                        color: AppColors.primary,
+                        fontSize: (14 * scale),
+                        fontWeight: FontWeight.w700,
+                        height: 20 / 14,
+                        letterSpacing: 0.14,
+                      ),
+                    ),
+                  )
+                      : const SizedBox.shrink(),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

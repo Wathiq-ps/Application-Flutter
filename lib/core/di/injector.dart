@@ -5,6 +5,9 @@ import '../../features/auth/domain/repository/auth_repository.dart';
 import '../../features/home/data/data_sources/home_data_source.dart';
 import '../../features/home/data/repository_implementations/home_repository_impl.dart';
 import '../../features/home/domain/repository/home_repository.dart';
+import '../../features/saved/data/data_sources/favorites_local_data_source.dart';
+import '../../features/saved/data/repository_implementations/favorites_repository_impl.dart';
+import '../../features/saved/domain/repositories/favorites_repository.dart';
 import '../cache/cache_store.dart';
 import '../cache/cached_fetcher.dart';
 import '../cache/shared_prefs_cache_store.dart';
@@ -14,13 +17,16 @@ import '../../features/property/domain/repository/create_property_repository.dar
 import '../../features/property/domain/usecases/create_property_usecase.dart';
 import '../constant/api_constants.dart';
 import '../services/secure_storage_service.dart';
-
 class Injector {
   Injector._();
 
   // ── Core ──────────────────────────────────────────────
   static final Dio _dio = Dio(BaseOptions(baseUrl: ApiConstants.baseUrl));
   static const SecureStorageService secureStorage = SecureStorageService();
+  static const FavoritesLocalDataSource _favoritesLocalDataSource =
+  FavoritesLocalDataSource();
+  static final FavoritesRepository favoritesRepository =
+  FavoritesRepositoryImpl(_favoritesLocalDataSource);
 
   // ── Cache ─────────────────────────────────────────────
   static const CacheStore cacheStore = SharedPrefsCacheStore();
