@@ -4,6 +4,7 @@ import 'package:mobile/features/home/presentation/widgets/property_home_card.dar
 import 'package:mobile/features/property/domain/entities/property_entity.dart';
 import '../../../../core/constant/strings.dart';
 import '../../../../core/utils/price_formatter.dart';
+import '../../../../core/widget/app_section_row.dart';
 
 class AllPropertiesSection extends StatelessWidget {
   const AllPropertiesSection({
@@ -29,34 +30,30 @@ class AllPropertiesSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(
-              AppStrings.allProperties,
+        AppSectionRow(
+          widthScale: widthScale,
+          label: AppStrings.allProperties,
+          textStyle: TextStyle(
+            color: AppColors.primary,
+            fontSize: 18 * widthScale,
+            fontWeight: FontWeight.w600,
+            height: 24 / 18,
+          ),
+          trailing: GestureDetector(
+            onTap: onViewAll,
+            behavior: HitTestBehavior.opaque,
+            child: Text(
+              AppStrings.viewAll,
               style: TextStyle(
                 color: AppColors.primary,
-                fontSize: 18 * widthScale,
-                fontWeight: FontWeight.w600,
-                height: 24 / 18,
+                fontSize: 11 * widthScale,
+                fontWeight: FontWeight.w400,
+                height: 14 / 11,
+                letterSpacing: 0.44,
               ),
             ),
-            GestureDetector(
-              onTap: onViewAll,
-              behavior: HitTestBehavior.opaque,
-              child: Text(
-                AppStrings.viewAll,
-                style: TextStyle(
-                  color: AppColors.primary,
-                  fontSize: 11 * widthScale,
-                  fontWeight: FontWeight.w400,
-                  height: 14 / 11,
-                  letterSpacing: 0.44,
-                ),
-              ),
-            ),
-          ],
+          ),
+          gap: 8,
         ),
         SizedBox(height: 12 * widthScale),
         AnimatedSwitcher(

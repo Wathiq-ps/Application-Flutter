@@ -80,7 +80,6 @@ class HomeScreen extends StatelessWidget {
                     ),
                     SizedBox(height: 25 * heightScale),
 
-                    // Search bar -> Search tab + open the field
                     PageSearchBar(
                       widthScale: widthScale,
                       onTap: () => navCubit.goToSearch(focusSearchField: true),
@@ -88,8 +87,6 @@ class HomeScreen extends StatelessWidget {
 
                     SizedBox(height: 13 * heightScale),
 
-                    // For Sale / For Rent filter.
-                    // Tapping the selected chip again clears it (= all).
                     BlocSelector<HomeCubit, HomeState, PropertyFilter>(
                       selector: (state) => state.filter,
                       builder: (context, filter) => PropertyFilterChips(
@@ -116,7 +113,6 @@ class HomeScreen extends StatelessWidget {
                           );
                         }
 
-                        // Nothing yet -> skeleton
                         if (resource.isInitialLoading) {
                           return HomeLoadingView(widthScale: widthScale);
                         }
@@ -143,7 +139,6 @@ class HomeScreen extends StatelessWidget {
                               SizedBox(height: 13 * heightScale),
                             ],
 
-                            // View all -> Search tab
                             AllPropertiesSection(
                               properties: state.filteredProperties,
                               widthScale: widthScale,

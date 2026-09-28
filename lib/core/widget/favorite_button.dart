@@ -20,7 +20,7 @@ class FavoriteButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AppCircularIconButton(
-      icon: isFavorite ? AppIcons.favouriteSelected : AppIcons.favouriteUnselected,
+      icon: isFavorite ? AppIcons.favouriteSelected : AppIcons.favouriteSelected,
       isSelected: isFavorite,
       selectedBackgroundColor: AppColors.secondary,
       onPressed: onPressed,

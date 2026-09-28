@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mobile/config/theme/app_colors.dart';
+import 'package:mobile/core/constant/app_icons.dart';
 import 'package:mobile/core/extensions/media_query_extensions.dart';
-
 
 class EmptyStateView extends StatelessWidget {
   const EmptyStateView({
     super.key,
     required this.title,
     this.subtitle,
-    this.icon = Icons.info_outline_rounded,
+    this.icon = AppIcons.block,
     this.widthScale,
   });
 
   final String title;
   final String? subtitle;
-  final IconData icon;
+  final String icon;
   final double? widthScale;
 
   @override
@@ -23,7 +24,10 @@ class EmptyStateView extends StatelessWidget {
     final double ws = widthScale ?? (context.screenWidth / figmaWidth);
 
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 64 * ws, horizontal: 20 * ws),
+      padding: EdgeInsets.symmetric(
+        vertical: 64 * ws,
+        horizontal: 20 * ws,
+      ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -35,14 +39,22 @@ class EmptyStateView extends StatelessWidget {
               shape: BoxShape.circle,
             ),
             alignment: Alignment.center,
-            child: Icon(icon, size: 20 * ws, color: AppColors.primary),
+            child: SvgPicture.asset(
+              icon,
+              width: 20 * ws,
+              height: 20 * ws,
+              colorFilter: ColorFilter.mode(
+                AppColors.primary,
+                BlendMode.srcIn,
+              ),
+            ),
           ),
           SizedBox(height: 16 * ws),
           Text(
             title,
             textAlign: TextAlign.center,
             style: TextStyle(
-              color: const Color(0xFF0A1F44),
+              color: AppColors.textPrimary,
               fontSize: 18 * ws,
               fontWeight: FontWeight.w600,
               height: 24 / 18,

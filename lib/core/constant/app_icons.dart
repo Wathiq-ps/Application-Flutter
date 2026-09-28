@@ -133,6 +133,10 @@ class AppIcons {
   static const String notifications =
       'assets/svg/notifications.svg';
 
+
+  static const String block =
+      'assets/svg/block.svg';
+
   static const String rateStar =
       'assets/svg/rate_star.svg';
   static const String circleEditF =

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:mobile/config/theme/app_colors.dart';
 import 'package:mobile/core/constant/app_icons.dart';
 import 'package:mobile/core/constant/strings.dart';
@@ -9,6 +10,7 @@ import 'package:mobile/core/widget/empty_state_view.dart';
 import 'package:mobile/core/widget/page_header.dart';
 
 import '../../../../core/di/injector.dart';
+import '../../../../core/widget/app_section_row.dart';
 import '../../../../core/widget/property_card.dart';
 import '../state_management/saved_cubit.dart';
 import '../state_management/saved_state.dart';
@@ -33,6 +35,9 @@ class SavedScreen extends StatelessWidget {
 
             PageHeader(
               widthScale: widthScale,
+              right: SvgPicture.asset(
+                AppIcons.filter
+              ),
               center: Text(
                 AppStrings.myFavorites,
                 textAlign: TextAlign.center,
@@ -64,30 +69,22 @@ class SavedScreen extends StatelessWidget {
                     slivers: [
                       if (favorites.isNotEmpty)
                         SliverToBoxAdapter(
-                          child: Padding(
-                            padding: EdgeInsets.only(bottom: 12 * widthScale),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  favorites.length == 1
-                                      ? AppStrings.onePropertySaved
-                                      : AppStrings.propertiesSavedCount(favorites.length),
-                                  style: TextStyle(
-                                    color: AppColors.primary,
-                                    fontSize: 11 * widthScale,
-                                    fontWeight: FontWeight.w500,
-                                    height: 14 / 11,
-                                    letterSpacing: 0.44,
-                                  ),
-                                ),
-                                AppLabelIconTrigger(
-                                  widthScale: widthScale,
-                                  label: AppStrings.recentlySaved,
-                                  icon: AppIcons.arrowDown,
-                                  // TODO: no sort options specified yet.
-                                ),
-                              ],
+                          child: AppSectionRow(
+                            widthScale: widthScale,
+                            label: favorites.length == 1
+                                ? AppStrings.onePropertySaved
+                                : AppStrings.propertiesSavedCount(favorites.length),
+                            color: AppColors.primary,
+                            fontSize: 11 * widthScale,
+                            fontWeight: FontWeight.w500,
+                            trailing: AppLabelIconTrigger(
+                              widthScale: widthScale,
+                              label: AppStrings.recentlySaved,
+                              icon: AppIcons.arrowDownBlue,
+                              // TODO: no sort options specified yet.
+                            ),
+                            padding: EdgeInsets.only(
+                              bottom: 12 * widthScale,
                             ),
                           ),
                         ),
@@ -98,7 +95,7 @@ class SavedScreen extends StatelessWidget {
                           child: Center(
                             child: EmptyStateView(
                               widthScale: widthScale,
-                              icon: Icons.favorite_border_rounded,
+                             // icon: Icons.favorite_border_rounded,
                               title: AppStrings.noSavedPropertiesTitle,
                               subtitle: AppStrings.noSavedPropertiesSubtitle,
                             ),
