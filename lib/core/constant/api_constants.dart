@@ -11,4 +11,6 @@ class ApiConstants {
   static const String createPropertyEndPoint = '/api/v1/properties';
   static const String myPropertiesEndpoint = '/api/v1/properties/my-properties';
   static String propertyByIdEndpoint(String id) => '/api/v1/properties/$id';
+  static const String profileEndpoint = '/api/v1/profile';
+  static const String searchPropertiesEndpoint = '/api/v1/properties/search';
 }

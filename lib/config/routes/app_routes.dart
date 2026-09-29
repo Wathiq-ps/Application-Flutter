@@ -39,7 +39,7 @@ class AppRoutes {
   // ─────────────────────────────────────────────
 
   static final GoRouter router = GoRouter(
-    initialLocation: RouteNames.ownerPropertiesScreen,
+    initialLocation: RouteNames.mainNavigation,
     routes: [
       // ─────────────────────────────────────────────
       // Splash

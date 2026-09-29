@@ -264,4 +264,9 @@ class AppStrings {
   static const String selectFeatures = 'Select features';
   static const String noFeaturesSelected = 'No features selected';
   static const String done = 'Done';
+  static const String searchProperties = 'Search Properties';
+  static const String onePropertyFound = '1 Property Found';
+  static String propertiesFoundCount(int count) => '$count Properties Found';
+  static const String noSearchResultsSubtitle =
+      'Try a different location or change the filter.';
 }

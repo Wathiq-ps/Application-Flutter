@@ -56,7 +56,9 @@ class OwnerPropertiesScreen extends StatelessWidget {
                             icon: AppIcons.backArrowProp,
                             iconWidth: 16,
                             iconHeight: 16,
-                            onTap: () {},
+                            onTap: () {
+                              context.pop();
+                            },
                           ),
                           center: Text(
                             AppStrings.myProperties,
@@ -72,8 +74,7 @@ class OwnerPropertiesScreen extends StatelessWidget {
                           right: AppElevatedButton(
                             text: AppStrings.addNewProperty,
                             onPressed: () {
-                              // TODO: navigate to add-property flow.
-                            },
+                              context.push(RouteNames.listPropertyTypeScreen);                            },
                             width: 97 * widthScale,
                             height: 32 * widthScale,
                             backgroundColor: AppColors.primary,

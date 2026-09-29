@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-
+import 'package:go_router/go_router.dart';
 import '../../../../config/theme/app_colors.dart';
 import '../../../../core/constant/app_icons.dart';
  
@@ -16,7 +16,7 @@ class HeaderWidget extends StatelessWidget {
       child: Row(
         children: [
           IconButton(
-            onPressed: () => Navigator.maybePop(context),
+            onPressed: () => context.pop(),
             icon: SvgPicture.asset(
               AppIcons.back,
               width: 20,

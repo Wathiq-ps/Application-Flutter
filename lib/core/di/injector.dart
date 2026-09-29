@@ -8,9 +8,15 @@ import '../../features/home/domain/repository/home_repository.dart';
 import '../../features/owner_property_mangment/data/data_sources/owner_property_remote_data_source.dart';
 import '../../features/owner_property_mangment/data/repositories_impl/owner_property_repository_impl.dart';
 import '../../features/owner_property_mangment/domain/repositories/owner_property_repository.dart';
+import '../../features/profile/data/data_sources/profile_remote_data_source.dart';
+import '../../features/profile/data/repository_implementations/profile_repository_impl.dart';
+import '../../features/profile/domain/repository/profile_repository.dart';
 import '../../features/saved/data/data_sources/favorites_local_data_source.dart';
 import '../../features/saved/data/repository_implementations/favorites_repository_impl.dart';
 import '../../features/saved/domain/repositories/favorites_repository.dart';
+import '../../features/search/domain/data/data_sources/search_data_source.dart';
+import '../../features/search/domain/data/repository_implementations/search_repository_impl.dart';
+import '../../features/search/domain/repository/search_repository.dart';
 import '../cache/cache_store.dart';
 import '../cache/cached_fetcher.dart';
 import '../cache/shared_prefs_cache_store.dart';
@@ -20,6 +26,7 @@ import '../../features/property/domain/repository/create_property_repository.dar
 import '../../features/property/domain/usecases/create_property_usecase.dart';
 import '../constant/api_constants.dart';
 import '../services/secure_storage_service.dart';
+
 class Injector {
   Injector._();
 
@@ -62,5 +69,16 @@ class Injector {
   static final OwnerPropertyRepository ownerPropertyRepository = OwnerPropertyRepositoryImpl(
     OwnerPropertyRemoteDataSourceImpl(_dio, secureStorage),
     cachedFetcher,
+  );
+
+  // ── Search ────────────────────────────────────────────
+  static final SearchRepository searchRepository = SearchRepositoryImpl(
+    SearchDataSourceImpl(_dio),
+    cachedFetcher,
+  );
+
+  // ── Profile ───────────────────────────────────────────
+  static final ProfileRepository profileRepository = ProfileRepositoryImpl(
+    ProfileRemoteDataSourceImpl(_dio, secureStorage),
   );
 }
