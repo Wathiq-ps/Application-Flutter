@@ -54,6 +54,7 @@ class OwnerPropertyRemoteDataSourceImpl implements OwnerPropertyRemoteDataSource
     try {
       final entries = <MapEntry<String, String>>[];
       fields.forEach((key, value) {
+        if (value == null) return; // never send the string "null"
         if (value is List) {
           for (var i = 0; i < value.length; i++) {
             entries.add(MapEntry('$key[$i]', value[i].toString()));

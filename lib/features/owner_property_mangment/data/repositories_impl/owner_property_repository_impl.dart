@@ -34,20 +34,20 @@ class OwnerPropertyRepositoryImpl implements OwnerPropertyRepository {
 
   @override
   Future<OwnerPropertyListItem> updateProperty(OwnerPropertyListItem property) async {
+    final bool isRent = property.listingType == 'rent';
+
     final fields = <String, dynamic>{
       '_method': 'PATCH',
       'listing_type': property.listingType,
       'type': property.propertyType.toLowerCase(),
-      'city': property.city,
-      'district': property.district,
-      'building_number': property.buildingNumber,
-      'latitude': property.latitude,
-      'longitude': property.longitude,
       'area_sqm': property.areaSqm,
       'price': _parsePrice(property.price),
       'price_currency': property.currency,
+      // Only meaningful for rent; null is skipped by the data source.
+      'price_unit': isRent ? property.rentUnit : null,
       'rooms': property.rooms,
       'bathrooms': property.bathrooms,
+      'floor_number': property.floorNumber,
       'features': property.features,
       'is_furnished': property.isFurnished ? 1 : 0,
       'description': property.description,

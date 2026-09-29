@@ -26,12 +26,15 @@ class OwnerPropertyListItemModel extends OwnerPropertyListItem {
     super.longitude,
     super.features,
     super.isFurnished,
+    super.rentUnit,
+    super.floorNumber,
   });
 
   factory OwnerPropertyListItemModel.fromJson(Map<String, dynamic> json) {
     final double priceNum = _toDouble(json['price']) ?? 0;
     final String currency = json['price_currency'] as String? ?? 'JOD';
     final String? apiStatus = json['status'] as String?;
+    final String? apiPriceUnit = json['price_unit'] as String?;
 
     return OwnerPropertyListItemModel(
       id: json['id'] as String,
@@ -42,10 +45,10 @@ class OwnerPropertyListItemModel extends OwnerPropertyListItem {
       areaSqm: (json['area_sqm'] as num?)?.toInt() ?? 0,
       price: _groupThousands(priceNum),
       priceUnit: '$currency /',
-      pricePeriod: _periodSuffix(json['price_unit'] as String?),
+      pricePeriod: _periodSuffix(apiPriceUnit),
       currency: currency,
       status: PropertyStatus.fromApi(apiStatus),
-      imageUrl: null, 
+      imageUrl: null,
       isListingActive: apiStatus == 'active',
       propertyType: _capitalize(json['type'] as String? ?? ''),
       description: json['description'] as String? ?? '',
@@ -55,8 +58,11 @@ class OwnerPropertyListItemModel extends OwnerPropertyListItem {
       buildingNumber: json['building_number']?.toString() ?? '',
       latitude: _toDouble(json['latitude']) ?? 0,
       longitude: _toDouble(json['longitude']) ?? 0,
-      features: (json['features'] as List?)?.map((e) => e.toString()).toList() ?? const [],
+      features: (json['features'] as List?)?.map((e) => e.toString()).toList() ??
+          const [],
       isFurnished: json['is_furnished'] as bool? ?? false,
+      rentUnit: apiPriceUnit,
+      floorNumber: _toInt(json['floor_number']),
     );
   }
 
@@ -89,6 +95,12 @@ class OwnerPropertyListItemModel extends OwnerPropertyListItem {
   static double? _toDouble(dynamic v) {
     if (v is num) return v.toDouble();
     if (v is String) return double.tryParse(v);
+    return null;
+  }
+
+  static int? _toInt(dynamic v) {
+    if (v is num) return v.toInt();
+    if (v is String) return int.tryParse(v);
     return null;
   }
 }

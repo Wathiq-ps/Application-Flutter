@@ -251,4 +251,17 @@ class AppStrings {
   static const String noSavedPropertiesTitle = 'No Properties Found';
   static const String noSavedPropertiesSubtitle =
       'Properties you save will appear here. Tap the heart icon on any listing to save it.';
+  static const String unitHour = 'Hour';
+  static const String unitDay = 'Day';
+  static const String unitWeek = 'Week';
+  static const String unitMonth = 'Month';
+  static const String priceUnitRequiredForRent =
+      'The price unit field is required when the listing type is rent.';
+  static const String saveFailed = 'Couldn\'t save changes';
+  static const String editSentToReviewTitle = 'Sent for review';
+  static const String editSentToReviewMessage =
+      'Your changes will be checked by an admin, and your property status is now pending.';
+  static const String selectFeatures = 'Select features';
+  static const String noFeaturesSelected = 'No features selected';
+  static const String done = 'Done';
 }

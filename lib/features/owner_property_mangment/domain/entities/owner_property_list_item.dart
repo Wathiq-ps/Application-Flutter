@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-
 import 'property_status.dart';
 
 class OwnerPropertyListItem extends Equatable {
@@ -27,6 +26,8 @@ class OwnerPropertyListItem extends Equatable {
     this.longitude = 0,
     this.features = const [],
     this.isFurnished = false,
+    this.rentUnit,
+    this.floorNumber,
   });
 
   final String id;
@@ -37,10 +38,14 @@ class OwnerPropertyListItem extends Equatable {
   final int bathrooms;
   final int areaSqm;
   final String price;
+
+  /// Display label only, e.g. "USD /".
   final String priceUnit;
   final String currency;
   final PropertyStatus status;
   final bool isListingActive;
+
+  /// Display suffix only, e.g. " month".
   final String pricePeriod;
   final String propertyType;
   final String description;
@@ -52,6 +57,10 @@ class OwnerPropertyListItem extends Equatable {
   final double longitude;
   final List<String> features;
   final bool isFurnished;
+
+  /// Raw API value: per_hour | per_day | per_week | per_month (null for sale).
+  final String? rentUnit;
+  final int? floorNumber;
 
   OwnerPropertyListItem copyWith({
     String? id,
@@ -77,6 +86,8 @@ class OwnerPropertyListItem extends Equatable {
     double? longitude,
     List<String>? features,
     bool? isFurnished,
+    String? rentUnit,
+    int? floorNumber,
   }) {
     return OwnerPropertyListItem(
       id: id ?? this.id,
@@ -102,6 +113,8 @@ class OwnerPropertyListItem extends Equatable {
       longitude: longitude ?? this.longitude,
       features: features ?? this.features,
       isFurnished: isFurnished ?? this.isFurnished,
+      rentUnit: rentUnit ?? this.rentUnit,
+      floorNumber: floorNumber ?? this.floorNumber,
     );
   }
 
@@ -130,5 +143,7 @@ class OwnerPropertyListItem extends Equatable {
     longitude,
     features,
     isFurnished,
+    rentUnit,
+    floorNumber,
   ];
 }

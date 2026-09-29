@@ -20,6 +20,7 @@ import '../../domain/entities/owner_property_list_item.dart';
 import '../state_management/owner_property_edit_cubit.dart';
 import '../state_management/owner_property_edit_state.dart';
 import '../widgets/listing_status_toggle.dart';
+import '../widgets/owner_features_card.dart';
 import '../widgets/owner_form_input_card.dart';
 import '../widgets/owner_property_photo_card.dart';
 
@@ -42,6 +43,13 @@ class OwnerEditPropertyScreen extends StatelessWidget {
 
 class _OwnerEditPropertyView extends StatelessWidget {
   const _OwnerEditPropertyView();
+
+  static const Map<String, String> _rentUnitLabels = {
+    'per_hour': AppStrings.unitHour,
+    'per_day': AppStrings.unitDay,
+    'per_week': AppStrings.unitWeek,
+    'per_month': AppStrings.unitMonth,
+  };
 
   Future<void> _confirmDiscard(BuildContext context) async {
     final bool? discard = await AppDialog.show<bool>(
@@ -134,6 +142,15 @@ class _OwnerEditPropertyView extends StatelessWidget {
     );
   }
 
+  void _showUnavailable(BuildContext context) {
+    AppTopSnackBar.show(
+      context,
+      title: AppStrings.featureNotAvailable,
+      message: AppStrings.featureComingSoon,
+      prefixIcon: AppIcons.error,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     const double figmaWidth = 393.0;
@@ -146,16 +163,35 @@ class _OwnerEditPropertyView extends StatelessWidget {
     return BlocListener<OwnerPropertyEditCubit, OwnerPropertyEditState>(
       listenWhen: (previous, current) =>
       previous.saveStatus != current.saveStatus &&
-          current.saveStatus == OwnerPropertySaveStatus.success,
+          (current.saveStatus == OwnerPropertySaveStatus.success ||
+              current.saveStatus == OwnerPropertySaveStatus.error),
       listener: (context, state) async {
+        if (state.saveStatus == OwnerPropertySaveStatus.error) {
+          AppTopSnackBar.show(
+            context,
+            title: AppStrings.saveFailed,
+            message: state.errorMessage ?? AppStrings.somethingWentWrong,
+            prefixIcon: AppIcons.error,
+          );
+          context.read<OwnerPropertyEditCubit>().resetSaveStatus();
+          return;
+        }
+
+        // Success
+        final bool review = state.sentToReview;
+        final Duration duration = Duration(milliseconds: review ? 2500 : 1500);
+
         AppTopSnackBar.show(
           context,
-          title: AppStrings.propertyEditedSuccessfully,
+          title: review
+              ? AppStrings.editSentToReviewTitle
+              : AppStrings.propertyEditedSuccessfully,
+          message: review ? AppStrings.editSentToReviewMessage : null,
           prefixIcon: AppIcons.success,
-          duration: const Duration(milliseconds: 1500),
+          duration: duration,
         );
 
-        await Future.delayed(const Duration(milliseconds: 1500));
+        await Future.delayed(duration);
 
         if (context.mounted) context.pop(true); // tell the list to refresh
       },
@@ -254,14 +290,7 @@ class _OwnerEditPropertyView extends StatelessWidget {
                               switchIconText: true,
                               iconHeight: 12 * widthScale,
                               iconWidth: 16 * widthScale,
-                              onTap: () {
-                                AppTopSnackBar.show(
-                                  context,
-                                  title: AppStrings.featureNotAvailable,
-                                  message: AppStrings.featureComingSoon,
-                                  prefixIcon: AppIcons.error,
-                                );
-                              },
+                              onTap: () => _showUnavailable(context),
                             ),
                           ),
                         ),
@@ -278,6 +307,8 @@ class _OwnerEditPropertyView extends StatelessWidget {
                   buildWhen: (previous, current) => previous.property != current.property,
                   builder: (context, state) {
                     final property = state.property;
+                    final cubit = context.read<OwnerPropertyEditCubit>();
+                    final bool isRent = property.listingType == 'rent';
 
                     return ListView(
                       padding: EdgeInsets.fromLTRB(
@@ -306,6 +337,8 @@ class _OwnerEditPropertyView extends StatelessWidget {
                           ),
                         ),
                         SizedBox(height: 16 * heightScale),
+
+                        // Listing type
                         Padding(
                           padding: EdgeInsets.symmetric(horizontal: 20 * widthScale),
                           child: Row(
@@ -324,18 +357,17 @@ class _OwnerEditPropertyView extends StatelessWidget {
                               Expanded(
                                 child: PropertyFilterChips(
                                   widthScale: widthScale,
-                                  selectedIndex: property.listingType == 'rent' ? 1 : 0,
-                                  onChanged: (index) {
-                                    context
-                                        .read<OwnerPropertyEditCubit>()
-                                        .updateListingType(index == 1 ? 'rent' : 'sale');
-                                  },
+                                  selectedIndex: isRent ? 1 : 0,
+                                  onChanged: (index) =>
+                                      cubit.updateListingType(index == 1 ? 'rent' : 'sale'),
                                 ),
                               ),
                             ],
                           ),
                         ),
                         SizedBox(height: 16 * heightScale),
+
+                        // Property type
                         OwnerFormInputCard(
                           label: AppStrings.propertyType,
                           value: property.propertyType,
@@ -352,11 +384,11 @@ class _OwnerEditPropertyView extends StatelessWidget {
                             AppStrings.propertyHouse,
                           ],
                           otherOptionLabel: AppStrings.propertyOther,
-                          onDropdownSelected: (selected) {
-                            context.read<OwnerPropertyEditCubit>().updatePropertyType(selected);
-                          },
+                          onDropdownSelected: cubit.updatePropertyType,
                         ),
                         SizedBox(height: 16 * heightScale),
+
+                        // Location (read-only)
                         OwnerFormInputCard(
                           label: AppStrings.location,
                           value: property.location,
@@ -367,16 +399,11 @@ class _OwnerEditPropertyView extends StatelessWidget {
                           switchIconText: false,
                           widthScale: widthScale,
                           isEditable: false,
-                          onEdit: () {
-                            AppTopSnackBar.show(
-                              context,
-                              title: AppStrings.featureNotAvailable,
-                              message: AppStrings.featureComingSoon,
-                              prefixIcon: AppIcons.error,
-                            );
-                          },
+                          onEdit: () => _showUnavailable(context),
                         ),
                         SizedBox(height: 16 * heightScale),
+
+                        // Price
                         OwnerFormInputCard(
                           label: AppStrings.price,
                           value: property.price,
@@ -398,11 +425,37 @@ class _OwnerEditPropertyView extends StatelessWidget {
                           isEditable: true,
                           keyboardType: TextInputType.number,
                           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                          onValueChanged: (newValue) {
-                            context.read<OwnerPropertyEditCubit>().updatePrice(newValue);
-                          },
+                          onValueChanged: cubit.updatePrice,
                         ),
                         SizedBox(height: 16 * heightScale),
+
+                        // Price unit (rent only)
+                        if (isRent) ...[
+                          OwnerFormInputCard(
+                            label: AppStrings.priceUnit,
+                            value: _rentUnitLabels[property.rentUnit] ??
+                                AppStrings.selectPriceUnit,
+                            actionIcon: AppIcons.edit,
+                            suffixIcon: AppIcons.arrowDownAshen,
+                            suffixIconHeight: 8,
+                            suffixIconWidth: 6,
+                            widthScale: widthScale,
+                            dropdownSheetTitle: AppStrings.selectPriceUnit,
+                            dropdownOptions: _rentUnitLabels.values.toList(),
+                            enableOtherCustomInput: false,
+                            onDropdownSelected: (selected) {
+                              final entry = _rentUnitLabels.entries
+                                  .where((e) => e.value == selected)
+                                  .toList();
+                              if (entry.isNotEmpty) {
+                                cubit.updateRentUnit(entry.first.key);
+                              }
+                            },
+                          ),
+                          SizedBox(height: 16 * heightScale),
+                        ],
+
+                        // Area
                         OwnerFormInputCard(
                           label: AppStrings.area,
                           value: '${property.areaSqm}',
@@ -416,23 +469,83 @@ class _OwnerEditPropertyView extends StatelessWidget {
                           inputFormatters: [
                             FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
                           ],
-                          onValueChanged: (newValue) {
-                            context.read<OwnerPropertyEditCubit>().updateArea(newValue);
-                          },
+                          onValueChanged: cubit.updateArea,
                         ),
                         SizedBox(height: 16 * heightScale),
+
+                        // Rooms
                         OwnerFormInputCard(
-                          label: AppStrings.features,
-                          value: '${property.rooms} Rooms\n${property.bathrooms} Bathrooms',
+                          label: AppStrings.rooms,
+                          value: '${property.rooms}',
                           actionIcon: AppIcons.edit,
                           widthScale: widthScale,
-                          valueMaxLines: 2,
+                          valueFontSize: 16,
+                          valueFontWeight: FontWeight.w700,
                           isEditable: true,
-                          onValueChanged: (newValue) {
-                            context.read<OwnerPropertyEditCubit>().updateFeatures(newValue);
-                          },
+                          keyboardType: TextInputType.number,
+                          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                          onValueChanged: cubit.updateRooms,
                         ),
                         SizedBox(height: 16 * heightScale),
+
+                        // Bathrooms
+                        OwnerFormInputCard(
+                          label: AppStrings.bathrooms,
+                          value: '${property.bathrooms}',
+                          actionIcon: AppIcons.edit,
+                          widthScale: widthScale,
+                          valueFontSize: 16,
+                          valueFontWeight: FontWeight.w700,
+                          isEditable: true,
+                          keyboardType: TextInputType.number,
+                          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                          onValueChanged: cubit.updateBathrooms,
+                        ),
+                        SizedBox(height: 16 * heightScale),
+
+                        // Floor
+                        OwnerFormInputCard(
+                          label: AppStrings.floor,
+                          value: property.floorNumber?.toString() ?? '-',
+                          actionIcon: AppIcons.edit,
+                          widthScale: widthScale,
+                          valueFontSize: 16,
+                          valueFontWeight: FontWeight.w700,
+                          isEditable: true,
+                          keyboardType: TextInputType.number,
+                          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                          onValueChanged: cubit.updateFloor,
+                        ),
+                        SizedBox(height: 16 * heightScale),
+
+                        // Furnished
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 3 * widthScale),
+                          child: AppSectionRow(
+                            widthScale: widthScale,
+                            label: AppStrings.furnished,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            lineHeight: 1.0,
+                            letterSpacing: 0.44,
+                            trailing: ListingStatusToggle(
+                              isActive: property.isFurnished,
+                              widthScale: widthScale,
+                              onChanged: cubit.updateFurnished,
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 16 * heightScale),
+
+                        // Features
+                        OwnerFeaturesCard(
+                          selected: property.features,
+                          widthScale: widthScale,
+                          onChanged: cubit.updateFeatures,
+                        ),
+                        SizedBox(height: 16 * heightScale),
+
+                        // Description
                         OwnerFormInputCard(
                           label: AppStrings.description,
                           value: property.description,
@@ -440,9 +553,7 @@ class _OwnerEditPropertyView extends StatelessWidget {
                           widthScale: widthScale,
                           valueMaxLines: 3,
                           isEditable: true,
-                          onValueChanged: (newValue) {
-                            context.read<OwnerPropertyEditCubit>().updateDescription(newValue);
-                          },
+                          onValueChanged: cubit.updateDescription,
                         ),
                       ],
                     );
