@@ -5,6 +5,9 @@ import '../../features/auth/domain/repository/auth_repository.dart';
 import '../../features/home/data/data_sources/home_data_source.dart';
 import '../../features/home/data/repository_implementations/home_repository_impl.dart';
 import '../../features/home/domain/repository/home_repository.dart';
+import '../../features/owner_property_mangment/data/data_sources/owner_property_remote_data_source.dart';
+import '../../features/owner_property_mangment/data/repositories_impl/owner_property_repository_impl.dart';
+import '../../features/owner_property_mangment/domain/repositories/owner_property_repository.dart';
 import '../../features/saved/data/data_sources/favorites_local_data_source.dart';
 import '../../features/saved/data/repository_implementations/favorites_repository_impl.dart';
 import '../../features/saved/domain/repositories/favorites_repository.dart';
@@ -55,4 +58,9 @@ class Injector {
 
   static final CreatePropertyUseCase createPropertyUseCase =
       CreatePropertyUseCase(createPropertyRepository);
+
+  static final OwnerPropertyRepository ownerPropertyRepository = OwnerPropertyRepositoryImpl(
+    OwnerPropertyRemoteDataSourceImpl(_dio, secureStorage),
+    cachedFetcher,
+  );
 }

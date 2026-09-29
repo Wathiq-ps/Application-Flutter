@@ -19,6 +19,14 @@ class OwnerPropertyListItem extends Equatable {
     this.isListingActive = true,
     this.propertyType = '',
     this.description = '',
+    this.listingType = 'sale',
+    this.city = '',
+    this.district = '',
+    this.buildingNumber = '',
+    this.latitude = 0,
+    this.longitude = 0,
+    this.features = const [],
+    this.isFurnished = false,
   });
 
   final String id;
@@ -36,6 +44,14 @@ class OwnerPropertyListItem extends Equatable {
   final String pricePeriod;
   final String propertyType;
   final String description;
+  final String listingType;
+  final String city;
+  final String district;
+  final String buildingNumber;
+  final double latitude;
+  final double longitude;
+  final List<String> features;
+  final bool isFurnished;
 
   OwnerPropertyListItem copyWith({
     String? id,
@@ -53,6 +69,14 @@ class OwnerPropertyListItem extends Equatable {
     bool? isListingActive,
     String? propertyType,
     String? description,
+    String? listingType,
+    String? city,
+    String? district,
+    String? buildingNumber,
+    double? latitude,
+    double? longitude,
+    List<String>? features,
+    bool? isFurnished,
   }) {
     return OwnerPropertyListItem(
       id: id ?? this.id,
@@ -70,6 +94,14 @@ class OwnerPropertyListItem extends Equatable {
       isListingActive: isListingActive ?? this.isListingActive,
       propertyType: propertyType ?? this.propertyType,
       description: description ?? this.description,
+      listingType: listingType ?? this.listingType,
+      city: city ?? this.city,
+      district: district ?? this.district,
+      buildingNumber: buildingNumber ?? this.buildingNumber,
+      latitude: latitude ?? this.latitude,
+      longitude: longitude ?? this.longitude,
+      features: features ?? this.features,
+      isFurnished: isFurnished ?? this.isFurnished,
     );
   }
 
@@ -90,5 +122,13 @@ class OwnerPropertyListItem extends Equatable {
     isListingActive,
     propertyType,
     description,
+    listingType,
+    city,
+    district,
+    buildingNumber,
+    latitude,
+    longitude,
+    features,
+    isFurnished,
   ];
 }

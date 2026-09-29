@@ -9,4 +9,6 @@ class ApiConstants {
   static const String refreshTokenEndpoint = '/auth/refresh';
   static const String homeEndpoint = '/api/v1/properties/home';
   static const String createPropertyEndPoint = '/api/v1/properties';
+  static const String myPropertiesEndpoint = '/api/v1/properties/my-properties';
+  static String propertyByIdEndpoint(String id) => '/api/v1/properties/$id';
 }
