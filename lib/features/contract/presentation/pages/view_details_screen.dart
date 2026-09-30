@@ -5,9 +5,14 @@ import '../../../../core/constant/app_icons.dart';
 import '../../../../core/constant/images_path.dart';
 import '../../../../core/constant/strings.dart';
 import '../../../../core/extensions/media_query_extensions.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/widget/app_svg_button.dart';
+import '../../../../core/widget/app_top_snackbar.dart';
 import '../../../../core/widget/page_header.dart';
 import '../../../property/domain/entities/property_entity.dart';
+import '../state_management/contract_cubit.dart';
+import '../state_management/contract_state.dart';
+import '../widgets/send_request_dialog.dart';
 
 class ViewPropertyDetailsScreen extends StatefulWidget {
   final PropertyEntity property;
@@ -37,6 +42,44 @@ class _ViewPropertyDetailsScreenState extends State<ViewPropertyDetailsScreen> {
   void dispose() {
     _pageController.dispose();
     super.dispose();
+  }
+
+  Future<void> _handleSendRequest(BuildContext context) async {
+    final cubit = context.read<ContractCubit>();
+    final note = await SendRequestDialog.show(
+      context,
+      onSend: (note) async {
+        final success = await cubit.sendRequest(
+          propertyId: widget.property.id,
+          message: note,
+        );
+        if (!success) {
+          final state = cubit.state;
+          if (state is SendRequestFailure && context.mounted) {
+            AppTopSnackBar.show(
+              context,
+              title: 'Failed to send request',
+              message: state.errorMessage,
+              prefixIcon: AppIcons.error,
+            );
+          }
+          throw Exception(
+            state is SendRequestFailure
+                ? state.errorMessage
+                : 'Failed to send request',
+          );
+        }
+      },
+    );
+
+    if (note != null && context.mounted) {
+      AppTopSnackBar.show(
+        context,
+        title: 'Request Sent',
+        message: 'Your request has been sent successfully.',
+        prefixIcon: AppIcons.success,
+      );
+    }
   }
 
   List<String> get _photoList => widget.property.photos;
@@ -580,7 +623,7 @@ class _ViewPropertyDetailsScreenState extends State<ViewPropertyDetailsScreen> {
                         ],
                       ),
                       child: ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () => _handleSendRequest(context),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF00113A),
                           foregroundColor: Colors.white,

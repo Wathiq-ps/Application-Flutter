@@ -12,6 +12,10 @@ import '../../features/property/data/data_sources/create_property_remote_data_so
 import '../../features/property/data/repositories/create_property_repository_impl.dart';
 import '../../features/property/domain/repository/create_property_repository.dart';
 import '../../features/property/domain/usecases/create_property_usecase.dart';
+import '../../features/contract/data/data_sources/contract_remote_data_source.dart';
+import '../../features/contract/data/repositories/contract_repository_impl.dart';
+import '../../features/contract/domain/repository/contract_repository.dart';
+import '../../features/contract/domain/usecases/contract_usecase.dart';
 import '../constant/api_constants.dart';
 import '../services/secure_storage_service.dart';
 
@@ -49,4 +53,17 @@ class Injector {
 
   static final CreatePropertyUseCase createPropertyUseCase =
       CreatePropertyUseCase(createPropertyRepository);
+
+  // ── Contract / Request ────────────────────────────────
+  static final ContractRemoteDataSource contractRemoteDataSource =
+      ContractRemoteDataSourceImpl(
+    _dio,
+    secureStorageService: secureStorage,
+  );
+
+  static final ContractRepository contractRepository =
+      ContractRepositoryImpl(contractRemoteDataSource);
+
+  static final SendPropertyRequestUseCase sendPropertyRequestUseCase =
+      SendPropertyRequestUseCase(contractRepository);
 }

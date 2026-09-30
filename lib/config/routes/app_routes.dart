@@ -19,7 +19,6 @@ import 'package:mobile/features/owner_property_mangment/domain/entities/owner_pr
 import 'package:mobile/features/owner_property_mangment/presentation/pages/owner_delete_property_screen.dart';
 import 'package:mobile/features/owner_property_mangment/presentation/pages/owner_edit_property_screen.dart';
 import 'package:mobile/features/owner_property_mangment/presentation/pages/owner_properties_screen.dart';
-import 'package:mobile/features/property/data/models/property_model.dart';
 import 'package:mobile/features/property/presentation/pages/list_property_features_screen.dart';
 import 'package:mobile/features/property/presentation/pages/list_property_photos_screen.dart';
 import 'package:mobile/features/property/presentation/pages/list_property_type_screen.dart';
@@ -32,6 +31,7 @@ import 'package:mobile/features/verification/presentation/pages/verify_identity_
 import 'package:mobile/features/verification/presentation/pages/verify_selfie_identity_screen.dart';
 
 import '../../features/contract/presentation/pages/view_details_screen.dart';
+import '../../features/contract/presentation/state_management/contract_cubit.dart';
 import '../../features/property/domain/entities/property_entity.dart';
 
 class AppRoutes {
@@ -345,8 +345,13 @@ class AppRoutes {
               body: Center(child: Text('Property not found.')),
             );
           }
-          return ViewPropertyDetailsScreen(
-            property: property
+          return BlocProvider<ContractCubit>(
+            create: (_) => ContractCubit(
+              sendPropertyRequestUseCase: Injector.sendPropertyRequestUseCase,
+            ),
+            child: ViewPropertyDetailsScreen(
+              property: property,
+            ),
           );
         },
       ),
