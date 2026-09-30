@@ -17,8 +17,12 @@ Future<void> showNationalityPicker({
   return showModalBottomSheet<void>(
     context: context,
     backgroundColor: Colors.transparent,
+    isScrollControlled: true,
     builder: (sheetContext) {
+      final double maxHeight = MediaQuery.of(sheetContext).size.height * 0.7;
+
       return Container(
+        constraints: BoxConstraints(maxHeight: maxHeight),
         decoration: BoxDecoration(
           color: AppColors.background,
           borderRadius: BorderRadius.vertical(top: Radius.circular(24 * widthScale)),
@@ -45,17 +49,24 @@ Future<void> showNationalityPicker({
               ),
             ),
             SizedBox(height: 12 * widthScale),
-            ..._nationalities.map((n) {
-              return AppDropdownOptionTile(
-                widthScale: widthScale,
-                label: n,
-                isSelected: n == current,
-                onTap: () {
-                  onSelected(n);
-                  Navigator.of(sheetContext).pop();
+            Flexible(
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: _nationalities.length,
+                itemBuilder: (context, index) {
+                  final n = _nationalities[index];
+                  return AppDropdownOptionTile(
+                    widthScale: widthScale,
+                    label: n,
+                    isSelected: n == current,
+                    onTap: () {
+                      onSelected(n);
+                      Navigator.of(sheetContext).pop();
+                    },
+                  );
                 },
-              );
-            }),
+              ),
+            ),
           ],
         ),
       );
