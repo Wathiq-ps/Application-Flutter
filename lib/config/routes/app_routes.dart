@@ -32,6 +32,7 @@ import '../../features/verification/presentation/cubit/verification_cubit.dart';
 import '../../features/verification/presentation/pages/verification_pending_screen.dart';
 import '../../features/verification/presentation/pages/verify_identity_screen.dart';
 import '../../features/verification/presentation/pages/verify_selfie_identity_screen.dart';
+import '../app_config.dart';
 
 class AppRoutes {
   AppRoutes._();
@@ -41,7 +42,7 @@ class AppRoutes {
   // ─────────────────────────────────────────────
 
   static final GoRouter router = GoRouter(
-    initialLocation: RouteNames.mainNavigation,
+    initialLocation: AppConfig.isTestMode ? RouteNames.mainNavigation : RouteNames.splash,
     routes: [
       // ─────────────────────────────────────────────
       // Splash
