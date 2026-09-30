@@ -4,5 +4,5 @@ class OtpRequestBodyModel {
 
   const OtpRequestBodyModel({required this.email, required this.status});
 
-  Map<String, dynamic> toJson() => {'email': email, 'status': status};
+  Map<String, dynamic> toJson() => {'email': email, 'status': status ,   'role': 'user',};
 }

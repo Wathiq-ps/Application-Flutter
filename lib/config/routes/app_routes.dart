@@ -4,76 +4,77 @@ import 'package:go_router/go_router.dart';
 import 'package:mobile/config/routes/routes_names.dart';
 import 'package:mobile/core/di/injector.dart';
 import 'package:mobile/features/auth/domain/entities/auth_mode.dart';
+import 'package:mobile/features/auth/presentation/pages/email_login_screen.dart';
+import 'package:mobile/features/auth/presentation/pages/email_registe_screen.dart';
+import 'package:mobile/features/auth/presentation/pages/phone_login_screen.dart';
+import 'package:mobile/features/auth/presentation/pages/phone_register_screen.dart';
 import 'package:mobile/features/auth/presentation/state_mangement/cubit/auth_cubit.dart';
-import 'package:mobile/features/property/presentation/pages/add_property_page_four.dart';
-import 'package:mobile/features/property/presentation/pages/proof_of_ownership_page.dart';
-import 'package:mobile/features/property/presentation/pages/review_listing_page.dart';
-import 'package:mobile/features/verification/presentation/pages/verification_pending_screen.dart';
-import 'package:mobile/features/verification/presentation/pages/verify_identity_screen.dart';
-import 'package:mobile/features/verification/presentation/pages/verify_selfie_identity_screen.dart';
-import 'package:mobile/features/property/presentation/pages/add_property_page_two.dart';
-import '../../features/auth/presentation/pages/email_login_screen.dart';
-import '../../features/auth/presentation/pages/email_registe_screen.dart';
-import '../../features/auth/presentation/pages/phone_login_screen.dart';
-import '../../features/auth/presentation/pages/phone_register_screen.dart';
-  import 'package:flutter/material.dart';
-  import 'package:flutter_bloc/flutter_bloc.dart';
-  import 'package:go_router/go_router.dart';
-  import 'package:mobile/config/routes/routes_names.dart';
-  import 'package:mobile/core/di/injector.dart';
-  import 'package:mobile/features/auth/domain/entities/auth_mode.dart';
-  import 'package:mobile/features/auth/presentation/state_mangement/cubit/auth_cubit.dart';
-import 'package:mobile/features/home/presentation/widgets/property_home_card.dart';
+import 'package:mobile/features/home/presentation/state_mangement/home_cubit.dart';
+import 'package:mobile/features/main_navigation/presentation/pages/main_navigation_screen.dart';
+import 'package:mobile/features/main_navigation/presentation/state_mangment/navigation_cubit.dart';
+import 'package:mobile/features/onboarding/presentation/onboardin_screen.dart';
+import 'package:mobile/features/onboarding/presentation/onboarding_login_screen.dart';
+import 'package:mobile/features/onboarding/presentation/splash_screen.dart';
+import 'package:mobile/features/owner_property_mangment/domain/entities/owner_property_list_item.dart';
 import 'package:mobile/features/owner_property_mangment/presentation/pages/owner_delete_property_screen.dart';
 import 'package:mobile/features/owner_property_mangment/presentation/pages/owner_edit_property_screen.dart';
 import 'package:mobile/features/owner_property_mangment/presentation/pages/owner_properties_screen.dart';
-  import 'package:mobile/features/property/presentation/pages/list_property_photos_screen.dart';
-  import 'package:mobile/features/property/presentation/pages/proof_of_ownership_page.dart';
-  import 'package:mobile/features/property/presentation/pages/review_listing_page.dart';
-  import 'package:mobile/features/verification/presentation/verification_pending_screen.dart';
-  import 'package:mobile/features/verification/presentation/verify_identity_screen.dart';
-  import 'package:mobile/features/verification/presentation/verify_selfie_identity_screen.dart';
-  import 'package:mobile/features/property/presentation/pages/property_location_screen.dart';
-  import '../../features/auth/presentation/pages/email_login_screen.dart';
-  import '../../features/auth/presentation/pages/email_registe_screen.dart';
-  import '../../features/auth/presentation/pages/phone_login_screen.dart';
-  import '../../features/auth/presentation/pages/phone_register_screen.dart';
-  import '../../features/home/presentation/state_mangement/home_cubit.dart';
-import '../../features/main_navigation/presentation/pages/main_navigation_screen.dart';
-import '../../features/main_navigation/presentation/state_mangment/navigation_cubit.dart';
-import '../../features/onboarding/presentation/onboardin_screen.dart';
-  import '../../features/onboarding/presentation/onboarding_login_screen.dart';
-  import '../../features/onboarding/presentation/splash_screen.dart';
-  import '../../features/owner_property_mangment/domain/entities/owner_property_list_item.dart';
-import '../../features/owner_property_mangment/presentation/state_management/owner_property_state.dart';
-import '../../features/property/presentation/pages/add_property_page_one.dart';
-  import '../../features/property/presentation/pages/add_property_page_three.dart';
-import '../../features/saved/presentations/state_management/saved_cubit.dart';
-import '../../features/property/presentation/pages/list_property_type_screen.dart';
-  import '../../features/property/presentation/pages/list_property_features_screen.dart';
-import '../../features/property/presentation/state_management/create_property_cubit.dart';
+import 'package:mobile/features/property/presentation/pages/list_property_features_screen.dart';
+import 'package:mobile/features/property/presentation/pages/list_property_photos_screen.dart';
+import 'package:mobile/features/property/presentation/pages/list_property_type_screen.dart';
+import 'package:mobile/features/property/presentation/pages/proof_of_ownership_page.dart';
+import 'package:mobile/features/property/presentation/pages/property_location_screen.dart';
+import 'package:mobile/features/property/presentation/pages/review_listing_page.dart';
+import 'package:mobile/features/property/presentation/state_management/create_property_cubit.dart';
+import 'package:mobile/features/saved/presentations/state_management/saved_cubit.dart';
+import '../../features/profile/presentation/pages/edit_profile_screen.dart';
+import '../../features/verification/presentation/cubit/verification_cubit.dart';
+import '../../features/verification/presentation/pages/verification_pending_screen.dart';
+import '../../features/verification/presentation/pages/verify_identity_screen.dart';
+import '../../features/verification/presentation/pages/verify_selfie_identity_screen.dart';
+import '../app_config.dart';
 
-  class AppRoutes {
-    AppRoutes._();
+class AppRoutes {
+  AppRoutes._();
 
-    // ─────────────────────────────────────────────
-    // Router
-    // ─────────────────────────────────────────────
+  // ─────────────────────────────────────────────
+  // Router
+  // ─────────────────────────────────────────────
 
-    static final GoRouter router = GoRouter(
-      initialLocation: RouteNames.mainNavigation,
+  static final GoRouter router = GoRouter(
+    initialLocation: AppConfig.isTestMode ? RouteNames.mainNavigation : RouteNames.splash,
+    routes: [
+      // ─────────────────────────────────────────────
+      // Splash
+      // ─────────────────────────────────────────────
+      GoRoute(
+        path: RouteNames.splash,
+        name: 'splash',
+        builder: (context, state) {
+          return const SplashScreen();
+        },
+      ),
 
-      routes: [
-        // ─────────────────────────────────────────────
-        // Splash
-        // ─────────────────────────────────────────────
-        GoRoute(
-          path: RouteNames.splash,
-          name: 'splash',
-          builder: (context, state) {
-            return const SplashScreen();
-          },
-        ),
+      // ─────────────────────────────────────────────
+      // Main Navigation
+      // ─────────────────────────────────────────────
+      GoRoute(
+        path: RouteNames.mainNavigation,
+        builder: (context, state) {
+          return MultiBlocProvider(
+            providers: [
+              BlocProvider(create: (_) => NavigationCubit()),
+              BlocProvider(
+                create: (_) => HomeCubit(Injector.homeRepository)..loadHome(),
+              ),
+              BlocProvider(
+                create: (_) => SavedCubit(Injector.favoritesRepository),
+              ),
+            ],
+            child: const MainNavigationScreen(),
+          );
+        },
+      ),
 
       // ─────────────────────────────────────────────
       // Onboarding
@@ -85,10 +86,9 @@ import '../../features/property/presentation/state_management/create_property_cu
           return CustomTransitionPage(
             key: state.pageKey,
             child: const OnBoardingScreen(),
-            transitionsBuilder:
-                (context, animation, secondaryAnimation, child) {
-                  return FadeTransition(opacity: animation, child: child);
-                },
+            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+              return FadeTransition(opacity: animation, child: child);
+            },
           );
         },
       ),
@@ -100,16 +100,15 @@ import '../../features/property/presentation/state_management/create_property_cu
           return CustomTransitionPage(
             key: state.pageKey,
             child: const OnBoardingLoginScreen(),
-            transitionsBuilder:
-                (context, animation, secondaryAnimation, child) {
-                  return FadeTransition(opacity: animation, child: child);
-                },
+            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+              return FadeTransition(opacity: animation, child: child);
+            },
           );
         },
       ),
 
       // ─────────────────────────────────────────────
-      // Login
+      // Authentication
       // ─────────────────────────────────────────────
       GoRoute(
         path: RouteNames.phoneLoginScreen,
@@ -118,16 +117,13 @@ import '../../features/property/presentation/state_management/create_property_cu
           return CustomTransitionPage(
             key: state.pageKey,
             child: const PhoneLoginScreen(),
-            transitionsBuilder:
-                (context, animation, secondaryAnimation, child) {
-                  return FadeTransition(opacity: animation, child: child);
-                },
+            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+              return FadeTransition(opacity: animation, child: child);
+            },
           );
         },
       ),
-      // ─────────────────────────────────────────────
-      // Email Login
-      // ─────────────────────────────────────────────
+
       GoRoute(
         path: RouteNames.emailLoginScreen,
         name: 'emailLoginScreen',
@@ -141,17 +137,13 @@ import '../../features/property/presentation/state_management/create_property_cu
               ),
               child: const EmailLoginScreen(),
             ),
-            transitionsBuilder:
-                (context, animation, secondaryAnimation, child) {
-                  return FadeTransition(opacity: animation, child: child);
-                },
+            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+              return FadeTransition(opacity: animation, child: child);
+            },
           );
         },
       ),
 
-      // ─────────────────────────────────────────────
-      // Register
-      // ─────────────────────────────────────────────
       GoRoute(
         path: RouteNames.phoneRegisterScreen,
         name: 'phoneRegisterScreen',
@@ -159,167 +151,32 @@ import '../../features/property/presentation/state_management/create_property_cu
           return CustomTransitionPage(
             key: state.pageKey,
             child: const PhoneRegisterScreen(),
-            transitionsBuilder:
-                (context, animation, secondaryAnimation, child) {
-                  return FadeTransition(opacity: animation, child: child);
-                },
+            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+              return FadeTransition(opacity: animation, child: child);
+            },
           );
         },
       ),
-        // ─────────────────────────────────────────────
-        // Onboarding
-        // ─────────────────────────────────────────────
-        GoRoute(
-          path: RouteNames.onboardingScreen,
-          name: 'onboardingScreen',
-          pageBuilder: (context, state) {
-            return CustomTransitionPage(
-              key: state.pageKey,
-              child: const OnBoardingScreen(),
-              transitionsBuilder: (
-                  context,
-                  animation,
-                  secondaryAnimation,
-                  child,
-                  ) {
-                return FadeTransition(
-                  opacity: animation,
-                  child: child,
-                );
-              },
-            );
-          },
-        ),
 
-        GoRoute(
-          path: RouteNames.onboardingLoginScreen,
-          name: 'onboardingLoginScreen',
-          pageBuilder: (context, state) {
-            return CustomTransitionPage(
-              key: state.pageKey,
-              child: const OnBoardingLoginScreen(),
-              transitionsBuilder: (
-                  context,
-                  animation,
-                  secondaryAnimation,
-                  child,
-                  ) {
-                return FadeTransition(
-                  opacity: animation,
-                  child: child,
-                );
-              },
-            );
-          },
-        ),
-
-  // ─────────────────────────────────────────────
-  // Login
-  // ─────────────────────────────────────────────
-        GoRoute(
-          path: RouteNames.phoneLoginScreen,
-          name: 'phoneLoginScreen',
-          pageBuilder: (context, state) {
-            return CustomTransitionPage(
-              key: state.pageKey,
-              child: const PhoneLoginScreen(),
-              transitionsBuilder: (
-                  context,
-                  animation,
-                  secondaryAnimation,
-                  child,
-                  ) {
-                return FadeTransition(
-                  opacity: animation,
-                  child: child,
-                );
-              },
-            );
-          },
-        ),
-        // ─────────────────────────────────────────────
-  // Email Login
-  // ─────────────────────────────────────────────
-        GoRoute(
-          path: RouteNames.emailLoginScreen,
-          name: 'emailLoginScreen',
-          pageBuilder: (context, state) {
-            return CustomTransitionPage(
-              key: state.pageKey,
-              child: BlocProvider(
-                create: (_) => AuthCubit(
-                  mode: AuthMode.login,
-                  authRepository: Injector.authRepository,
-                ),
-                child: const EmailLoginScreen(),
+      GoRoute(
+        path: RouteNames.emailRegisterScreen,
+        name: 'emailRegisterScreen',
+        pageBuilder: (context, state) {
+          return CustomTransitionPage(
+            key: state.pageKey,
+            child: BlocProvider(
+              create: (_) => AuthCubit(
+                mode: AuthMode.register,
+                authRepository: Injector.authRepository,
               ),
-              transitionsBuilder: (
-                  context,
-                  animation,
-                  secondaryAnimation,
-                  child,
-                  ) {
-                return FadeTransition(
-                  opacity: animation,
-                  child: child,
-                );
-              },
-            );
-          },
-        ),
-
-  // ─────────────────────────────────────────────
-  // Register
-  // ─────────────────────────────────────────────
-        GoRoute(
-          path: RouteNames.phoneRegisterScreen,
-          name: 'phoneRegisterScreen',
-          pageBuilder: (context, state) {
-            return CustomTransitionPage(
-              key: state.pageKey,
-              child: const PhoneRegisterScreen(),
-              transitionsBuilder: (
-                  context,
-                  animation,
-                  secondaryAnimation,
-                  child,
-                  ) {
-                return FadeTransition(
-                  opacity: animation,
-                  child: child,
-                );
-              },
-            );
-          },
-        ),
-
-        GoRoute(
-          path: RouteNames.emailRegisterScreen,
-          name: 'emailRegisterScreen',
-          pageBuilder: (context, state) {
-            return CustomTransitionPage(
-              key: state.pageKey,
-              child: BlocProvider(
-                create: (_) => AuthCubit(
-                  mode: AuthMode.register,
-                  authRepository: Injector.authRepository,
-                ),
-                child: const EmailRegisterScreen(),
-              ),
-              transitionsBuilder: (
-                  context,
-                  animation,
-                  secondaryAnimation,
-                  child,
-                  ) {
-                return FadeTransition(
-                  opacity: animation,
-                  child: child,
-                );
-              },
-            );
-          },
-        ),
+              child: const EmailRegisterScreen(),
+            ),
+            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+              return FadeTransition(opacity: animation, child: child);
+            },
+          );
+        },
+      ),
 
       // ─────────────────────────────────────────────
       // Property
@@ -341,7 +198,7 @@ import '../../features/property/presentation/state_management/create_property_cu
               final isEdit = state.extra is bool
                   ? state.extra as bool
                   : (state.extra as Map<String, dynamic>?)?['isEdit'] as bool? ??
-                      false;
+                  false;
               return ListPropertyTypeScreen(isEdit: isEdit);
             },
           ),
@@ -352,7 +209,7 @@ import '../../features/property/presentation/state_management/create_property_cu
               final isEdit = state.extra is bool
                   ? state.extra as bool
                   : (state.extra as Map<String, dynamic>?)?['isEdit'] as bool? ??
-                      false;
+                  false;
               return PropertyLocationScreen(isEdit: isEdit);
             },
           ),
@@ -363,7 +220,7 @@ import '../../features/property/presentation/state_management/create_property_cu
               final isEdit = state.extra is bool
                   ? state.extra as bool
                   : (state.extra as Map<String, dynamic>?)?['isEdit'] as bool? ??
-                      false;
+                  false;
               return ListPropertyFeaturesScreen(isEdit: isEdit);
             },
           ),
@@ -374,7 +231,7 @@ import '../../features/property/presentation/state_management/create_property_cu
               final isEdit = state.extra is bool
                   ? state.extra as bool
                   : (state.extra as Map<String, dynamic>?)?['isEdit'] as bool? ??
-                      false;
+                  false;
               return ListPropertyPhotosScreen(isEdit: isEdit);
             },
           ),
@@ -385,7 +242,7 @@ import '../../features/property/presentation/state_management/create_property_cu
               final isEdit = state.extra is bool
                   ? state.extra as bool
                   : (state.extra as Map<String, dynamic>?)?['isEdit'] as bool? ??
-                      false;
+                  false;
               return ProofOfOwnershipPage(isEdit: isEdit);
             },
           ),
@@ -399,96 +256,81 @@ import '../../features/property/presentation/state_management/create_property_cu
         ],
       ),
 
-        // ─────────────────────────────────────────────
-        // Verification
-        // ─────────────────────────────────────────────
-        GoRoute(
-          path: RouteNames.verifyIdentityScreen,
-          name: 'verifyIdentityScreen',
-          builder: (context, state) {
-            return const VerifyIdentityScreen();
-          },
-        ),
+      // ─────────────────────────────────────────────
+      // Verification
+      // ─────────────────────────────────────────────
 
-        GoRoute(
-          path: RouteNames.verifySelfieIdentityScreen,
-          name: 'verifySelfieIdentityScreen',
-          builder: (context, state) {
-            return const VerifySelfieIdentityScreen();
-          },
-        ),
+      ShellRoute(
+        builder: (context, state, child) {
+          return BlocProvider<VerificationCubit>(
+            create: (_) => VerificationCubit(Injector.verificationRepository),
+            child: child,
+          );
+        },
+        routes: [
+          GoRoute(
+            path: RouteNames.verifyIdentityScreen,
+            name: 'verifyIdentityScreen',
+            builder: (context, state) => const VerifyIdentityScreen(),
+          ),
+          GoRoute(
+            path: RouteNames.verifySelfieIdentityScreen,
+            name: 'verifySelfieIdentityScreen',
+            builder: (context, state) => const VerifySelfieIdentityScreen(),
+          ),
+          GoRoute(
+            path: RouteNames.verificationPendingScreen,
+            name: 'verificationPendingScreen',
+            builder: (context, state) => const VerificationPendingScreen(),
+          ),
+        ],
+      ),
 
-        GoRoute(
-          path: RouteNames.verificationPendingScreen,
-          name: 'verificationPendingScreen',
-          builder: (context, state) {
-            return const VerificationPendingScreen();
-          },
-        ),
+
+  GoRoute(
+  path: RouteNames.editProfileScreen,
+  name: 'editProfileScreen',
+  builder: (context, state) => const EditProfileScreen(),
+  ),
+
+      // ─────────────────────────────────────────────
+      // Owner Property Management
+      // ─────────────────────────────────────────────
+      GoRoute(
+        path: RouteNames.ownerPropertiesScreen,
+        name: 'ownerPropertiesScreen',
+        builder: (context, state) {
+          return const OwnerPropertiesScreen();
+        },
+      ),
 
       GoRoute(
-        path: RouteNames.verificationPendingScreen,
-        name: 'verificationPendingScreen',
+        path: RouteNames.ownerEditPropertyScreen,
+        name: 'ownerEditPropertyScreen',
         builder: (context, state) {
-          return const VerificationPendingScreen();
+          final property = state.extra as OwnerPropertyListItem?;
+          if (property == null) {
+            return const Scaffold(
+              body: Center(child: Text('Property not found.')),
+            );
+          }
+          return OwnerEditPropertyScreen(property: property);
+        },
+      ),
+
+      GoRoute(
+        path: RouteNames.ownerDeletePropertyScreen,
+        name: 'ownerDeletePropertyScreen',
+        builder: (context, state) {
+          final property = state.extra as OwnerPropertyListItem?;
+          if (property == null) {
+            return const Scaffold(
+              body: Center(child: Text('Property not found.')),
+            );
+          }
+          return OwnerDeletePropertyScreen(property: property);
         },
       ),
     ],
   );
 }
-        GoRoute(
-          path: RouteNames.mainNavigation,
-          builder: (context, state) {
-            return MultiBlocProvider(
-              providers: [
-                BlocProvider(create: (_) => NavigationCubit()),
-                BlocProvider(create: (_) => HomeCubit(Injector.homeRepository)..loadHome()),
-                BlocProvider(create: (_) => SavedCubit(Injector.favoritesRepository)),
-              ],
-              child: const MainNavigationScreen(),
-            );
-          },
-        ),
-// ─────────────────────────────────────────────
-// Owner Property Management
-// ─────────────────────────────────────────────
-
-        GoRoute(
-          path: RouteNames.ownerPropertiesScreen,
-          name: 'ownerPropertiesScreen',
-          builder: (context, state) {
-            return const OwnerPropertiesScreen();
-          },
-        ),
-
-        GoRoute(
-          path: RouteNames.ownerEditPropertyScreen,
-          name: 'ownerEditPropertyScreen',
-          builder: (context, state) {
-            final property = state.extra as OwnerPropertyListItem?;
-            if (property == null) {
-              // No property was passed in `extra` — avoid a hard crash.
-              return const Scaffold(
-                body: Center(child: Text('Property not found.')),
-              );
-            }
-            return OwnerEditPropertyScreen(property: property);
-          },
-        ),
-
-        GoRoute(
-          path: RouteNames.ownerDeletePropertyScreen,
-          name: 'ownerDeletePropertyScreen',
-          builder: (context, state) {
-            final property = state.extra as OwnerPropertyListItem?;
-            if (property == null) {
-              return const Scaffold(
-                body: Center(child: Text('Property not found.')),
-              );
-            }
-            return OwnerDeletePropertyScreen(property: property);
-          },
-        ),
-      ],
-    );
-  }

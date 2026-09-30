@@ -35,7 +35,8 @@ class SavedScreen extends StatelessWidget {
             PageHeader(
               widthScale: widthScale,
               right: SvgPicture.asset(
-                AppIcons.filter
+                AppIcons.filter,
+                  height: 18 * widthScale,width: 18 * widthScale
               ),
               center: Text(
                 AppStrings.myFavorites,

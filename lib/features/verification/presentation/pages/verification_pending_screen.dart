@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-
 import 'package:mobile/config/routes/routes_names.dart';
 import '../../data/models/verification_model.dart';
 import '../cubit/verification_cubit.dart';
@@ -34,7 +33,7 @@ class _VerificationPendingScreenState extends State<VerificationPendingScreen> {
 
           if (kycStatus == VerificationStatus.approved) {
             // TODO: عدّل الراوت حسب اسم شاشة الـ Home/Dashboard عندك
-            context.go(RouteNames.addPropertyScreenOne);
+            context.go(RouteNames.lsitpro );
           } else if (kycStatus == VerificationStatus.rejected) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
@@ -163,7 +162,7 @@ class _VerificationPendingScreenState extends State<VerificationPendingScreen> {
                                       );
                                     }
                                   : () => context.go(
-                                      RouteNames.addPropertyScreenOne,
+                                      RouteNames.verifyIdentityScreen,
                                     ),
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: const Color(0xff001B4D),

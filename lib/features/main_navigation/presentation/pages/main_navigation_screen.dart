@@ -3,13 +3,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mobile/features/home/presentation/pages/home_screen.dart';
 import 'package:mobile/features/profile/presentation/pages/profile_screen.dart';
 import '../../../../config/theme/app_colors.dart';
-import '../../../../core/constant/strings.dart';
 import '../../../../core/widget/fade_indexed_stack.dart';
 import '../../../saved/presentations/pages/saved_screen.dart';
+import '../../../search/presentations/pages/search_screen.dart';
 import '../state_mangment/navigation_cubit.dart';
 import '../state_mangment/navigation_state.dart';
 import '../widgets/main_bottom_navigation_bar.dart';
-import '../widgets/navigation_placeholder.dart';
 
 class MainNavigationScreen extends StatelessWidget {
   const MainNavigationScreen({super.key});
@@ -17,8 +16,8 @@ class MainNavigationScreen extends StatelessWidget {
   static const List<Widget> pages = [
     HomeScreen(),
     SavedScreen(),
-    NavigationPlaceholder(title: AppStrings.search),
-   ProfileScreen(),
+    SearchScreen(),
+    ProfileScreen(),
   ];
 
   @override

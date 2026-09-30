@@ -9,6 +9,23 @@ enum PropertyStatus {
   rejected,
   suspended;
 
+  static PropertyStatus fromApi(String? value) {
+    switch (value) {
+      case 'active':
+        return PropertyStatus.active;
+
+      case 'rejected':
+        return PropertyStatus.rejected;
+
+      case 'suspended':
+        return PropertyStatus.suspended;
+
+      case 'pending_verification':
+      case 'review':
+      default:
+        return PropertyStatus.review;
+    }
+  }
   String get label {
     switch (this) {
       case PropertyStatus.active:
@@ -25,39 +42,48 @@ enum PropertyStatus {
   Color get backgroundColor {
     switch (this) {
       case PropertyStatus.active:
-        return const Color(0xE6D1FAE5);
+        return AppColors.propertyActiveBg;
+
       case PropertyStatus.review:
-        return const Color(0xE6FFCFA8);
+        return AppColors.propertyReviewBg;
+
       case PropertyStatus.rejected:
-        return const Color(0xE6BE1510);
+        return AppColors.propertyRejectedBg;
+
       case PropertyStatus.suspended:
-        return const Color(0xE67B7B7B);
+        return AppColors.propertySuspendedBg;
     }
   }
 
   Color get dotColor {
     switch (this) {
       case PropertyStatus.active:
-        return const Color(0xFF059669);
+        return AppColors.propertyActiveDot;
+
       case PropertyStatus.review:
-        return const Color(0xFFFF6805);
+        return AppColors.propertyReviewDot;
+
       case PropertyStatus.rejected:
-        return const Color(0xFFFFD1D0);
+        return AppColors.propertyRejectedDot;
+
       case PropertyStatus.suspended:
-        return const Color(0xFF464646);
+        return AppColors.propertySuspendedDot;
     }
   }
 
   Color get textColor {
     switch (this) {
       case PropertyStatus.active:
-        return const Color(0xFF065F46);
+        return AppColors.propertyActiveText;
+
       case PropertyStatus.review:
-        return const Color(0xFFFF6805);
+        return AppColors.propertyReviewText;
+
       case PropertyStatus.rejected:
-        return const Color(0xFFFFD1D0);
+        return AppColors.propertyRejectedText;
+
       case PropertyStatus.suspended:
-        return const Color(0xFF464646);
+        return AppColors.propertySuspendedText;
     }
   }
 }

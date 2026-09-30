@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile/core/constant/images_path.dart';
+import 'package:mobile/core/di/injector.dart';
 import '../../../../config/theme/app_colors.dart';
 import '../../../../core/constant/app_icons.dart';
 import '../../../../core/constant/strings.dart';
@@ -11,38 +12,30 @@ import '../../../../core/widget/app_svg_button.dart';
 import '../../../../core/widget/app_top_snackbar.dart';
 import '../../../../core/widget/page_header.dart';
 import '../../domain/entities/owner_property_list_item.dart';
-import '../state_management/owner_property_cubit.dart';
-import '../state_management/owner_property_state.dart';
+import '../state_management/owner_property_edit_cubit.dart';
+import '../state_management/owner_property_edit_state.dart';
 import '../widgets/owner_form_input_card.dart';
 import '../widgets/owner_property_photo_card.dart';
 
 class OwnerDeletePropertyScreen extends StatelessWidget {
-  const OwnerDeletePropertyScreen({
-    super.key,
-    required this.property,
-  });
+  const OwnerDeletePropertyScreen({super.key, required this.property});
 
   final OwnerPropertyListItem property;
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => OwnerPropertyCubit.forEdit(
+      create: (_) => OwnerPropertyEditCubit(
         property: property,
+        repository: Injector.ownerPropertyRepository,
       ),
-      child: _OwnerDeletePropertyView(
-        property: property,
-      ),
+      child: const _OwnerDeletePropertyView(),
     );
   }
 }
 
 class _OwnerDeletePropertyView extends StatelessWidget {
-  const _OwnerDeletePropertyView({
-    required this.property,
-  });
-
-  final OwnerPropertyListItem property;
+  const _OwnerDeletePropertyView();
 
   Future<void> _confirmDelete(BuildContext context) async {
     final bool? delete = await AppDialog.show<bool>(
@@ -54,19 +47,13 @@ class _OwnerDeletePropertyView extends StatelessWidget {
       message: AppStrings.sureToDeleteProperty,
       primaryText: AppStrings.deleteAction,
       primaryBackgroundColor: AppColors.error,
-      onPrimary: () {
-        Navigator.of(context).pop(true);
-      },
+      onPrimary: () => Navigator.of(context).pop(true),
       secondaryText: AppStrings.cancel,
-      onSecondary: () {
-        Navigator.of(context).pop(false);
-      },
+      onSecondary: () => Navigator.of(context).pop(false),
     );
 
     if (delete == true && context.mounted) {
-      await context.read<OwnerPropertyCubit>().deleteProperty(
-        property.id,
-      );
+      await context.read<OwnerPropertyEditCubit>().delete();
     }
   }
 
@@ -74,14 +61,12 @@ class _OwnerDeletePropertyView extends StatelessWidget {
   Widget build(BuildContext context) {
     const double figmaWidth = 393.0;
     const double figmaHeight = 932.0;
-
     final double widthScale = context.screenWidth / figmaWidth;
     final double heightScale = context.screenHeight / figmaHeight;
-
     final ThemeData theme = Theme.of(context);
     final TextTheme textTheme = theme.textTheme;
 
-    return BlocListener<OwnerPropertyCubit, OwnerPropertyState>(
+    return BlocListener<OwnerPropertyEditCubit, OwnerPropertyEditState>(
       listenWhen: (previous, current) =>
       previous.saveStatus != current.saveStatus &&
           current.saveStatus == OwnerPropertySaveStatus.success,
@@ -93,13 +78,9 @@ class _OwnerDeletePropertyView extends StatelessWidget {
           duration: const Duration(milliseconds: 1500),
         );
 
-        context.read<OwnerPropertyCubit>().resetSaveStatus();
-
         await Future.delayed(const Duration(milliseconds: 1500));
 
-        if (context.mounted) {
-          context.pop();
-        }
+        if (context.mounted) context.pop(true); // tell the list to refresh
       },
       child: Scaffold(
         backgroundColor: theme.scaffoldBackgroundColor,
@@ -131,22 +112,17 @@ class _OwnerDeletePropertyView extends StatelessWidget {
                     letterSpacing: -0.45,
                   ),
                 ),
-                right: BlocBuilder<OwnerPropertyCubit, OwnerPropertyState>(
-                  buildWhen: (previous, current) =>
-                  previous.saveStatus != current.saveStatus,
+                right: BlocBuilder<OwnerPropertyEditCubit, OwnerPropertyEditState>(
+                  buildWhen: (previous, current) => previous.saveStatus != current.saveStatus,
                   builder: (context, state) {
-                    final bool isDeleting =
-                        state.saveStatus == OwnerPropertySaveStatus.saving;
-
+                    final bool isDeleting = state.saveStatus == OwnerPropertySaveStatus.saving;
                     return GestureDetector(
                       onTap: isDeleting ? null : () => _confirmDelete(context),
                       behavior: HitTestBehavior.opaque,
                       child: Text(
                         AppStrings.deleteAction,
                         style: textTheme.bodyLarge?.copyWith(
-                          color: isDeleting
-                              ? AppColors.disabled
-                              : AppColors.error,
+                          color: isDeleting ? AppColors.disabled : AppColors.error,
                           fontSize: 18 * widthScale,
                           fontWeight: FontWeight.w500,
                           height: 24 / 18,
@@ -160,17 +136,11 @@ class _OwnerDeletePropertyView extends StatelessWidget {
 
               SizedBox(height: 12 * widthScale),
 
-
               Expanded(
-                child: BlocBuilder<OwnerPropertyCubit, OwnerPropertyState>(
-                  buildWhen: (previous, current) =>
-                  previous.properties != current.properties,
+                child: BlocBuilder<OwnerPropertyEditCubit, OwnerPropertyEditState>(
+                  buildWhen: (previous, current) => previous.property != current.property,
                   builder: (context, state) {
-                    final OwnerPropertyListItem currentProperty =
-                    state.properties.firstWhere(
-                          (item) => item.id == property.id,
-                      orElse: () => property,
-                    );
+                    final property = state.property;
 
                     return ListView(
                       padding: EdgeInsets.fromLTRB(
@@ -180,14 +150,12 @@ class _OwnerDeletePropertyView extends StatelessWidget {
                         32 * heightScale,
                       ),
                       children: [
-                        // Photos (view-only — no edit badge overlay).
                         SizedBox(
                           height: 120 * widthScale,
                           child: ListView.separated(
                             scrollDirection: Axis.horizontal,
                             itemCount: 2,
-                            separatorBuilder: (_, __) =>
-                                SizedBox(width: 7 * widthScale),
+                            separatorBuilder: (_, __) => SizedBox(width: 7 * widthScale),
                             itemBuilder: (context, index) {
                               return OwnerPropertyPhotoCard(
                                 widthScale: widthScale,
@@ -197,60 +165,47 @@ class _OwnerDeletePropertyView extends StatelessWidget {
                             },
                           ),
                         ),
-
                         SizedBox(height: 16 * heightScale),
-
                         OwnerFormInputCard(
                           label: AppStrings.propertyType,
-                          value: currentProperty.propertyType,
+                          value: property.propertyType,
                           widthScale: widthScale,
                         ),
-
                         SizedBox(height: 16 * heightScale),
-
                         OwnerFormInputCard(
                           label: AppStrings.location,
-                          value: currentProperty.location,
+                          value: property.location,
                           widthScale: widthScale,
                         ),
-
                         SizedBox(height: 16 * heightScale),
-
                         OwnerFormInputCard(
                           label: AppStrings.price,
-                          value: currentProperty.price,
-                          suffixText: currentProperty.currency,
+                          value: property.price,
+                          suffixText: property.currency,
                           widthScale: widthScale,
                           valueFontSize: 16,
                           valueFontWeight: FontWeight.w700,
                         ),
-
                         SizedBox(height: 16 * heightScale),
-
                         OwnerFormInputCard(
                           label: AppStrings.area,
-                          value: '${currentProperty.areaSqm}',
+                          value: '${property.areaSqm}',
                           suffixText: 'm²',
                           widthScale: widthScale,
                           valueFontSize: 16,
                           valueFontWeight: FontWeight.w700,
                         ),
-
                         SizedBox(height: 16 * heightScale),
-
                         OwnerFormInputCard(
                           label: AppStrings.features,
-                          value: '${currentProperty.rooms} Rooms\n'
-                              '${currentProperty.bathrooms} Bathrooms',
+                          value: '${property.rooms} Rooms\n${property.bathrooms} Bathrooms',
                           widthScale: widthScale,
                           valueMaxLines: 2,
                         ),
-
                         SizedBox(height: 16 * heightScale),
-
                         OwnerFormInputCard(
                           label: AppStrings.description,
-                          value: currentProperty.description,
+                          value: property.description,
                           widthScale: widthScale,
                           valueMaxLines: 3,
                         ),

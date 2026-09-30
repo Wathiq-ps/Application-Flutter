@@ -1,17 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mobile/config/theme/app_colors.dart';
 import 'package:mobile/core/constant/app_icons.dart';
 import 'package:mobile/core/constant/images_path.dart';
 import 'package:mobile/core/constant/strings.dart';
+import 'package:mobile/core/di/injector.dart';
 import 'package:mobile/core/extensions/media_query_extensions.dart';
-import 'package:mobile/core/widget/app_circular_icon_button.dart';
 import 'package:mobile/core/widget/app_profile_avatar.dart';
 import 'package:mobile/core/widget/page_header.dart';
+import '../../../../config/routes/routes_names.dart';
+import '../state_management/profile_cubit.dart';
+import '../state_management/profile_state.dart';
 import '../widgets/profile_menu_item.dart';
 import '../widgets/verified_status_badge.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (_) => ProfileCubit(Injector.profileRepository)..load(),
+      child: const _ProfileView(),
+    );
+  }
+}
+
+class _ProfileView extends StatelessWidget {
+  const _ProfileView();
 
   static const double figmaWidth = 393.0;
   static const double figmaHeight = 852.0;
@@ -22,15 +39,14 @@ class ProfileScreen extends StatelessWidget {
     final double screenHeight = context.screenHeight;
     final double widthScale = screenWidth / figmaWidth;
     final double heightScale = screenHeight / figmaHeight;
-
     final double avatarSize = 112 * widthScale;
     final double sheetTopOffset = 198 * heightScale;
     final double avatarTopOffset = sheetTopOffset - (avatarSize / 2);
+    final profileCubit = context.read<ProfileCubit>();
 
     return SizedBox.expand(
       child: Stack(
         children: [
-          // Background Image
           Positioned.fill(
             child: Image.asset(
               ImagePath.background,
@@ -49,9 +65,7 @@ class ProfileScreen extends StatelessWidget {
           SafeArea(
             bottom: false,
             child: Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: 20 * widthScale,
-              ),
+              padding: EdgeInsets.symmetric(horizontal: 20 * widthScale),
               child: PageHeader(
                 widthScale: widthScale,
                 center: Text(
@@ -63,7 +77,7 @@ class ProfileScreen extends StatelessWidget {
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-              )
+              ),
             ),
           ),
 
@@ -88,21 +102,63 @@ class ProfileScreen extends StatelessWidget {
                   bottom: 24 * heightScale,
                 ),
                 children: [
-                  Text(
-                    "Samer Abu Zaina",
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      color: AppColors.primary,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 24 * widthScale,
-                    ),
-                  ),
+                  // Name + verification badge (from GET /api/v1/profile)
+                  BlocBuilder<ProfileCubit, ProfileState>(
+                    builder: (context, state) {
+                      if (state.isInitialFailure) {
+                        return Column(
+                          children: [
+                            Text(
+                              state.errorMessage ?? AppStrings.somethingWentWrong,
+                              textAlign: TextAlign.center,
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            ),
+                            TextButton(
+                              onPressed: profileCubit.load,
+                              child: const Text(AppStrings.retry),
+                            ),
+                          ],
+                        );
+                      }
 
-                  SizedBox(height: 8 * heightScale),
+                      if (state.isInitialLoading) {
+                        return SizedBox(
+                          height: 64 * heightScale,
+                          child: const Center(
+                            child: SizedBox(
+                              width: 22,
+                              height: 22,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            ),
+                          ),
+                        );
+                      }
 
-                  VerifiedStatusBadge(
-                    isVerified: false,
-                    widthScale: widthScale,
+                      final profile = state.data!;
+                      final String displayName =
+                      profile.name.trim().isNotEmpty ? profile.name : profile.email;
+
+                      return Column(
+                        children: [
+                          Text(
+                            displayName,
+                            textAlign: TextAlign.center,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                              color: AppColors.primary,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 24 * widthScale,
+                            ),
+                          ),
+                          SizedBox(height: 8 * heightScale),
+                          VerifiedStatusBadge(
+                            isVerified: profile.isVerified,
+                            widthScale: widthScale,
+                          ),
+                        ],
+                      );
+                    },
                   ),
 
                   SizedBox(height: 24 * heightScale),
@@ -115,17 +171,20 @@ class ProfileScreen extends StatelessWidget {
                     heightScale: heightScale,
                     iconWidth: 18 * widthScale,
                     iconHeight: 19 * widthScale,
-                    onTap: () {},
+                    onTap: () async {
+                      await context.push(RouteNames.verifyIdentityScreen);
+                      profileCubit.load(); // refresh badge when coming back
+                    },
                   ),
 
                   ProfileMenuItem(
                     icon: AppIcons.properties,
-                    title: AppStrings.properties,
+                    title: AppStrings.myProperties,
                     widthScale: widthScale,
                     heightScale: heightScale,
                     iconWidth: 20 * widthScale,
                     iconHeight: 18 * widthScale,
-                    onTap: () {},
+                    onTap: () => context.push(RouteNames.ownerPropertiesScreen),
                   ),
 
                   ProfileMenuItem(
@@ -145,7 +204,10 @@ class ProfileScreen extends StatelessWidget {
                     heightScale: heightScale,
                     iconWidth: 16 * widthScale,
                     iconHeight: 16 * widthScale,
-                    onTap: () {},
+                    onTap: () async {
+                      await context.push(RouteNames.editProfileScreen);
+                      profileCubit.load();
+                    },
                   ),
 
                   ProfileMenuItem(
