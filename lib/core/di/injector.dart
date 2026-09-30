@@ -17,6 +17,9 @@ import '../../features/saved/domain/repositories/favorites_repository.dart';
 import '../../features/search/domain/data/data_sources/search_data_source.dart';
 import '../../features/search/domain/data/repository_implementations/search_repository_impl.dart';
 import '../../features/search/domain/repository/search_repository.dart';
+import '../../features/verification/data/repositories/verification_repository_impl.dart';
+import '../../features/verification/data/services/verification_service.dart';
+import '../../features/verification/domain/repositories/verify_repositories.dart';
 import '../cache/cache_store.dart';
 import '../cache/cached_fetcher.dart';
 import '../cache/shared_prefs_cache_store.dart';
@@ -54,19 +57,22 @@ class Injector {
     cachedFetcher,
   );
 
+  // ── Create property ───────────────────────────────────
   static final CreatePropertyRemoteDataSource createPropertyRemoteDataSource =
-      CreatePropertyRemoteDataSourceImpl(
+  CreatePropertyRemoteDataSourceImpl(
     _dio,
     secureStorageService: secureStorage,
   );
 
   static final CreatePropertyRepository createPropertyRepository =
-      CreatePropertyRepositoryImpl(createPropertyRemoteDataSource);
+  CreatePropertyRepositoryImpl(createPropertyRemoteDataSource);
 
   static final CreatePropertyUseCase createPropertyUseCase =
-      CreatePropertyUseCase(createPropertyRepository);
+  CreatePropertyUseCase(createPropertyRepository);
 
-  static final OwnerPropertyRepository ownerPropertyRepository = OwnerPropertyRepositoryImpl(
+  // ── Owner properties ──────────────────────────────────
+  static final OwnerPropertyRepository ownerPropertyRepository =
+  OwnerPropertyRepositoryImpl(
     OwnerPropertyRemoteDataSourceImpl(_dio, secureStorage),
     cachedFetcher,
   );
@@ -81,4 +87,21 @@ class Injector {
   static final ProfileRepository profileRepository = ProfileRepositoryImpl(
     ProfileRemoteDataSourceImpl(_dio, secureStorage),
   );
+
+  // ── Verification ──────────────────────────────────────
+  static final Dio _authDio = Dio(BaseOptions(baseUrl: ApiConstants.baseUrl))
+    ..interceptors.add(
+      InterceptorsWrapper(
+        onRequest: (options, handler) async {
+          final token = await secureStorage.getAccessToken();
+          if (token != null) {
+            options.headers['Authorization'] = 'Bearer $token';
+          }
+          handler.next(options);
+        },
+      ),
+    );
+
+  static final VerificationRepository verificationRepository =
+  VerificationRepositoryImpl(VerificationService(_authDio));
 }

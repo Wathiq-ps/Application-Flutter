@@ -14,6 +14,7 @@ class SearchState extends Equatable {
     this.extraItems = const [],
     this.page = 1,
     this.isLoadingMore = false,
+    this.favoriteIds = const {},
   });
 
   final String query;
@@ -23,6 +24,9 @@ class SearchState extends Equatable {
   final List<PropertyEntity> extraItems;
   final int page;
   final bool isLoadingMore;
+
+  /// Ids of the properties currently saved as favourites.
+  final Set<String> favoriteIds;
 
   List<PropertyEntity> get items =>
       [...(resource.data?.items ?? const <PropertyEntity>[]), ...extraItems];
@@ -39,6 +43,7 @@ class SearchState extends Equatable {
     List<PropertyEntity>? extraItems,
     int? page,
     bool? isLoadingMore,
+    Set<String>? favoriteIds,
   }) {
     return SearchState(
       query: query ?? this.query,
@@ -48,10 +53,19 @@ class SearchState extends Equatable {
       extraItems: extraItems ?? this.extraItems,
       page: page ?? this.page,
       isLoadingMore: isLoadingMore ?? this.isLoadingMore,
+      favoriteIds: favoriteIds ?? this.favoriteIds,
     );
   }
 
   @override
-  List<Object?> get props =>
-      [query, appliedQuery, filter, resource, extraItems, page, isLoadingMore];
+  List<Object?> get props => [
+    query,
+    appliedQuery,
+    filter,
+    resource,
+    extraItems,
+    page,
+    isLoadingMore,
+    favoriteIds,
+  ];
 }

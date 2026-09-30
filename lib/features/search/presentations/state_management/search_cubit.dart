@@ -4,6 +4,8 @@ import 'package:mobile/core/resource/resource_loader.dart';
 import 'package:mobile/core/resource/resource_state.dart';
 import 'package:mobile/features/home/presentation/state_mangement/home_state.dart'
     show PropertyFilter;
+import 'package:mobile/features/property/domain/entities/property_entity.dart';
+import 'package:mobile/features/saved/domain/repositories/favorites_repository.dart';
 import '../../domain/entities/search_result_entity.dart';
 import '../../domain/repository/search_repository.dart';
 import 'search_state.dart';
@@ -17,11 +19,31 @@ extension PropertyFilterApi on PropertyFilter {
 }
 
 class SearchCubit extends Cubit<SearchState> {
-  SearchCubit(this._repository) : super(const SearchState());
+  SearchCubit(this._repository, this._favorites)
+      : super(SearchState(
+    favoriteIds: Set<String>.from(_favorites.favoriteIdsListenable.value),
+  )) {
+    _favorites.favoriteIdsListenable.addListener(_onFavoritesChanged);
+  }
 
   final SearchRepository _repository;
+  final FavoritesRepository _favorites;
   Timer? _debounce;
   int _requestId = 0;
+
+  // ── Favourites ──────────────────────────────────────────
+
+  void _onFavoritesChanged() {
+    if (isClosed) return;
+    emit(state.copyWith(
+      favoriteIds: Set<String>.from(_favorites.favoriteIdsListenable.value),
+    ));
+  }
+
+  Future<void> toggleFavorite(PropertyEntity property) =>
+      _favorites.toggleFavorite(property);
+
+  // ── Search ──────────────────────────────────────────────
 
   void onQueryChanged(String value) {
     emit(state.copyWith(query: value));
@@ -41,7 +63,6 @@ class SearchCubit extends Cubit<SearchState> {
     emit(state.copyWith(filter: filter));
     search();
   }
-
 
   Future<void> search({bool refresh = false}) async {
     _debounce?.cancel();
@@ -67,7 +88,7 @@ class SearchCubit extends Cubit<SearchState> {
     }
 
     await for (final r in loader.load(base)) {
-      if (isClosed || id != _requestId) return; // a newer search started
+      if (isClosed || id != _requestId) return;
       emit(state.copyWith(
         appliedQuery: query,
         resource: r,
@@ -99,13 +120,14 @@ class SearchCubit extends Cubit<SearchState> {
       ));
     } catch (_) {
       if (isClosed || id != _requestId) return;
-      emit(state.copyWith(isLoadingMore: false)); // retried on next scroll
+      emit(state.copyWith(isLoadingMore: false));
     }
   }
 
   @override
   Future<void> close() {
     _debounce?.cancel();
+    _favorites.favoriteIdsListenable.removeListener(_onFavoritesChanged);
     return super.close();
   }
 }

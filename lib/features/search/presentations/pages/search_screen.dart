@@ -18,12 +18,12 @@ import '../../../../core/widget/cached_data_banner.dart';
 import '../../../../core/widget/empty_state_view.dart';
 import '../../../../core/widget/error_retry_view.dart';
 import '../../../../core/widget/page_header.dart';
+import '../../../../core/widget/page_search_bar.dart';
 import '../../../../core/widget/property_card.dart';
 import '../../../../core/widget/property_filter_chips.dart';
 import '../state_management/search_cubit.dart';
 import '../state_management/search_state.dart';
 import '../widgets/applied_query_chip.dart';
-import '../widgets/search_input_field.dart';
 
 class SearchScreen extends StatelessWidget {
   const SearchScreen({super.key});
@@ -31,7 +31,10 @@ class SearchScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => SearchCubit(Injector.searchRepository)..search(),
+      create: (_) => SearchCubit(
+        Injector.searchRepository,
+        Injector.favoritesRepository,
+      )..search(),
       child: const _SearchView(),
     );
   }
@@ -131,13 +134,13 @@ class _SearchViewState extends State<_SearchView> {
                 right: GestureDetector(
                   onTap: _showUnavailable, // TODO: filters sheet
                   behavior: HitTestBehavior.opaque,
-                  child: SvgPicture.asset(AppIcons.filter),
+                  child: SvgPicture.asset(AppIcons.filter,height: 18 * ws,width: 18 * ws,),
                 ),
               ),
 
               SizedBox(height: 16 * hs),
 
-              SearchInputField(
+              PageSearchBar(
                 widthScale: ws,
                 controller: _controller,
                 focusNode: _focusNode,
@@ -291,6 +294,9 @@ class _SearchViewState extends State<_SearchView> {
                         property: toDisplayItem(property),
                         widthScale: ws,
                         showStatus: false,
+                        showFavorite: true,
+                        isFavorite: state.favoriteIds.contains(property.id),
+                        onFavoritePressed: () => cubit.toggleFavorite(property),
                         onViewDetails: () {
                           // TODO: navigate to property details
                         },

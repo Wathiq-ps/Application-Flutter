@@ -27,6 +27,7 @@ import 'package:mobile/features/property/presentation/pages/property_location_sc
 import 'package:mobile/features/property/presentation/pages/review_listing_page.dart';
 import 'package:mobile/features/property/presentation/state_management/create_property_cubit.dart';
 import 'package:mobile/features/saved/presentations/state_management/saved_cubit.dart';
+import '../../features/verification/presentation/cubit/verification_cubit.dart';
 import '../../features/verification/presentation/pages/verification_pending_screen.dart';
 import '../../features/verification/presentation/pages/verify_identity_screen.dart';
 import '../../features/verification/presentation/pages/verify_selfie_identity_screen.dart';
@@ -256,28 +257,31 @@ class AppRoutes {
       // ─────────────────────────────────────────────
       // Verification
       // ─────────────────────────────────────────────
-      GoRoute(
-        path: RouteNames.verifyIdentityScreen,
-        name: 'verifyIdentityScreen',
-        builder: (context, state) {
-          return const VerifyIdentityScreen();
-        },
-      ),
 
-      GoRoute(
-        path: RouteNames.verifySelfieIdentityScreen,
-        name: 'verifySelfieIdentityScreen',
-        builder: (context, state) {
-          return const VerifySelfieIdentityScreen();
+      ShellRoute(
+        builder: (context, state, child) {
+          return BlocProvider<VerificationCubit>(
+            create: (_) => VerificationCubit(Injector.verificationRepository),
+            child: child,
+          );
         },
-      ),
-
-      GoRoute(
-        path: RouteNames.verificationPendingScreen,
-        name: 'verificationPendingScreen',
-        builder: (context, state) {
-          return const VerificationPendingScreen();
-        },
+        routes: [
+          GoRoute(
+            path: RouteNames.verifyIdentityScreen,
+            name: 'verifyIdentityScreen',
+            builder: (context, state) => const VerifyIdentityScreen(),
+          ),
+          GoRoute(
+            path: RouteNames.verifySelfieIdentityScreen,
+            name: 'verifySelfieIdentityScreen',
+            builder: (context, state) => const VerifySelfieIdentityScreen(),
+          ),
+          GoRoute(
+            path: RouteNames.verificationPendingScreen,
+            name: 'verificationPendingScreen',
+            builder: (context, state) => const VerificationPendingScreen(),
+          ),
+        ],
       ),
 
       // ─────────────────────────────────────────────
