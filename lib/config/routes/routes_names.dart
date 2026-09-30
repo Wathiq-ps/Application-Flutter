@@ -34,4 +34,7 @@ class RouteNames {
   static const String ownerPropertiesScreen = '/ownerPropertiesScreen';
   static const String ownerEditPropertyScreen = '/ownerEditPropertyScreen';
   static const String ownerDeletePropertyScreen = '/ownerDeletePropertyScreen';
+
+  //contract
+  static const String viewPropertyDetailsScreen = '/viewPropertyDetailsScreen';
 }

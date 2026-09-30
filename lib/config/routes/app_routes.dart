@@ -19,6 +19,7 @@ import 'package:mobile/features/owner_property_mangment/domain/entities/owner_pr
 import 'package:mobile/features/owner_property_mangment/presentation/pages/owner_delete_property_screen.dart';
 import 'package:mobile/features/owner_property_mangment/presentation/pages/owner_edit_property_screen.dart';
 import 'package:mobile/features/owner_property_mangment/presentation/pages/owner_properties_screen.dart';
+import 'package:mobile/features/property/data/models/property_model.dart';
 import 'package:mobile/features/property/presentation/pages/list_property_features_screen.dart';
 import 'package:mobile/features/property/presentation/pages/list_property_photos_screen.dart';
 import 'package:mobile/features/property/presentation/pages/list_property_type_screen.dart';
@@ -29,6 +30,9 @@ import 'package:mobile/features/property/presentation/state_management/create_pr
 import 'package:mobile/features/verification/presentation/pages/verification_pending_screen.dart';
 import 'package:mobile/features/verification/presentation/pages/verify_identity_screen.dart';
 import 'package:mobile/features/verification/presentation/pages/verify_selfie_identity_screen.dart';
+
+import '../../features/contract/presentation/pages/view_details_screen.dart';
+import '../../features/property/domain/entities/property_entity.dart';
 
 class AppRoutes {
   AppRoutes._();
@@ -80,17 +84,10 @@ class AppRoutes {
           return CustomTransitionPage(
             key: state.pageKey,
             child: const OnBoardingScreen(),
-            transitionsBuilder: (
-              context,
-              animation,
-              secondaryAnimation,
-              child,
-            ) {
-              return FadeTransition(
-                opacity: animation,
-                child: child,
-              );
-            },
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+                  return FadeTransition(opacity: animation, child: child);
+                },
           );
         },
       ),
@@ -102,17 +99,10 @@ class AppRoutes {
           return CustomTransitionPage(
             key: state.pageKey,
             child: const OnBoardingLoginScreen(),
-            transitionsBuilder: (
-              context,
-              animation,
-              secondaryAnimation,
-              child,
-            ) {
-              return FadeTransition(
-                opacity: animation,
-                child: child,
-              );
-            },
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+                  return FadeTransition(opacity: animation, child: child);
+                },
           );
         },
       ),
@@ -127,17 +117,10 @@ class AppRoutes {
           return CustomTransitionPage(
             key: state.pageKey,
             child: const PhoneLoginScreen(),
-            transitionsBuilder: (
-              context,
-              animation,
-              secondaryAnimation,
-              child,
-            ) {
-              return FadeTransition(
-                opacity: animation,
-                child: child,
-              );
-            },
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+                  return FadeTransition(opacity: animation, child: child);
+                },
           );
         },
       ),
@@ -155,17 +138,10 @@ class AppRoutes {
               ),
               child: const EmailLoginScreen(),
             ),
-            transitionsBuilder: (
-              context,
-              animation,
-              secondaryAnimation,
-              child,
-            ) {
-              return FadeTransition(
-                opacity: animation,
-                child: child,
-              );
-            },
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+                  return FadeTransition(opacity: animation, child: child);
+                },
           );
         },
       ),
@@ -177,17 +153,10 @@ class AppRoutes {
           return CustomTransitionPage(
             key: state.pageKey,
             child: const PhoneRegisterScreen(),
-            transitionsBuilder: (
-              context,
-              animation,
-              secondaryAnimation,
-              child,
-            ) {
-              return FadeTransition(
-                opacity: animation,
-                child: child,
-              );
-            },
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+                  return FadeTransition(opacity: animation, child: child);
+                },
           );
         },
       ),
@@ -205,17 +174,10 @@ class AppRoutes {
               ),
               child: const EmailRegisterScreen(),
             ),
-            transitionsBuilder: (
-              context,
-              animation,
-              secondaryAnimation,
-              child,
-            ) {
-              return FadeTransition(
-                opacity: animation,
-                child: child,
-              );
-            },
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+                  return FadeTransition(opacity: animation, child: child);
+                },
           );
         },
       ),
@@ -239,8 +201,9 @@ class AppRoutes {
             builder: (context, state) {
               final isEdit = state.extra is bool
                   ? state.extra as bool
-                  : (state.extra as Map<String, dynamic>?)?['isEdit'] as bool? ??
-                      false;
+                  : (state.extra as Map<String, dynamic>?)?['isEdit']
+                            as bool? ??
+                        false;
               return ListPropertyTypeScreen(isEdit: isEdit);
             },
           ),
@@ -250,8 +213,9 @@ class AppRoutes {
             builder: (context, state) {
               final isEdit = state.extra is bool
                   ? state.extra as bool
-                  : (state.extra as Map<String, dynamic>?)?['isEdit'] as bool? ??
-                      false;
+                  : (state.extra as Map<String, dynamic>?)?['isEdit']
+                            as bool? ??
+                        false;
               return PropertyLocationScreen(isEdit: isEdit);
             },
           ),
@@ -261,8 +225,9 @@ class AppRoutes {
             builder: (context, state) {
               final isEdit = state.extra is bool
                   ? state.extra as bool
-                  : (state.extra as Map<String, dynamic>?)?['isEdit'] as bool? ??
-                      false;
+                  : (state.extra as Map<String, dynamic>?)?['isEdit']
+                            as bool? ??
+                        false;
               return ListPropertyFeaturesScreen(isEdit: isEdit);
             },
           ),
@@ -272,8 +237,9 @@ class AppRoutes {
             builder: (context, state) {
               final isEdit = state.extra is bool
                   ? state.extra as bool
-                  : (state.extra as Map<String, dynamic>?)?['isEdit'] as bool? ??
-                      false;
+                  : (state.extra as Map<String, dynamic>?)?['isEdit']
+                            as bool? ??
+                        false;
               return ListPropertyPhotosScreen(isEdit: isEdit);
             },
           ),
@@ -283,8 +249,9 @@ class AppRoutes {
             builder: (context, state) {
               final isEdit = state.extra is bool
                   ? state.extra as bool
-                  : (state.extra as Map<String, dynamic>?)?['isEdit'] as bool? ??
-                      false;
+                  : (state.extra as Map<String, dynamic>?)?['isEdit']
+                            as bool? ??
+                        false;
               return ProofOfOwnershipPage(isEdit: isEdit);
             },
           ),
@@ -362,6 +329,25 @@ class AppRoutes {
             );
           }
           return OwnerDeletePropertyScreen(property: property);
+        },
+      ),
+
+      // ─────────────────────────────────────────────
+      // Contract
+      // ─────────────────────────────────────────────
+      GoRoute(
+        path: RouteNames.viewPropertyDetailsScreen,
+        name: 'viewPropertyDetailsScreen',
+        builder: (context, state) {
+          final property = state.extra as PropertyEntity?;
+          if (property == null) {
+            return const Scaffold(
+              body: Center(child: Text('Property not found.')),
+            );
+          }
+          return ViewPropertyDetailsScreen(
+            property: property
+          );
         },
       ),
     ],

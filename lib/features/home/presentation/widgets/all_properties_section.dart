@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mobile/config/theme/app_colors.dart';
 import 'package:mobile/features/property/domain/entities/property_entity.dart';
+import '../../../../config/routes/routes_names.dart';
 import '../../../../core/constant/strings.dart';
 import '../../../../core/utils/price_formatter.dart';
 import 'property_card.dart';
@@ -22,7 +24,8 @@ class AllPropertiesSection extends StatelessWidget {
   static String _capitalize(String s) =>
       s.isEmpty ? s : '${s[0].toUpperCase()}${s.substring(1)}';
 
-  static String _roomsLabel(int rooms) => rooms == 1 ? '1 room' : '$rooms rooms';
+  static String _roomsLabel(int rooms) =>
+      rooms == 1 ? '1 room' : '$rooms rooms';
 
   @override
   Widget build(BuildContext context) {
@@ -66,42 +69,49 @@ class AllPropertiesSection extends StatelessWidget {
           switchInCurve: Curves.easeOut,
           child: properties.isEmpty
               ? Padding(
-            key: const ValueKey('empty'),
-            padding: EdgeInsets.symmetric(vertical: 48 * widthScale),
-            child: Center(
-              child: Text(
-                AppStrings.noPropertiesFound,
-                style: TextStyle(
-                  color: AppColors.primary.withValues(alpha: 0.6),
-                  fontSize: 14 * widthScale,
-                ),
-              ),
-            ),
-          )
-              : Column(
-            key: ValueKey(properties.map((p) => p.id).join()),
-            children: [
-              for (final property in properties)
-                PropertyCard(
-                  // null / empty -> default villa (handled by PropertyImage)
-                  imagePath: property.coverPhoto,
-                  title:
-                  '${_capitalize(property.type)} — ${_roomsLabel(property.rooms)}',
-                  location: property.locationLabel,
-                  price: PriceFormatter.displayWithCode(
-                    price: property.price,
-                    currency: property.priceCurrency,
-                    unit: property.priceUnit,
+                  key: const ValueKey('empty'),
+                  padding: EdgeInsets.symmetric(vertical: 48 * widthScale),
+                  child: Center(
+                    child: Text(
+                      AppStrings.noPropertiesFound,
+                      style: TextStyle(
+                        color: AppColors.primary.withValues(alpha: 0.6),
+                        fontSize: 14 * widthScale,
+                      ),
+                    ),
                   ),
-                  rooms: _roomsLabel(property.rooms),
-                  // no For Sale / For Rent badge here
-                  rating: property.averageRating, // null -> 0.0
-                  onTap: onPropertyTap == null
-                      ? null
-                      : () => onPropertyTap!(property),
+                )
+              : Column(
+                  key: ValueKey(properties.map((p) => p.id).join()),
+                  children: [
+                    for (final property in properties)
+                      PropertyCard(
+                        // null / empty -> default villa (handled by PropertyImage)
+                        imagePath: property.coverPhoto,
+                        title:
+                            '${_capitalize(property.type)} — ${_roomsLabel(property.rooms)}',
+                        location: property.locationLabel,
+                        price: PriceFormatter.displayWithCode(
+                          price: property.price,
+                          currency: property.priceCurrency,
+                          unit: property.priceUnit,
+                        ),
+                        rooms: _roomsLabel(property.rooms),
+                        // no For Sale / For Rent badge here
+                        rating: property.averageRating, // null -> 0.0
+                        onTap: onPropertyTap == null
+                            ? null
+                            : () => onPropertyTap!(property),
+
+                        onViewDetails: () {
+                          context.push(
+                            RouteNames.viewPropertyDetailsScreen,
+                            extra: property,
+                          );
+                        },
+                      ),
+                  ],
                 ),
-            ],
-          ),
         ),
       ],
     );

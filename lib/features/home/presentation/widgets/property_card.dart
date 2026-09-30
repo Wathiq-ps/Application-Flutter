@@ -6,6 +6,7 @@ import '../../../../core/constant/strings.dart';
 import '../../../../core/extensions/media_query_extensions.dart';
 import '../../../../core/widget/app_circular_icon_button.dart';
 import '../../../../core/widget/property_image.dart';
+import '../../../property/domain/entities/property_entity.dart';
 
 class PropertyCard extends StatelessWidget {
   const PropertyCard({
@@ -19,7 +20,7 @@ class PropertyCard extends StatelessWidget {
     this.onTap,
     this.onViewDetails,
     this.isFavorite = false,
-    this.onFavoritePressed,
+    this.onFavoritePressed, 
   });
   /// Backend URL, asset path, or null/empty (falls back to the default villa).
   final String? imagePath;
@@ -32,6 +33,7 @@ class PropertyCard extends StatelessWidget {
   final VoidCallback? onTap;
   final bool isFavorite;
   final VoidCallback? onFavoritePressed;
+   
 
   @override
   Widget build(BuildContext context) {

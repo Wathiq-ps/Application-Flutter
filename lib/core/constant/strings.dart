@@ -451,4 +451,11 @@ class AppStrings {
   static const String retry = 'Retry';
 
 
+  // ─────────────────────────────────────────────
+  // view Property Details
+  // ─────────────────────────────────────────────
+   static const String propertyDetails = 'Property Details';
+   
+   
+
 }
