@@ -204,7 +204,10 @@ class _ProfileView extends StatelessWidget {
                     heightScale: heightScale,
                     iconWidth: 16 * widthScale,
                     iconHeight: 16 * widthScale,
-                    onTap: () {},
+                    onTap: () async {
+                      await context.push(RouteNames.editProfileScreen);
+                      profileCubit.load();
+                    },
                   ),
 
                   ProfileMenuItem(

@@ -8,8 +8,11 @@ import '../../features/home/domain/repository/home_repository.dart';
 import '../../features/owner_property_mangment/data/data_sources/owner_property_remote_data_source.dart';
 import '../../features/owner_property_mangment/data/repositories_impl/owner_property_repository_impl.dart';
 import '../../features/owner_property_mangment/domain/repositories/owner_property_repository.dart';
+import '../../features/profile/data/data_sources/edit_profile_remote_data_source.dart';
 import '../../features/profile/data/data_sources/profile_remote_data_source.dart';
+import '../../features/profile/data/repository_implementations/edit_profile_repository_impl.dart';
 import '../../features/profile/data/repository_implementations/profile_repository_impl.dart';
+import '../../features/profile/domain/repository/edit_profile_repository.dart';
 import '../../features/profile/domain/repository/profile_repository.dart';
 import '../../features/saved/data/data_sources/favorites_local_data_source.dart';
 import '../../features/saved/data/repository_implementations/favorites_repository_impl.dart';
@@ -28,6 +31,7 @@ import '../../features/property/data/repositories/create_property_repository_imp
 import '../../features/property/domain/repository/create_property_repository.dart';
 import '../../features/property/domain/usecases/create_property_usecase.dart';
 import '../constant/api_constants.dart';
+import '../services/image_picker_service.dart';
 import '../services/secure_storage_service.dart';
 
 class Injector {
@@ -101,7 +105,12 @@ class Injector {
         },
       ),
     );
+  static final EditProfileRepository editProfileRepository = EditProfileRepositoryImpl(
+    EditProfileRemoteDataSourceImpl(_dio, secureStorage),
+  );
 
   static final VerificationRepository verificationRepository =
   VerificationRepositoryImpl(VerificationService(_authDio));
+
+  static final ImagePickerService imagePickerService = ImagePickerService();
 }

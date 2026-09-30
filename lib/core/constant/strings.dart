@@ -269,4 +269,20 @@ class AppStrings {
   static String propertiesFoundCount(int count) => '$count Properties Found';
   static const String noSearchResultsSubtitle =
       'Try a different location or change the filter.';
+  static const String fullName = 'Full Name';
+  static const String dateOfBirth = 'Date of Birth';
+  static const String nationality = 'Nationality';
+  static const String mobileNumber = 'Mobile Number';
+  static const String idNumber = 'ID Number';
+  static const String nationalId = 'National ID';
+  static const String passport = 'Passport';
+  static const String addPhoto = 'Add Photo';
+  static const String signature = 'Signature';
+  static const String draw = 'Draw';
+  static const String upload = 'Upload';
+  static const String clearSignature = 'Clear Signature';
+  static const String editSignature = 'Edit Signature';
+  static const String saveChangesCta = 'Save Changes';
+  static const String selectNationality = 'Select Nationality';
+  static const String profileUpdated = 'Profile updated';
 }

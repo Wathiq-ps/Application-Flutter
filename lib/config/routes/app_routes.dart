@@ -27,6 +27,7 @@ import 'package:mobile/features/property/presentation/pages/property_location_sc
 import 'package:mobile/features/property/presentation/pages/review_listing_page.dart';
 import 'package:mobile/features/property/presentation/state_management/create_property_cubit.dart';
 import 'package:mobile/features/saved/presentations/state_management/saved_cubit.dart';
+import '../../features/profile/presentation/pages/edit_profile_screen.dart';
 import '../../features/verification/presentation/cubit/verification_cubit.dart';
 import '../../features/verification/presentation/pages/verification_pending_screen.dart';
 import '../../features/verification/presentation/pages/verify_identity_screen.dart';
@@ -283,6 +284,13 @@ class AppRoutes {
           ),
         ],
       ),
+
+
+  GoRoute(
+  path: RouteNames.editProfileScreen,
+  name: 'editProfileScreen',
+  builder: (context, state) => const EditProfileScreen(),
+  ),
 
       // ─────────────────────────────────────────────
       // Owner Property Management

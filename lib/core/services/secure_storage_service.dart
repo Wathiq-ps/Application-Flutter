@@ -2,10 +2,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import '../constant/storage_keys.dart';
+import 'image_picker_service.dart';
 
 class SecureStorageService {
   final FlutterSecureStorage _storage;
-
+  static const SecureStorageService secureStorage = SecureStorageService();
+  static final ImagePickerService imagePickerService = ImagePickerService();
   const SecureStorageService([FlutterSecureStorage? storage])
     : _storage = storage ?? const FlutterSecureStorage();
 
@@ -38,4 +40,5 @@ class SecureStorageService {
     final token = await getAccessToken();
     return token != null && token.isNotEmpty;
   }
+
 }
