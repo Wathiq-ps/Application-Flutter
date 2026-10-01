@@ -7,13 +7,13 @@ import 'config/theme/app_theme.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
-  //runApp(const WathiqApp());
-   runApp(
-    DevicePreview(
-       enabled: !kReleaseMode,
-      builder: (context) => const WathiqApp(),
-    ),
-   );
+  runApp(const WathiqApp());
+  //  runApp(
+  //   DevicePreview(
+  //      enabled: !kReleaseMode,
+  //     builder: (context) => const WathiqApp(),
+  //   ),
+  //  );
 }
 
 class WathiqApp extends StatelessWidget {
