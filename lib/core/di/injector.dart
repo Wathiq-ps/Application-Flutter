@@ -31,6 +31,7 @@ import '../../features/property/data/repositories/create_property_repository_imp
 import '../../features/property/domain/repository/create_property_repository.dart';
 import '../../features/property/domain/usecases/create_property_usecase.dart';
 import '../constant/api_constants.dart';
+import '../localization/locale_storage_service.dart';
 import '../services/image_picker_service.dart';
 import '../services/secure_storage_service.dart';
 
@@ -113,4 +114,6 @@ class Injector {
   VerificationRepositoryImpl(VerificationService(_authDio));
 
   static final ImagePickerService imagePickerService = ImagePickerService();
+
+  static const LocaleStorageService localeStorageService = LocaleStorageService();
 }
