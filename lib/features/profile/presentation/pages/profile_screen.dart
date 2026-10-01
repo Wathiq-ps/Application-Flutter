@@ -12,6 +12,7 @@ import 'package:mobile/core/widget/page_header.dart';
 import '../../../../config/routes/routes_names.dart';
 import '../state_management/profile_cubit.dart';
 import '../state_management/profile_state.dart';
+import '../widgets/language_picker_sheet.dart';
 import '../widgets/profile_menu_item.dart';
 import '../widgets/verified_status_badge.dart';
 
@@ -215,7 +216,7 @@ class _ProfileView extends StatelessWidget {
                     title: AppStrings.language,
                     widthScale: widthScale,
                     heightScale: heightScale,
-                    onTap: () {},
+                    onTap: () => showLanguagePicker(context: context, widthScale: widthScale),
                   ),
 
                   ProfileMenuItem(
