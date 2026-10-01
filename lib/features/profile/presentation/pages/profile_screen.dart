@@ -116,7 +116,7 @@ class _ProfileView extends StatelessWidget {
                             ),
                             TextButton(
                               onPressed: profileCubit.load,
-                              child: const Text(AppStrings.retry),
+                              child:  Text(AppStrings.retry),
                             ),
                           ],
                         );

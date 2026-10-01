@@ -27,7 +27,7 @@ class _ListPropertyFeaturesScreenState
     extends State<ListPropertyFeaturesScreen> {
   final TextEditingController _descriptionController = TextEditingController();
   final Set<int> _selectedFeatureIndexes = {};
-  final List<Map<String, String>> _features = const [
+  final List<Map<String, String>> _features =  [
     {
       'title': AppStrings.elevator,
       'icon': AppIcons.elevator,

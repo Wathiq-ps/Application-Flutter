@@ -42,7 +42,8 @@ class AppRoutes {
   // ─────────────────────────────────────────────
 
   static final GoRouter router = GoRouter(
-    initialLocation: AppConfig.isTestMode ? RouteNames.mainNavigation : RouteNames.splash,
+    // initialLocation: AppConfig.isTestMode ? RouteNames.mainNavigation : RouteNames.splash,
+    initialLocation: RouteNames.mainNavigation ,
     routes: [
       // ─────────────────────────────────────────────
       // Splash

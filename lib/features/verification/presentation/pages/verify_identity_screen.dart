@@ -7,7 +7,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:mobile/config/routes/routes_names.dart';
 import 'package:mobile/core/constant/images_path.dart';
 import 'package:mobile/core/constant/strings.dart';
-
 import 'package:mobile/features/verification/presentation/cubit/verification_cubit.dart';
 import 'package:mobile/features/verification/presentation/widgets/action_button.dart';
 import 'package:mobile/features/verification/presentation/widgets/dashed_border_painter.dart';
@@ -102,7 +101,7 @@ class _VerifyIdentityScreenState extends State<VerifyIdentityScreen> {
 
                           const SizedBox(width: 10),
 
-                          const Expanded(
+                           Expanded(
                             child: Text(
                               AppStrings.verifyYourIdentity,
                               textAlign: TextAlign.center,
@@ -118,7 +117,7 @@ class _VerifyIdentityScreenState extends State<VerifyIdentityScreen> {
 
                       const SizedBox(height: 2),
 
-                      const Text(
+                       Text(
                         AppStrings.step1Of2,
                         style: TextStyle(
                           color: Colors.white70,
@@ -153,7 +152,7 @@ class _VerifyIdentityScreenState extends State<VerifyIdentityScreen> {
                           ),
                           child: Column(
                             children: [
-                              const Text(
+                               Text(
                                 AppStrings.uploadYourId,
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
@@ -165,7 +164,7 @@ class _VerifyIdentityScreenState extends State<VerifyIdentityScreen> {
 
                               const SizedBox(height: 7),
 
-                              const Text(
+                               Text(
                                 AppStrings.takeClearPhotoOfId,
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
@@ -197,7 +196,7 @@ class _VerifyIdentityScreenState extends State<VerifyIdentityScreen> {
                                     width: double.infinity,
                                     height: 200,
                                     decoration: BoxDecoration(
-                                      color: Colors.white.withOpacity(0.08),
+                                      color: Colors.white.withValues(alpha: 0.08),
                                       borderRadius: BorderRadius.circular(18),
                                     ),
                                     child: idImage == null
@@ -221,7 +220,7 @@ class _VerifyIdentityScreenState extends State<VerifyIdentityScreen> {
 
                                               const SizedBox(height: 10),
 
-                                              const Text(
+                                               Text(
                                                 AppStrings.tapToUpload,
                                                 style: TextStyle(
                                                   color: Colors.white,
@@ -285,19 +284,19 @@ class _VerifyIdentityScreenState extends State<VerifyIdentityScreen> {
                         // =========================
                         // Requirements
                         // =========================
-                        const RequirementItem(
+                         RequirementItem(
                           text: AppStrings.faceAndIdClearlyVisible,
                         ),
 
                         const SizedBox(height: 11),
 
-                        const RequirementItem(
+                         RequirementItem(
                           text: AppStrings.goodLightingNoShadows,
                         ),
 
                         const SizedBox(height: 11),
 
-                        const RequirementItem(
+                         RequirementItem(
                           text: AppStrings.removeSunglassesOrHats,
                         ),
 
@@ -320,7 +319,7 @@ class _VerifyIdentityScreenState extends State<VerifyIdentityScreen> {
                                 borderRadius: BorderRadius.circular(35),
                               ),
                             ),
-                            child: const Text(
+                            child:  Text(
                               AppStrings.continueText,
                               style: TextStyle(
                                 fontSize: 19,

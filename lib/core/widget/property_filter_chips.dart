@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../config/theme/app_colors.dart';
 import '../constant/strings.dart';
 
@@ -8,34 +9,40 @@ class PropertyFilterChips extends StatelessWidget {
     required this.widthScale,
     this.selectedIndex,
     this.onChanged,
-    this.labels = const [
-      AppStrings.forSale,
-      AppStrings.forRent,
-    ],
+    this.labels,
     this.allowDeselect = true,
   });
 
   final double widthScale;
   final int? selectedIndex;
   final ValueChanged<int?>? onChanged;
-  final List<String> labels;
+  final List<String>? labels;
   final bool allowDeselect;
 
   void _handleTap(int index) {
     final bool isSelected = index == selectedIndex;
+
     if (isSelected && !allowDeselect) return;
+
     onChanged?.call(isSelected ? null : index);
   }
 
   @override
   Widget build(BuildContext context) {
+    final List<String> effectiveLabels = labels ?? [
+      AppStrings.forSale,
+      AppStrings.forRent,
+    ];
+
     return SizedBox(
       height: 38 * widthScale,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         physics: const BouncingScrollPhysics(),
-        itemCount: labels.length,
-        separatorBuilder: (_, __) => SizedBox(width: 7 * widthScale),
+        itemCount: effectiveLabels.length,
+        separatorBuilder: (_, __) => SizedBox(
+          width: 7 * widthScale,
+        ),
         itemBuilder: (context, index) {
           final bool selected = index == selectedIndex;
 
@@ -45,9 +52,13 @@ class PropertyFilterChips extends StatelessWidget {
               duration: const Duration(milliseconds: 200),
               curve: Curves.easeInOut,
               height: 32 * widthScale,
-              padding: EdgeInsets.symmetric(horizontal: 20 * widthScale),
+              padding: EdgeInsets.symmetric(
+                horizontal: 20 * widthScale,
+              ),
               decoration: BoxDecoration(
-                color: selected ? AppColors.primary : AppColors.white,
+                color: selected
+                    ? AppColors.primary
+                    : AppColors.white,
                 borderRadius: BorderRadius.circular(9999),
                 border: Border.all(
                   color: selected
@@ -66,11 +77,15 @@ class PropertyFilterChips extends StatelessWidget {
               ),
               alignment: Alignment.center,
               child: Text(
-                labels[index],
+                effectiveLabels[index],
                 style: TextStyle(
-                  color: selected ? AppColors.white : AppColors.primary,
+                  color: selected
+                      ? AppColors.white
+                      : AppColors.primary,
                   fontSize: 12 * widthScale,
-                  fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
+                  fontWeight: selected
+                      ? FontWeight.w600
+                      : FontWeight.w500,
                   height: 16 / 12,
                   letterSpacing: 0.24,
                 ),

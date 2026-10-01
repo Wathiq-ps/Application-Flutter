@@ -120,7 +120,7 @@ class _EditProfileViewState extends State<_EditProfileView> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(state.errorMessage ?? AppStrings.somethingWentWrong),
-                    TextButton(onPressed: cubit.load, child: const Text(AppStrings.retry)),
+                    TextButton(onPressed: cubit.load, child:  Text(AppStrings.retry)),
                   ],
                 ),
               );

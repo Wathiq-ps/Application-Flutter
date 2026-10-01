@@ -12,19 +12,24 @@ import 'l10n/generated/app_localizations.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  // runApp(
-  //   DevicePreview(
-  //     enabled: !kReleaseMode,
-  //     builder: (context) => const WathiqApp(),
-  //   ),
-  // );
   runApp(
-    BlocProvider(
-      create: (_) => LocaleCubit(Injector.localeStorageService)..load(),
-      child: const WathiqApp(),
+    DevicePreview(
+      enabled: !kReleaseMode,
+      builder: (context) => BlocProvider(
+        create: (_) => LocaleCubit(
+          Injector.localeStorageService,
+        )..load(),
+        child: const WathiqApp(),
+      ),
     ),
   );
-}
+//   runApp(
+//     BlocProvider(
+//       create: (_) => LocaleCubit(Injector.localeStorageService)..load(),
+//       child: const WathiqApp(),
+//     ),
+//   );
+ }
 
 class WathiqApp extends StatelessWidget {
   const WathiqApp({super.key});

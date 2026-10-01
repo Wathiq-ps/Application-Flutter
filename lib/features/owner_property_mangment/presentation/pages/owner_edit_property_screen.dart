@@ -44,7 +44,7 @@ class OwnerEditPropertyScreen extends StatelessWidget {
 class _OwnerEditPropertyView extends StatelessWidget {
   const _OwnerEditPropertyView();
 
-  static const Map<String, String> _rentUnitLabels = {
+  static  Map<String, String> _rentUnitLabels = {
     'per_hour': AppStrings.unitHour,
     'per_day': AppStrings.unitDay,
     'per_week': AppStrings.unitWeek,
@@ -376,7 +376,7 @@ class _OwnerEditPropertyView extends StatelessWidget {
                           suffixIconHeight: 8,
                           suffixIconWidth: 6,
                           widthScale: widthScale,
-                          dropdownOptions: const [
+                          dropdownOptions:  [
                             AppStrings.propertyApartment,
                             AppStrings.propertyVilla,
                             AppStrings.propertyLand,

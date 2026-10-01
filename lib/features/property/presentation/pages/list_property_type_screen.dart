@@ -30,7 +30,7 @@ class _ListPropertyTypeScreenState extends State<ListPropertyTypeScreen> {
   int _selectedPropertyTypeIndex = 0;
   final TextEditingController _customTypeController = TextEditingController();
 
-  final List<Map<String, String>> _propertyTypes = const [
+  final List<Map<String, String>> _propertyTypes =  [
     {
       'title': AppStrings.propertyApartment,
       'value': 'apartment',

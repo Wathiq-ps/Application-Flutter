@@ -24,7 +24,7 @@ class ErrorRetryView extends StatelessWidget {
             TextButton.icon(
               onPressed: onRetry,
               icon: const Icon(Icons.refresh_rounded),
-              label: const Text(AppStrings.retry),
+              label:  Text(AppStrings.retry),
             ),
           ],
         ),

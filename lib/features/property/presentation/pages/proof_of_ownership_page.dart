@@ -7,7 +7,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile/core/widget/app_button.dart';
 import 'package:mobile/features/property/presentation/widgets/submit_button_widget.dart';
-
 import '../../../../config/routes/routes_names.dart';
 import '../../../../config/theme/app_colors.dart';
 import '../../../../core/constant/app_icons.dart';
@@ -38,7 +37,7 @@ class _ProofOfOwnershipPageState extends State<ProofOfOwnershipPage> {
   final ImagePickerService _imagePickerService = ImagePickerService();
   String? _selectedDocumentType;
 
-  static const Map<String, String> _documentTypes = {
+  static  Map<String, String> _documentTypes = {
     'title_deed': AppStrings.titleDeed,
     'sale_contract': AppStrings.saleContract,
     'inheritance_deed': AppStrings.inheritanceDeed,
