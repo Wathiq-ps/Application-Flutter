@@ -489,7 +489,7 @@ class CreatePropertyCubit extends Cubit<CreatePropertyState> {
         ),
       );
     } catch (e) {
-      print('Error creating property: $e');
+      print('Error creating property: 0$e');
       // 👇 أضف هذا الجزء هنا:
       if (e is DioException) {
         print('❌ Status Code: ${e.response?.statusCode}');

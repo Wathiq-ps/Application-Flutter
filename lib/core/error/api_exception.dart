@@ -17,7 +17,7 @@ class ApiException implements Exception {
       default:
         final data = e.response?.data;
         final serverMessage = data is Map ? data['message']?.toString() : null;
-        return ApiException(
+         return ApiException(
           serverMessage ?? 'Something went wrong. Please try again.',
           statusCode: e.response?.statusCode,
         );

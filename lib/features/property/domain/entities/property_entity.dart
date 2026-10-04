@@ -1,3 +1,5 @@
+import 'package:mobile/features/property/data/models/owner_model.dart';
+
 enum PropertyListingType {
   sale,
   rent,
@@ -34,6 +36,7 @@ class PropertyEntity {
   final List<String> photos;
   final double? averageRating;
   final int ratingsCount;
+  final OwnerModel owner;
 
   const PropertyEntity({
     required this.id,
@@ -59,8 +62,10 @@ class PropertyEntity {
     required this.photos,
     this.averageRating,
     required this.ratingsCount,
+    required this.owner,
   });
 
   String? get coverPhoto => photos.isEmpty ? null : photos.first;
   String get locationLabel => district.isEmpty ? city : '$district, $city';
 }
+

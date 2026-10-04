@@ -76,7 +76,6 @@ class HomeScreen extends StatelessWidget {
                           // TODO: open notifications
                         },
                       ),
-
                     ),
                     SizedBox(height: 25 * heightScale),
 
@@ -109,8 +108,9 @@ class HomeScreen extends StatelessWidget {
 
                         // Failed AND nothing cached -> retry screen
                         if (resource.isInitialFailure) {
-                          return ErrorRetryView(
-                            message: resource.errorMessage ??
+                           return ErrorRetryView(
+                            message:
+                                resource.errorMessage ??
                                 AppStrings.somethingWentWrong,
                             onRetry: homeCubit.loadHome,
                           );

@@ -1,3 +1,4 @@
+import 'package:mobile/features/property/data/models/owner_model.dart';
 import 'package:mobile/features/property/domain/entities/property_entity.dart';
 
 class PropertyModel extends PropertyEntity {
@@ -24,7 +25,7 @@ class PropertyModel extends PropertyEntity {
     required super.features,
     required super.photos,
     super.averageRating,
-    required super.ratingsCount,
+    required super.ratingsCount, required super.owner,
   });
 
   factory PropertyModel.fromJson(Map<String, dynamic> json) {
@@ -51,7 +52,7 @@ class PropertyModel extends PropertyEntity {
       features: _stringList(json['features']),
       photos: _parsePhotos(json['photos']),
       averageRating: _toDouble(json['average_rating']),
-      ratingsCount: (json['ratings_count'] as num?)?.toInt() ?? 0,
+      ratingsCount: (json['ratings_count'] as num?)?.toInt() ?? 0, owner: OwnerModel.fromJson(json['owner']),
     );
   }
 

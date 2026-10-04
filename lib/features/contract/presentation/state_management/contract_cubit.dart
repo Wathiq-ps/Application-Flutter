@@ -5,10 +5,13 @@ import '../../domain/usecases/contract_usecase.dart';
 import 'contract_state.dart';
 
 class ContractCubit extends Cubit<ContractState> {
-  final SendPropertyRequestUseCase sendPropertyRequestUseCase;
+  final SendPropertyRequestUseCase _sendPropertyRequestUseCase;
 
-  ContractCubit({required this.sendPropertyRequestUseCase})
-      : super(const ContractInitial());
+  ContractCubit({
+    required SendPropertyRequestUseCase sendPropertyRequestUseCase,
+  }) : _sendPropertyRequestUseCase = sendPropertyRequestUseCase,
+
+       super(const ContractInitial());
 
   Future<bool> sendRequest({
     required String propertyId,
@@ -24,7 +27,7 @@ class ContractCubit extends Cubit<ContractState> {
         termStart: termStart,
         termEnd: termEnd,
       );
-      await sendPropertyRequestUseCase(entity);
+      await _sendPropertyRequestUseCase(entity);
       emit(const SendRequestSuccess());
       return true;
     } on ApiException catch (e) {

@@ -15,8 +15,10 @@ class HomeDataSourceImpl implements HomeDataSource {
   Future<Map<String, dynamic>> getHomeJson() async {
     try {
       final response = await _dio.get(ApiConstants.homeEndpoint);
+      
       return response.data as Map<String, dynamic>;
     } on DioException catch (e) {
+      
       throw ApiException.fromDioException(e);
     }
   }

@@ -17,10 +17,7 @@ import '../widgets/send_request_dialog.dart';
 class ViewPropertyDetailsScreen extends StatefulWidget {
   final PropertyEntity property;
 
-  const ViewPropertyDetailsScreen({
-    super.key,
-    required this.property,
-  });
+  const ViewPropertyDetailsScreen({super.key, required this.property});
 
   @override
   State<ViewPropertyDetailsScreen> createState() =>
@@ -46,12 +43,16 @@ class _ViewPropertyDetailsScreenState extends State<ViewPropertyDetailsScreen> {
 
   Future<void> _handleSendRequest(BuildContext context) async {
     final cubit = context.read<ContractCubit>();
-    final note = await SendRequestDialog.show(
+    final isRent = widget.property.listingType == PropertyListingType.rent;
+    final result = await SendRequestDialog.show(
       context,
-      onSend: (note) async {
+      isRent: isRent,
+      onSend: (note, termStart, termEnd) async {
         final success = await cubit.sendRequest(
           propertyId: widget.property.id,
           message: note,
+          termStart: termStart,
+          termEnd: termEnd,
         );
         if (!success) {
           final state = cubit.state;
@@ -72,7 +73,7 @@ class _ViewPropertyDetailsScreenState extends State<ViewPropertyDetailsScreen> {
       },
     );
 
-    if (note != null && context.mounted) {
+    if (result != null && context.mounted) {
       AppTopSnackBar.show(
         context,
         title: 'Request Sent',
@@ -86,13 +87,15 @@ class _ViewPropertyDetailsScreenState extends State<ViewPropertyDetailsScreen> {
 
   String _formatPrice(double price) {
     final isWhole = price.truncateToDouble() == price;
-    final parts = (isWhole
-            ? price.toInt().toString()
-            : price.toStringAsFixed(2))
-        .split('.');
+    final parts =
+        (isWhole ? price.toInt().toString() : price.toStringAsFixed(2)).split(
+          '.',
+        );
     final reg = RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))');
-    final formattedInt =
-        parts[0].replaceAllMapped(reg, (Match m) => '${m[1]},');
+    final formattedInt = parts[0].replaceAllMapped(
+      reg,
+      (Match m) => '${m[1]},',
+    );
     return parts.length > 1 ? '$formattedInt.${parts[1]}' : formattedInt;
   }
 
@@ -126,19 +129,15 @@ class _ViewPropertyDetailsScreenState extends State<ViewPropertyDetailsScreen> {
       return Image.network(
         path,
         fit: BoxFit.cover,
-        errorBuilder: (_, __, ___) => Image.asset(
-          ImagePath.villa,
-          fit: BoxFit.cover,
-        ),
+        errorBuilder: (_, __, ___) =>
+            Image.asset(ImagePath.villa, fit: BoxFit.cover),
       );
     }
     return Image.asset(
       path,
       fit: BoxFit.cover,
-      errorBuilder: (_, __, ___) => Image.asset(
-        ImagePath.villa,
-        fit: BoxFit.cover,
-      ),
+      errorBuilder: (_, __, ___) =>
+          Image.asset(ImagePath.villa, fit: BoxFit.cover),
     );
   }
 
@@ -221,33 +220,22 @@ class _ViewPropertyDetailsScreenState extends State<ViewPropertyDetailsScreen> {
         'icon': AppIcons.furnished,
         'value': 'furnished',
       },
-      {
-        'title': AppStrings.garden,
-        'icon': AppIcons.garden,
-        'value': 'garden',
-      },
-      {
-        'title': AppStrings.water,
-        'icon': AppIcons.water,
-        'value': 'water',
-      },
+      {'title': AppStrings.garden, 'icon': AppIcons.garden, 'value': 'garden'},
+      {'title': AppStrings.water, 'icon': AppIcons.water, 'value': 'water'},
       {
         'title': AppStrings.electricity,
         'icon': AppIcons.electricity,
         'value': 'electricity',
       },
-      {
-        'title': AppStrings.wifi,
-        'icon': AppIcons.wifi,
-        'value': 'wifi',
-      },
+      {'title': AppStrings.wifi, 'icon': AppIcons.wifi, 'value': 'wifi'},
     ];
 
     for (final feature in featureDefinitions) {
       final featureValue = feature['value']!.toLowerCase();
       final featureTitle = feature['title']!.toLowerCase();
 
-      final isPresent = widget.property.features.any((f) {
+      final isPresent =
+          widget.property.features.any((f) {
             final lower = f.trim().toLowerCase();
             return lower == featureValue || lower == featureTitle;
           }) ||
@@ -255,16 +243,11 @@ class _ViewPropertyDetailsScreenState extends State<ViewPropertyDetailsScreen> {
 
       if (isPresent) {
         chips.add(
-          _buildFeatureChip(
-            feature['icon']!,
-            feature['title']!,
-            widthScale,
-          ),
+          _buildFeatureChip(feature['icon']!, feature['title']!, widthScale),
         );
       }
     }
 
-  
     if (chips.isEmpty) {
       return const SizedBox.shrink();
     }
@@ -292,10 +275,17 @@ class _ViewPropertyDetailsScreenState extends State<ViewPropertyDetailsScreen> {
 
     final descriptionText = widget.property.description;
 
+     final owner = widget.property.owner;
+    // final owner = OwnerModel(
+    //   id: '1',
+    //   name: 'Nour Khalaf',
+    //   isVerified: true,
+    //   memberSince: '02/10/2026',
+    // );
+
     final priceFormatted = _formatPrice(widget.property.price);
     final currency = widget.property.priceCurrency;
-    final formattedPriceUnit =
-        _formatPriceUnit(widget.property.priceUnit);
+    final formattedPriceUnit = _formatPriceUnit(widget.property.priceUnit);
 
     return Scaffold(
       backgroundColor: AppColors.white,
@@ -398,8 +388,9 @@ class _ViewPropertyDetailsScreenState extends State<ViewPropertyDetailsScreen> {
                                   onTap: () {
                                     if (_currentPage > 0) {
                                       _pageController.previousPage(
-                                        duration:
-                                            const Duration(milliseconds: 300),
+                                        duration: const Duration(
+                                          milliseconds: 300,
+                                        ),
                                         curve: Curves.easeInOut,
                                       );
                                     }
@@ -419,8 +410,9 @@ class _ViewPropertyDetailsScreenState extends State<ViewPropertyDetailsScreen> {
                                   onTap: () {
                                     if (_currentPage < photoList.length - 1) {
                                       _pageController.nextPage(
-                                        duration:
-                                            const Duration(milliseconds: 300),
+                                        duration: const Duration(
+                                          milliseconds: 300,
+                                        ),
                                         curve: Curves.easeInOut,
                                       );
                                     }
@@ -524,7 +516,7 @@ class _ViewPropertyDetailsScreenState extends State<ViewPropertyDetailsScreen> {
                           ),
                           alignment: Alignment.center,
                           child: Text(
-                            'M',
+                            owner.name.isNotEmpty ? owner.name[0].toUpperCase() : "U",
                             style: TextStyle(
                               color: const Color(0xFF00113A),
                               fontSize: 20 * widthScale,
@@ -537,7 +529,7 @@ class _ViewPropertyDetailsScreenState extends State<ViewPropertyDetailsScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Manar Ayyoub',
+                              owner.name,
                               style: TextStyle(
                                 color: const Color(0xFF00113A),
                                 fontSize: 18 * widthScale,
@@ -546,7 +538,7 @@ class _ViewPropertyDetailsScreenState extends State<ViewPropertyDetailsScreen> {
                             ),
                             SizedBox(height: 3 * widthScale),
                             Text(
-                              'Property Owner',
+                              owner.memberSince,
                               style: TextStyle(
                                 color: const Color(0xFF64748B),
                                 fontSize: 13 * widthScale,
@@ -555,6 +547,9 @@ class _ViewPropertyDetailsScreenState extends State<ViewPropertyDetailsScreen> {
                             ),
                           ],
                         ),
+                       Spacer(),
+                       if (owner.isVerified)
+                          SvgPicture.asset(AppIcons.verified_profile_status),
                       ],
                     ),
 
@@ -615,8 +610,9 @@ class _ViewPropertyDetailsScreenState extends State<ViewPropertyDetailsScreen> {
                         borderRadius: BorderRadius.circular(999),
                         boxShadow: [
                           BoxShadow(
-                            color:
-                                const Color(0xFF00113A).withValues(alpha: 0.25),
+                            color: const Color(
+                              0xFF00113A,
+                            ).withValues(alpha: 0.25),
                             blurRadius: 14,
                             offset: const Offset(0, 6),
                           ),

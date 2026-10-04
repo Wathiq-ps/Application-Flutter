@@ -6,7 +6,7 @@ class SendPropertyRequestUseCase {
 
   const SendPropertyRequestUseCase(this.repository);
 
-  Future<void> call(SendRequestEntity entity) {
-    return repository.sendPropertyRequest(entity);
+  Future<void> call(SendRequestEntity request) {
+    return repository.sendPropertyRequest(request);
   }
 }
