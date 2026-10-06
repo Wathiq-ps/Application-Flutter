@@ -154,59 +154,68 @@ class _SendRequestDialogState extends State<SendRequestDialog> {
     return GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
-      child: Container(
-        padding: EdgeInsets.symmetric(
-          horizontal: 12 * widthScale,
-          vertical: 10 * widthScale,
-        ),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(14 * widthScale),
-          border: Border.all(
-            color: _dateError != null && !isSelected
-                ? Colors.red.shade400
-                : const Color(0xFFCBD5E1),
-            width: 1.2,
-          ),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              label,
-              style: TextStyle(
-                color: const Color(0xFF8C95A6),
-                fontSize: 11 * widthScale,
-                fontWeight: FontWeight.w600,
+      child: Column(
+         crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                label,
+                style: TextStyle(
+                  color: const Color(0xFF8C95A6),
+                  fontSize: 13 * widthScale,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
-            SizedBox(height: 4 * widthScale),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          Container(
+            padding: EdgeInsets.symmetric(
+              horizontal: 10 * widthScale,
+              vertical: 10 * widthScale,
+            ),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(14 * widthScale),
+              border: Border.all(
+                color: _dateError != null && !isSelected
+                    ? Colors.red.shade400
+                    : const Color(0xFFCBD5E1),
+                width: 1.2,
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
-                  child: Text(
-                    dateText,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      color: isSelected
-                          ? const Color(0xFF00113A)
-                          : const Color(0xFF8C95A6),
-                      fontSize: 13 * widthScale,
-                      fontWeight:
-                          isSelected ? FontWeight.w700 : FontWeight.w500,
+              
+               
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        dateText,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: isSelected
+                              ? const Color(0xFF00113A)
+                              : const Color(0xFF8C95A6),
+                          fontSize: 13 * widthScale,
+                          fontWeight:
+                              isSelected ? FontWeight.w700 : FontWeight.w500,
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-                Icon(
-                  Icons.calendar_today_outlined,
-                  size: 15 * widthScale,
-                  color: const Color(0xFF00113A),
+                    Icon(
+                      Icons.calendar_today_outlined,
+                      size: 15 * widthScale,
+                      color: const Color(0xFF00113A),
+                    ),
+                  ],
                 ),
               ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
