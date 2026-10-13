@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
@@ -136,6 +135,7 @@ class _EditProfileViewState extends State<_EditProfileView> {
                     icon: AppIcons.backArrowProp,
                     iconWidth: 20 * ws,
                     iconHeight: 16 * ws,
+                    flipForRtl: true,
                     onTap: () => context.pop(),
                   ),
                   center: Text(

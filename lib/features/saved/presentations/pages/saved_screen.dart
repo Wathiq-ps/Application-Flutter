@@ -75,7 +75,7 @@ class SavedScreen extends StatelessWidget {
                                 ? AppStrings.onePropertySaved
                                 : AppStrings.propertiesSavedCount(favorites.length),
                             color: AppColors.primary,
-                            fontSize: 11 * widthScale,
+                            fontSize: 11 * widthScale.clamp(0.1, 1.2),
                             fontWeight: FontWeight.w500,
                             trailing: AppLabelIconTrigger(
                               widthScale: widthScale,

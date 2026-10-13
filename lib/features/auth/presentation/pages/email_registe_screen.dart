@@ -97,10 +97,13 @@ class _EmailRegisterScreenState extends State<EmailRegisterScreen> {
         leading: IconButton(
           padding: EdgeInsets.only(left: 5 * _widthScale),
           onPressed: () => context.pop(),
-          icon: SvgPicture.asset(
-            AppIcons.back,
-            width: _widthScale * 20,
-            height: _widthScale * 20,
+          icon: Transform.flip(
+            flipX: Directionality.of(context) == TextDirection.rtl,
+            child: SvgPicture.asset(
+              AppIcons.back,
+              width: _widthScale * 20,
+              height: _widthScale * 20,
+            ),
           ),
         ),
       ),

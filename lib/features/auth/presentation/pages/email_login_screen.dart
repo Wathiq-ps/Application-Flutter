@@ -101,11 +101,14 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
             left: 5 * widthScale,
           ),
           onPressed: () => context.pop(),
-          icon: SvgPicture.asset(
-            AppIcons.back,
-            width: widthScale * 20,
-            height: widthScale * 20,
-            excludeFromSemantics: true,
+          icon: Transform.flip(
+            flipX: Directionality.of(context) == TextDirection.rtl,
+            child: SvgPicture.asset(
+              AppIcons.back,
+              width: widthScale * 20,
+              height: widthScale * 20,
+              excludeFromSemantics: true,
+            ),
           ),
         ),
       ),

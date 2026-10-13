@@ -50,11 +50,14 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
       appBar: AppBar(
         leading: IconButton(
           onPressed: () => Navigator.maybePop(context),
-          icon: SvgPicture.asset(
-            AppIcons.back,
-            width: widthScale * 24,
-            height: widthScale * 24,
-            excludeFromSemantics: true,
+          icon: Transform.flip(
+            flipX: Directionality.of(context) == TextDirection.rtl,
+            child: SvgPicture.asset(
+              AppIcons.back,
+              width: widthScale * 24,
+              height: widthScale * 24,
+              excludeFromSemantics: true,
+            ),
           ),
         ),
       ),

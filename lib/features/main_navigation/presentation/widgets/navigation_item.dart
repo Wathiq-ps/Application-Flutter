@@ -70,12 +70,10 @@ class NavigationItem extends StatelessWidget {
                   curve: Curves.easeInOutCubic,
                   child: isSelected
                       ? Padding(
-                    padding: EdgeInsets.only(left: 8 * scale),
+                    padding: EdgeInsets.only(left: 8 * scale , right: 8 * scale),
                     child: Text(
                       label,
-                      style: Theme.of(context)
-                          .textTheme
-                          .labelMedium
+                      style: Theme.of(context).textTheme.labelMedium
                           ?.copyWith(
                         color: AppColors.primary,
                         fontSize: (14 * scale),

@@ -99,6 +99,7 @@ class _OwnerDeletePropertyView extends StatelessWidget {
                   icon: AppIcons.backArrowProp,
                   iconWidth: 20,
                   iconHeight: 16,
+                  flipForRtl: true,
                   onTap: () => context.pop(),
                 ),
                 center: Text(

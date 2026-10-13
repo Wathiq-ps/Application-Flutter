@@ -12,24 +12,17 @@ import 'l10n/generated/app_localizations.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+
   runApp(
     DevicePreview(
       enabled: !kReleaseMode,
       builder: (context) => BlocProvider(
-        create: (_) => LocaleCubit(
-          Injector.localeStorageService,
-        )..load(),
+        create: (_) => LocaleCubit(Injector.localeStorageService)..load(),
         child: const WathiqApp(),
       ),
     ),
   );
-//   runApp(
-//     BlocProvider(
-//       create: (_) => LocaleCubit(Injector.localeStorageService)..load(),
-//       child: const WathiqApp(),
-//     ),
-//   );
- }
+}
 
 class WathiqApp extends StatelessWidget {
   const WathiqApp({super.key});
@@ -38,20 +31,24 @@ class WathiqApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<LocaleCubit, LocaleState>(
       builder: (context, state) {
+        final currentLocale = state.locale.locale;
+        AppStrings.update(lookupAppLocalizations(currentLocale));
+
         return MaterialApp.router(
+          locale: currentLocale,
+          builder: (context, child) {
+            final previewChild = DevicePreview.appBuilder(context, child);
+            return KeyedSubtree(
+              key: ValueKey(state.locale.code),
+              child: previewChild,
+            );
+          },
           debugShowCheckedModeBanner: false,
           title: 'Wathiq',
           theme: AppTheme.light,
           routerConfig: AppRoutes.router,
-          locale: state.locale.locale,
           supportedLocales: AppLocalizations.supportedLocales,
           localizationsDelegates: AppLocalizations.localizationsDelegates,
-          builder: (context, child) {
-            // Refreshes the AppStrings facade once per locale change —
-            // every existing AppStrings.xxx call site keeps working as-is.
-            AppStrings.update(AppLocalizations.of(context));
-            return child ?? const SizedBox.shrink();
-          },
         );
       },
     );

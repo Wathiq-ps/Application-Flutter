@@ -57,7 +57,7 @@ Future<void> showLanguagePicker({
                     children: [
                       AppDropdownOptionTile(
                         widthScale: widthScale,
-                        label: AppStrings.languageEnglish,
+                        label: AppStrings.englishLan,
                         isSelected: state.locale == AppLocale.en,
                         onTap: () {
                           localeCubit.setLocale(AppLocale.en);
@@ -66,7 +66,7 @@ Future<void> showLanguagePicker({
                       ),
                       AppDropdownOptionTile(
                         widthScale: widthScale,
-                        label: AppStrings.languageArabic,
+                        label: AppStrings.arabicLan,
                         isSelected: state.locale == AppLocale.ar,
                         onTap: () {
                           localeCubit.setLocale(AppLocale.ar);

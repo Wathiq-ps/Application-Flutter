@@ -579,10 +579,10 @@ class AppLocalizationsAr extends AppLocalizations {
       'لا يمكن التراجع عن هذا الإجراء. هل أنت متأكد من حذف هذا العقار؟';
 
   @override
-  String get beds => ' غرف نوم';
+  String get beds => ' غرف ';
 
   @override
-  String get baths => ' حمامات';
+  String get baths => ' حمام';
 
   @override
   String get sqm => ' م²';

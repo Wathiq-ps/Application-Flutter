@@ -212,6 +212,7 @@ class _OwnerEditPropertyView extends StatelessWidget {
                   icon: AppIcons.backArrowProp,
                   iconWidth: 20,
                   iconHeight: 16,
+                  flipForRtl: true,
                   onTap: () => _confirmDiscard(context),
                 ),
                 center: Text(

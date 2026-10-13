@@ -56,6 +56,7 @@ class OwnerPropertiesScreen extends StatelessWidget {
                             icon: AppIcons.backArrowProp,
                             iconWidth: 16,
                             iconHeight: 16,
+                            flipForRtl: true,
                             onTap: () {
                               context.pop();
                             },

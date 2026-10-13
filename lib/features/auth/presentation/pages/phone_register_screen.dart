@@ -31,7 +31,10 @@ class _PhoneRegisterScreenState extends State<PhoneRegisterScreen> {
       appBar: AppBar(
         leading: IconButton(
           onPressed: () => Navigator.maybePop(context),
-          icon: SvgPicture.asset(AppIcons.back),
+          icon: Transform.flip(
+            flipX: Directionality.of(context) == TextDirection.rtl,
+            child: SvgPicture.asset(AppIcons.back),
+          ),
         ),
       ),
       body: SafeArea(

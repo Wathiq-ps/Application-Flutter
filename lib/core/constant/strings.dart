@@ -1,3 +1,4 @@
+
 import '../../l10n/generated/app_localizations.dart';
 import '../../l10n/generated/app_localizations_en.dart';
 
@@ -267,4 +268,7 @@ class AppStrings {
   static String get selectLanguage => _l.selectLanguage;
   static String get languageEnglish => _l.languageEnglish;
   static String get languageArabic => _l.languageArabic;
+  static  String arabicLan = "العربية" ;
+  static String englishLan = "English";
+
 }

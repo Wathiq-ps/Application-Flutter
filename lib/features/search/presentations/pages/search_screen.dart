@@ -115,6 +115,7 @@ class _SearchViewState extends State<_SearchView> {
                   icon: AppIcons.backArrowProp,
                   iconWidth: 20,
                   iconHeight: 16,
+                  flipForRtl: true,
                   onTap: () {
                     _focusNode.unfocus();
                     context.read<NavigationCubit>().changeTab(0); // Home
