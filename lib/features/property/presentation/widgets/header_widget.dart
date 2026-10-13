@@ -17,13 +17,16 @@ class HeaderWidget extends StatelessWidget {
         children: [
           IconButton(
             onPressed: () => context.pop(),
-            icon: SvgPicture.asset(
-              AppIcons.back,
-              width: 20,
-              height: 20,
-              colorFilter: const ColorFilter.mode(
-                AppColors.white,
-                BlendMode.srcIn,
+            icon: Transform.flip(
+              flipX: Directionality.of(context) == TextDirection.rtl,
+              child: SvgPicture.asset(
+                AppIcons.back,
+                width: 20,
+                height: 20,
+                colorFilter: const ColorFilter.mode(
+                  AppColors.white,
+                  BlendMode.srcIn,
+                ),
               ),
             ),
           ),
