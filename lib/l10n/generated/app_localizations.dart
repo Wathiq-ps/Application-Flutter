@@ -1639,6 +1639,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Arabic'**
   String get languageArabic;
+
+  /// No description provided for @connectionTimeout.
+  ///
+  /// In en, this message translates to:
+  /// **'The connection timed out. Please try again.'**
+  String get connectionTimeout;
+
+  /// No description provided for @sessionExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Your session has expired. Please sign in again.'**
+  String get sessionExpired;
+
+  /// No description provided for @propertyPublished.
+  ///
+  /// In en, this message translates to:
+  /// **'Property published'**
+  String get propertyPublished;
+
+  /// No description provided for @propertySuspended.
+  ///
+  /// In en, this message translates to:
+  /// **'Property suspended'**
+  String get propertySuspended;
+
+  /// No description provided for @signatureDrawn.
+  ///
+  /// In en, this message translates to:
+  /// **'Signature drawn'**
+  String get signatureDrawn;
+
+  /// No description provided for @signatureUploaded.
+  ///
+  /// In en, this message translates to:
+  /// **'Signature image uploaded'**
+  String get signatureUploaded;
+
+  /// No description provided for @signatureSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'A signature is already saved'**
+  String get signatureSaved;
+
+  /// No description provided for @noSignatureYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No signature added yet'**
+  String get noSignatureYet;
+
+  /// No description provided for @imagePickFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t pick the image'**
+  String get imagePickFailed;
 }
 
 class _AppLocalizationsDelegate

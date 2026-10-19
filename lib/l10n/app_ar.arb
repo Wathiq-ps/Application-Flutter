@@ -265,5 +265,14 @@
   "profileUpdated": "تم تحديث الملف الشخصي",
   "selectLanguage": "اختر اللغة",
   "languageEnglish": "الإنجليزية",
-  "languageArabic": "العربية"
+  "languageArabic": "العربية",
+    "connectionTimeout": "انتهت مهلة الاتصال. يرجى المحاولة مرة أخرى.",
+    "sessionExpired": "انتهت الجلسة. يرجى تسجيل الدخول مرة أخرى.",
+    "propertyPublished": "تم نشر العقار",
+    "propertySuspended": "تم إيقاف العقار",
+    "signatureDrawn": "تم رسم التوقيع",
+    "signatureUploaded": "تم رفع صورة التوقيع",
+    "signatureSaved": "يوجد توقيع محفوظ مسبقًا",
+    "noSignatureYet": "لم تتم إضافة توقيع بعد",
+    "imagePickFailed": "تعذر اختيار الصورة"
 }

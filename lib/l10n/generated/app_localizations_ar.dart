@@ -808,4 +808,31 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get languageArabic => 'العربية';
+
+  @override
+  String get connectionTimeout => 'انتهت مهلة الاتصال. يرجى المحاولة مرة أخرى.';
+
+  @override
+  String get sessionExpired => 'انتهت الجلسة. يرجى تسجيل الدخول مرة أخرى.';
+
+  @override
+  String get propertyPublished => 'تم نشر العقار';
+
+  @override
+  String get propertySuspended => 'تم إيقاف العقار';
+
+  @override
+  String get signatureDrawn => 'تم رسم التوقيع';
+
+  @override
+  String get signatureUploaded => 'تم رفع صورة التوقيع';
+
+  @override
+  String get signatureSaved => 'يوجد توقيع محفوظ مسبقًا';
+
+  @override
+  String get noSignatureYet => 'لم تتم إضافة توقيع بعد';
+
+  @override
+  String get imagePickFailed => 'تعذر اختيار الصورة';
 }

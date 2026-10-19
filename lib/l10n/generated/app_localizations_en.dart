@@ -813,4 +813,32 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get languageArabic => 'Arabic';
+
+  @override
+  String get connectionTimeout => 'The connection timed out. Please try again.';
+
+  @override
+  String get sessionExpired =>
+      'Your session has expired. Please sign in again.';
+
+  @override
+  String get propertyPublished => 'Property published';
+
+  @override
+  String get propertySuspended => 'Property suspended';
+
+  @override
+  String get signatureDrawn => 'Signature drawn';
+
+  @override
+  String get signatureUploaded => 'Signature image uploaded';
+
+  @override
+  String get signatureSaved => 'A signature is already saved';
+
+  @override
+  String get noSignatureYet => 'No signature added yet';
+
+  @override
+  String get imagePickFailed => 'Couldn\'t pick the image';
 }

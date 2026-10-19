@@ -44,14 +44,24 @@ class _EditProfileViewState extends State<_EditProfileView> {
   final _nameController = TextEditingController();
   final _documentNumberController = TextEditingController();
   final _phoneController = TextEditingController();
-  String _phoneCountryCode = '+970'; // Default
+  final _emailController = TextEditingController();
+  final _dobController = TextEditingController();
+
+  String _phoneIso = 'PS'; 
   bool _seeded = false;
+
+  static String _iso(String? v) =>
+      (v != null && v.trim().length == 2) ? v.trim().toUpperCase() : 'PS';
+
+  static final DateFormat _dobFormat = DateFormat('dd / MM / yyyy');
 
   @override
   void dispose() {
     _nameController.dispose();
     _documentNumberController.dispose();
     _phoneController.dispose();
+    _emailController.dispose();
+    _dobController.dispose();
     super.dispose();
   }
 
@@ -60,14 +70,21 @@ class _EditProfileViewState extends State<_EditProfileView> {
     if (paths.isNotEmpty) cubit.setLocalAvatarPath(paths.first);
   }
 
-  Future<void> _pickDate(BuildContext context, EditProfileCubit cubit, DateTime? current) async {
+  Future<void> _pickDate(
+      BuildContext context,
+      EditProfileCubit cubit,
+      DateTime? current,
+      ) async {
     final picked = await showDatePicker(
       context: context,
       initialDate: current ?? DateTime(1990, 1, 1),
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
     );
-    if (picked != null) cubit.setDateOfBirth(picked);
+    if (picked != null) {
+      _dobController.text = _dobFormat.format(picked);
+      cubit.setDateOfBirth(picked);
+    }
   }
 
   @override
@@ -90,6 +107,10 @@ class _EditProfileViewState extends State<_EditProfileView> {
               _nameController.text = state.name;
               _documentNumberController.text = state.documentNumber;
               _phoneController.text = state.phone ?? '';
+              _emailController.text = state.email;
+              _dobController.text = state.dateOfBirth == null
+                  ? ''
+                  : _dobFormat.format(state.dateOfBirth!);
             }
             if (state.status == EditProfileStatus.saved) {
               AppTopSnackBar.show(
@@ -100,7 +121,8 @@ class _EditProfileViewState extends State<_EditProfileView> {
               );
               context.pop(true);
             }
-            if (state.status == EditProfileStatus.saveFailed && state.errorMessage != null) {
+            if (state.status == EditProfileStatus.saveFailed &&
+                state.errorMessage != null) {
               AppTopSnackBar.show(
                 context,
                 title: AppStrings.somethingWentWrong,
@@ -110,7 +132,8 @@ class _EditProfileViewState extends State<_EditProfileView> {
             }
           },
           builder: (context, state) {
-            if (state.status == EditProfileStatus.loading || state.status == EditProfileStatus.initial) {
+            if (state.status == EditProfileStatus.loading ||
+                state.status == EditProfileStatus.initial) {
               return const Center(child: CircularProgressIndicator());
             }
             if (state.isLoadFailed) {
@@ -119,7 +142,10 @@ class _EditProfileViewState extends State<_EditProfileView> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(state.errorMessage ?? AppStrings.somethingWentWrong),
-                    TextButton(onPressed: cubit.load, child:  Text(AppStrings.retry)),
+                    TextButton(
+                      onPressed: cubit.load,
+                      child: Text(AppStrings.retry),
+                    ),
                   ],
                 ),
               );
@@ -129,7 +155,7 @@ class _EditProfileViewState extends State<_EditProfileView> {
               children: [
                 PageHeader(
                   widthScale: ws,
-                  padding: EdgeInsets.symmetric(horizontal: 20 * ws, vertical: 12 * hs),
+                  padding: EdgeInsets.symmetric(horizontal: 20 * ws),
                   left: AppSvgIconButton(
                     widthScale: ws,
                     icon: AppIcons.backArrowProp,
@@ -148,11 +174,13 @@ class _EditProfileViewState extends State<_EditProfileView> {
                       letterSpacing: -0.45,
                     ),
                   ),
-                  right: SizedBox(width: 20 * ws),
                 ),
                 Expanded(
                   child: ListView(
-                    padding: EdgeInsets.symmetric(horizontal: 17 * ws, vertical: 16 * hs),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 17 * ws,
+                      vertical: 16 * hs,
+                    ),
                     children: [
                       Center(
                         child: Column(
@@ -163,7 +191,6 @@ class _EditProfileViewState extends State<_EditProfileView> {
                               child: Stack(
                                 clipBehavior: Clip.none,
                                 children: [
-                                  // Wrapped in DefaultTextStyle to force larger font size if widget relies on ambient text style
                                   DefaultTextStyle(
                                     style: TextStyle(
                                       fontSize: 36 * ws,
@@ -184,8 +211,8 @@ class _EditProfileViewState extends State<_EditProfileView> {
                                       borderWidth: 4,
                                     ),
                                   ),
-                                  Positioned(
-                                    right: 0,
+                                  PositionedDirectional(
+                                    end: 0,
                                     bottom: 2 * ws,
                                     child: GestureDetector(
                                       onTap: () => _pickAvatar(cubit),
@@ -226,28 +253,34 @@ class _EditProfileViewState extends State<_EditProfileView> {
                       ),
                       SizedBox(height: 24 * hs),
 
-                      _field(AppStrings.fullName, ws, hs,
-                          InputFieldWidget(
-                            controller: _nameController,
-                            hint: AppStrings.fullName,
-                            errorText: state.fieldErrors['name']?.first,
-                            onChanged: cubit.setName,
-                          )),
+                      _field(
+                        AppStrings.fullName,
+                        ws,
+                        hs,
+                        InputFieldWidget(
+                          controller: _nameController,
+                          hint: AppStrings.fullName,
+                          errorText: state.fieldErrors['name']?.first,
+                          onChanged: cubit.setName,
+                        ),
+                      ),
 
-                      _field(AppStrings.dateOfBirth, ws, hs,
-                          GestureDetector(
-                            onTap: () => _pickDate(context, cubit, state.dateOfBirth),
-                            child: AbsorbPointer(
-                              child: InputFieldWidget(
-                                controller: TextEditingController(
-                                  text: state.dateOfBirth == null
-                                      ? ''
-                                      : DateFormat('dd / MM / yyyy').format(state.dateOfBirth!),
-                                ),
-                                hint: 'dd / mm / yyyy',
-                              ),
+                      _field(
+                        AppStrings.dateOfBirth,
+                        ws,
+                        hs,
+                        GestureDetector(
+                          onTap: () =>
+                              _pickDate(context, cubit, state.dateOfBirth),
+                          child: AbsorbPointer(
+                            child: InputFieldWidget(
+                              controller: _dobController,
+                              hint: 'dd / mm / yyyy',
                             ),
-                          )),
+                          ),
+                        ),
+                      ),
+
                       _field(
                         AppStrings.nationality,
                         ws,
@@ -255,21 +288,13 @@ class _EditProfileViewState extends State<_EditProfileView> {
                         Container(
                           decoration: BoxDecoration(
                             color: Colors.white,
-                            border: Border.all(
-                              color: const Color(0x4D00113A),
-                            ),
+                            border: Border.all(color: const Color(0x4D00113A)),
                             borderRadius: BorderRadius.circular(8 * ws),
                           ),
                           child: CountryCodePicker(
-                            onChanged: (country) {
-                              cubit.setNationality(
-                                country.code ?? 'PS',
-                              );
-                            },
-                            initialSelection:
-                            state.nationality?.isNotEmpty == true
-                                ? state.nationality
-                                : 'PS',
+                            onChanged: (country) =>
+                                cubit.setNationality(country.code ?? 'PS'),
+                            initialSelection: _iso(state.nationality),
                             showCountryOnly: true,
                             showOnlyCountryWhenClosed: true,
                             alignLeft: true,
@@ -286,48 +311,58 @@ class _EditProfileViewState extends State<_EditProfileView> {
                           ),
                         ),
                       ),
-                      _field(AppStrings.mobileNumber, ws, hs,
-                          InputFieldWidget(
-                            controller: _phoneController,
-                            hint: '593216070',
-                            onChanged: cubit.setPhone,
-                            prefixIcon: IntrinsicHeight(
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  CountryCodePicker(
-                                    onChanged: (country) {
-                                      _phoneCountryCode = country.dialCode ?? '+970';
-                                    },
-                                    initialSelection: 'PS',
-                                    showCountryOnly: false,
-                                    showOnlyCountryWhenClosed: false,
-                                    alignLeft: false,
-                                    showFlag: false,
-                                    padding: EdgeInsets.zero,
-                                    textStyle: TextStyle(
-                                      color: const Color(0xB200113A),
-                                      fontSize: 14 * ws,
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                  ),
-                                  Icon(
-                                    Icons.keyboard_arrow_down_rounded,
-                                    color: const Color(0xB200113A),
-                                    size: 16 * ws,
-                                  ),
-                                  SizedBox(width: 8 * ws),
-                                ],
-                              ),
-                            ),
-                          )),
 
-                      _field(AppStrings.enterEmail, ws, hs,
-                          InputFieldWidget(
-                            controller: TextEditingController(text: state.email),
-                            hint: state.email,
-                            onChanged: null,
-                          ), isRequired: false), // Assuming email cannot be changed and might not be explicitly required to edit
+                      _field(
+                        AppStrings.mobileNumber,
+                        ws,
+                        hs,
+                        InputFieldWidget(
+                          controller: _phoneController,
+                          hint: '593216070',
+                          onChanged: cubit.setPhone,
+                          prefixIcon: IntrinsicHeight(
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                CountryCodePicker(
+                                  onChanged: (country) => setState(
+                                        () => _phoneIso = country.code ?? 'PS',
+                                  ),
+                                  initialSelection: _phoneIso,
+                                  showCountryOnly: false,
+                                  showOnlyCountryWhenClosed: false,
+                                  alignLeft: false,
+                                  showFlag: false,
+                                  padding: EdgeInsets.zero,
+                                  textStyle: TextStyle(
+                                    color: const Color(0xB200113A),
+                                    fontSize: 14 * ws,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                                Icon(
+                                  Icons.keyboard_arrow_down_rounded,
+                                  color: const Color(0xB200113A),
+                                  size: 16 * ws,
+                                ),
+                                SizedBox(width: 8 * ws),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      _field(
+                        AppStrings.enterEmail,
+                        ws,
+                        hs,
+                        InputFieldWidget(
+                          controller: _emailController,
+                          hint: state.email,
+                          onChanged: null,
+                        ),
+                        isRequired: false,
+                      ),
 
                       SizedBox(height: 8 * hs),
                       RichText(
@@ -341,7 +376,10 @@ class _EditProfileViewState extends State<_EditProfileView> {
                             fontFamily: 'Alexandria',
                           ),
                           children: const [
-                            TextSpan(text: ' *', style: TextStyle(color: Colors.red)),
+                            TextSpan(
+                              text: ' *',
+                              style: TextStyle(color: Colors.red),
+                            ),
                           ],
                         ),
                       ),
@@ -353,16 +391,19 @@ class _EditProfileViewState extends State<_EditProfileView> {
                       ),
                       SizedBox(height: 20 * hs),
 
-                      _field(AppStrings.idNumber, ws, hs,
-                          InputFieldWidget(
-                            controller: _documentNumberController,
-                            hint: AppStrings.idNumber,
-                            errorText: state.fieldErrors['document_number']?.first,
-                            onChanged: cubit.setDocumentNumber,
-                          )),
+                      _field(
+                        AppStrings.idNumber,
+                        ws,
+                        hs,
+                        InputFieldWidget(
+                          controller: _documentNumberController,
+                          hint: AppStrings.idNumber,
+                          errorText: state.fieldErrors['document_number']?.first,
+                          onChanged: cubit.setDocumentNumber,
+                        ),
+                      ),
 
                       SignatureInputCard(
-                        hasSignature: state.hasSignatureToShow,
                         cubit: cubit,
                         widthScale: ws,
                         fieldError: state.fieldErrors['signature_image']?.first,
@@ -394,7 +435,13 @@ class _EditProfileViewState extends State<_EditProfileView> {
     );
   }
 
-  Widget _field(String label, double ws, double hs, Widget input, {bool isRequired = true}) {
+  Widget _field(
+      String label,
+      double ws,
+      double hs,
+      Widget input, {
+        bool isRequired = true,
+      }) {
     return Padding(
       padding: EdgeInsets.only(bottom: 16 * hs),
       child: Column(

@@ -263,6 +263,15 @@ class AppStrings {
   static String get saveChangesCta => _l.saveChangesCta;
   static String get selectNationality => _l.selectNationality;
   static String get profileUpdated => _l.profileUpdated;
+  static String get connectionTimeout => _l.connectionTimeout;
+  static String get sessionExpired => _l.sessionExpired;
+  static String get propertyPublished => _l.propertyPublished;
+  static String get propertySuspended => _l.propertySuspended;
+  static String get signatureDrawn => _l.signatureDrawn;
+  static String get signatureUploaded => _l.signatureUploaded;
+  static String get signatureSaved => _l.signatureSaved;
+  static String get noSignatureYet => _l.noSignatureYet;
+  static String get imagePickFailed => _l.imagePickFailed;
 
   // ── Language switcher ────────────────────────────
   static String get selectLanguage => _l.selectLanguage;

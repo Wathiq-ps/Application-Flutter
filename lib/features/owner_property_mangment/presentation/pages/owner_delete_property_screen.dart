@@ -90,10 +90,7 @@ class _OwnerDeletePropertyView extends StatelessWidget {
               PageHeader(
                 widthScale: widthScale,
                 expandCenter: true,
-                padding: EdgeInsets.symmetric(
-                  horizontal: 20 * widthScale,
-                  vertical: 12 * heightScale,
-                ),
+                padding: EdgeInsets.symmetric(horizontal: 20 * widthScale),
                 left: AppSvgIconButton(
                   widthScale: widthScale,
                   icon: AppIcons.backArrowProp,

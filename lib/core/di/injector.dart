@@ -32,6 +32,7 @@ import '../../features/property/domain/repository/create_property_repository.dar
 import '../../features/property/domain/usecases/create_property_usecase.dart';
 import '../constant/api_constants.dart';
 import '../localization/locale_storage_service.dart';
+import '../network/api_headers_interceptor.dart';
 import '../services/image_picker_service.dart';
 import '../services/secure_storage_service.dart';
 
@@ -39,7 +40,14 @@ class Injector {
   Injector._();
 
   // ── Core ──────────────────────────────────────────────
-  static final Dio _dio = Dio(BaseOptions(baseUrl: ApiConstants.baseUrl));
+  static final Dio _dio = Dio(
+    BaseOptions(
+      baseUrl: ApiConstants.baseUrl,
+      connectTimeout: const Duration(seconds: 15),
+      sendTimeout: const Duration(seconds: 30),
+      receiveTimeout: const Duration(seconds: 30),
+    ),
+  )..interceptors.add(ApiHeadersInterceptor(secureStorage));
   static const SecureStorageService secureStorage = SecureStorageService();
   static const FavoritesLocalDataSource _favoritesLocalDataSource =
   FavoritesLocalDataSource();

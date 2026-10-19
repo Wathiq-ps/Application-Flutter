@@ -16,6 +16,7 @@ import '../state_mangement/home_state.dart';
 import '../widgets/all_properties_section.dart';
 import '../widgets/home_greeting.dart';
 import '../widgets/home_loading_view.dart';
+import '../widgets/home_user_name.dart';
 import '../widgets/home_promo_banner.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -46,37 +47,38 @@ class HomeScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(height: 15 * heightScale),
 
-                    PageHeader(
-                      widthScale: widthScale,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      leftGap: 10,
-                      rightGap: 8,
-                      left: AppProfileAvatar(
+                    HomeUserName(
+                      builder: (context, firstName) => PageHeader(
                         widthScale: widthScale,
-                        size: 36,
-                        initialsSource: 'samer',
-                        showInitialsFallback: false,
-                        onTap: () {
-                          // TODO: open profile
-                        },
+                        centered: false,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        leftGap: 10,
+                        rightGap: 8,
+                        left: AppProfileAvatar(
+                          widthScale: widthScale,
+                          size: 36,
+                          initialsSource: firstName,
+                          showInitialsFallback: false,
+                          onTap: () {
+                            // TODO: open profile
+                          },
+                        ),
+                        center: HomeGreeting(
+                          widthScale: widthScale,
+                          userName: firstName,
+                        ),
+                        right: AppSvgIconButton(
+                          widthScale: widthScale,
+                          icon: AppIcons.notifications,
+                          boxSize: 24,
+                          iconWidth: 16,
+                          iconHeight: 20,
+                          onTap: () {
+                            // TODO: open notifications
+                          },
+                        ),
                       ),
-                      center: HomeGreeting(
-                        widthScale: widthScale,
-                        userName: 'Samer',
-                      ),
-                      right: AppSvgIconButton(
-                        widthScale: widthScale,
-                        icon: AppIcons.notifications,
-                        boxSize: 24,
-                        iconWidth: 16,
-                        iconHeight: 20,
-                        onTap: () {
-                          // TODO: open notifications
-                        },
-                      ),
-
                     ),
                     SizedBox(height: 25 * heightScale),
 

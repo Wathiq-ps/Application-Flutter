@@ -30,7 +30,6 @@ class SavedScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: 15 * widthScale),
 
             PageHeader(
               widthScale: widthScale,

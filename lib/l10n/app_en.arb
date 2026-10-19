@@ -265,5 +265,14 @@
   "profileUpdated": "Profile updated",
   "selectLanguage": "Select Language",
   "languageEnglish": "English",
-  "languageArabic": "Arabic"
+  "languageArabic": "Arabic",
+    "connectionTimeout": "The connection timed out. Please try again.",
+    "sessionExpired": "Your session has expired. Please sign in again.",
+    "propertyPublished": "Property published",
+    "propertySuspended": "Property suspended",
+    "signatureDrawn": "Signature drawn",
+    "signatureUploaded": "Signature image uploaded",
+    "signatureSaved": "A signature is already saved",
+    "noSignatureYet": "No signature added yet",
+    "imagePickFailed": "Couldn't pick the image"
 }
