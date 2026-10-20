@@ -31,15 +31,10 @@ class ProfileScreen extends StatelessWidget {
 class _ProfileView extends StatelessWidget {
   const _ProfileView();
 
-  static const double figmaWidth = 393.0;
-  static const double figmaHeight = 852.0;
-
   @override
   Widget build(BuildContext context) {
-    final double screenWidth = context.screenWidth;
-    final double screenHeight = context.screenHeight;
-    final double widthScale = screenWidth / figmaWidth;
-    final double heightScale = screenHeight / figmaHeight;
+    final double widthScale = context.widthScale;
+    final double heightScale = context.heightScale;
     final double avatarSize = 112 * widthScale;
     final double sheetTopOffset = 198 * heightScale;
     final double avatarTopOffset = sheetTopOffset - (avatarSize / 2);
@@ -103,7 +98,6 @@ class _ProfileView extends StatelessWidget {
                   bottom: 24 * heightScale,
                 ),
                 children: [
-                  // Name + verification badge (from GET /api/v1/profile)
                   BlocBuilder<ProfileCubit, ProfileState>(
                     builder: (context, state) {
                       if (state.isInitialFailure) {
@@ -116,7 +110,7 @@ class _ProfileView extends StatelessWidget {
                             ),
                             TextButton(
                               onPressed: profileCubit.load,
-                              child:  Text(AppStrings.retry),
+                              child: Text(AppStrings.retry),
                             ),
                           ],
                         );

@@ -52,15 +52,7 @@ class AppElevatedButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    // Figma reference dimensions.
-    const double figmaWidth = 393;
-    const double figmaHeight = 852;
-
-    final double screenWidth = context.screenWidth;
-    final double screenHeight = context.screenHeight;
-
-    final double widthScale = screenWidth / figmaWidth;
-    final double heightScale = screenHeight / figmaHeight;
+    final double widthScale = context.widthScale;
 
     const double figmaButtonHeight = 56;
     const double figmaBorderRadius = 50;

@@ -24,10 +24,8 @@ class OwnerPropertiesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const double figmaWidth = 393.0;
-    const double figmaHeight = 852.0;
-    final double widthScale = context.screenWidth / figmaWidth;
-    final double heightScale = context.screenHeight / figmaHeight;
+    final double widthScale = context.widthScale;
+    final double heightScale = context.heightScale;
 
     return BlocProvider(
       create: (_) => OwnerPropertyCubit(Injector.ownerPropertyRepository)..load(),
@@ -75,7 +73,8 @@ class OwnerPropertiesScreen extends StatelessWidget {
                           right: AppElevatedButton(
                             text: AppStrings.addNewProperty,
                             onPressed: () {
-                              context.push(RouteNames.listPropertyTypeScreen);                            },
+                              context.push(RouteNames.listPropertyTypeScreen);
+                            },
                             width: 97 * widthScale,
                             height: 32 * widthScale,
                             backgroundColor: AppColors.primary,

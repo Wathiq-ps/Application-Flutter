@@ -20,8 +20,7 @@ class EmptyStateView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const double figmaWidth = 393.0;
-    final double ws = widthScale ?? (context.screenWidth / figmaWidth);
+    final double ws = widthScale ?? context.widthScale;
 
     return Padding(
       padding: EdgeInsets.symmetric(

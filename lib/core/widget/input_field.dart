@@ -27,15 +27,8 @@ class InputFieldWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
 
-    // Figma reference dimensions.
-    final _figmaWidth = 393;
-    final _figmaHeight = 852;
-
-    final _currentScreenWidth = context.screenWidth;
-    final _currentScreenHeight = context.screenHeight;
-
-    final _widthScale = _currentScreenWidth / _figmaWidth;
-    final _heightScale = _currentScreenHeight / _figmaHeight;
+    final widthScale = context.widthScale;
+    final heightScale = context.heightScale;
 
     const double figmaBorderRadius = 12;
     const double figmaHorizontalPadding = 16;
@@ -49,7 +42,7 @@ class InputFieldWidget extends StatelessWidget {
       obscureText: obscureText,
       style: textTheme.bodyLarge?.copyWith(
         color: AppColors.textPrimary,
-        fontSize: figmaFontSize * _widthScale,
+        fontSize: figmaFontSize * widthScale,
         height: figmaLineHeight / figmaFontSize,
       ),
       decoration: InputDecoration(
@@ -62,8 +55,8 @@ class InputFieldWidget extends StatelessWidget {
         fillColor: AppColors.white,
 
         contentPadding: EdgeInsets.symmetric(
-          horizontal: figmaHorizontalPadding * _widthScale,
-          vertical: figmaVerticalPadding * _heightScale,
+          horizontal: figmaHorizontalPadding * widthScale,
+          vertical: figmaVerticalPadding * heightScale,
         ),
 
         floatingLabelBehavior: FloatingLabelBehavior.never,
@@ -76,13 +69,13 @@ class InputFieldWidget extends StatelessWidget {
 
         hintStyle: textTheme.bodyLarge?.copyWith(
           color: AppColors.textSecondary,
-          fontSize: figmaFontSize * _widthScale,
+          fontSize: figmaFontSize * widthScale,
           height: figmaLineHeight / figmaFontSize,
         ),
 
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(
-            figmaBorderRadius * _widthScale,
+            figmaBorderRadius * widthScale,
           ),
           borderSide: const BorderSide(
             color: AppColors.border,
@@ -92,7 +85,7 @@ class InputFieldWidget extends StatelessWidget {
 
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(
-            figmaBorderRadius * _widthScale,
+            figmaBorderRadius * widthScale,
           ),
           borderSide: const BorderSide(
             color: AppColors.primary,
@@ -102,7 +95,7 @@ class InputFieldWidget extends StatelessWidget {
 
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(
-            figmaBorderRadius * _widthScale,
+            figmaBorderRadius * widthScale,
           ),
           borderSide: const BorderSide(
             color: AppColors.error,
@@ -112,7 +105,7 @@ class InputFieldWidget extends StatelessWidget {
 
         focusedErrorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(
-            figmaBorderRadius * _widthScale,
+            figmaBorderRadius * widthScale,
           ),
           borderSide: const BorderSide(
             color: AppColors.error,
@@ -122,7 +115,7 @@ class InputFieldWidget extends StatelessWidget {
 
         errorStyle: textTheme.bodySmall?.copyWith(
           color: AppColors.error,
-          fontSize: 12 * _widthScale,
+          fontSize: 12 * widthScale,
         ),
       ),
     );

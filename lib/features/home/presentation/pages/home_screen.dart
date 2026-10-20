@@ -24,10 +24,8 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const double figmaWidth = 393.0;
-    const double figmaHeight = 852.0;
-    final double widthScale = context.screenWidth / figmaWidth;
-    final double heightScale = context.screenHeight / figmaHeight;
+    final double widthScale = context.widthScale;
+    final double heightScale = context.heightScale;
 
     final homeCubit = context.read<HomeCubit>();
     final navCubit = context.read<NavigationCubit>();
@@ -48,36 +46,36 @@ class HomeScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
 
-                    HomeUserName(
-                      builder: (context, firstName) => PageHeader(
+                    PageHeader(
+                      widthScale: widthScale,
+                      centered: false,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      leftGap: 10,
+                      rightGap: 8,
+                      left: const AppProfileAvatar(
+                        widthScale: 1.0,
+                        size: 36,
+                        showInitialsFallback: false,
+                      ),
+                      center: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          HomeGreeting(
+                            widthScale: widthScale,
+                            userName: '',
+                          ),
+                          const HomeUserName(),
+                        ],
+                      ),
+                      right: AppSvgIconButton(
                         widthScale: widthScale,
-                        centered: false,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        leftGap: 10,
-                        rightGap: 8,
-                        left: AppProfileAvatar(
-                          widthScale: widthScale,
-                          size: 36,
-                          initialsSource: firstName,
-                          showInitialsFallback: false,
-                          onTap: () {
-                            // TODO: open profile
-                          },
-                        ),
-                        center: HomeGreeting(
-                          widthScale: widthScale,
-                          userName: firstName,
-                        ),
-                        right: AppSvgIconButton(
-                          widthScale: widthScale,
-                          icon: AppIcons.notifications,
-                          boxSize: 24,
-                          iconWidth: 16,
-                          iconHeight: 20,
-                          onTap: () {
-                            // TODO: open notifications
-                          },
-                        ),
+                        icon: AppIcons.notifications,
+                        boxSize: 24,
+                        iconWidth: 16,
+                        iconHeight: 20,
+                        onTap: () {
+                          // TODO: open notifications
+                        },
                       ),
                     ),
                     SizedBox(height: 25 * heightScale),

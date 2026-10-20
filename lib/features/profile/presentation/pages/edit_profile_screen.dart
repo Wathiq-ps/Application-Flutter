@@ -47,7 +47,7 @@ class _EditProfileViewState extends State<_EditProfileView> {
   final _emailController = TextEditingController();
   final _dobController = TextEditingController();
 
-  String _phoneIso = 'PS'; 
+  String _phoneIso = 'PS';
   bool _seeded = false;
 
   static String _iso(String? v) =>
@@ -89,10 +89,8 @@ class _EditProfileViewState extends State<_EditProfileView> {
 
   @override
   Widget build(BuildContext context) {
-    const double figmaWidth = 393.0;
-    const double figmaHeight = 852.0;
-    final double ws = context.screenWidth / figmaWidth;
-    final double hs = context.screenHeight / figmaHeight;
+    final double ws = context.widthScale;
+    final double hs = context.heightScale;
     final theme = Theme.of(context);
     final cubit = context.read<EditProfileCubit>();
 

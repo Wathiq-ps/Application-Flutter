@@ -162,14 +162,11 @@ class _OwnerEditPropertyView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const double figmaWidth = 393.0;
-    const double figmaHeight = 932.0;
-    final double widthScale = context.screenWidth / figmaWidth;
-    final double heightScale = context.screenHeight / figmaHeight;
+    final double widthScale = context.widthScale;
+    final double heightScale = context.heightScale;
     final ThemeData theme = Theme.of(context);
     final TextTheme textTheme = theme.textTheme;
 
-    // Outer listener: publish / suspend toggle.
     return BlocListener<OwnerPropertyEditCubit, OwnerPropertyEditState>(
       listenWhen: (p, c) =>
       p.toggleStatus != c.toggleStatus &&
@@ -194,7 +191,6 @@ class _OwnerEditPropertyView extends StatelessWidget {
           prefixIcon: AppIcons.success,
         );
       },
-      // Inner listener: save result.
       child: BlocListener<OwnerPropertyEditCubit, OwnerPropertyEditState>(
         listenWhen: (previous, current) =>
         previous.saveStatus != current.saveStatus &&
@@ -212,7 +208,6 @@ class _OwnerEditPropertyView extends StatelessWidget {
             return;
           }
 
-          // Success
           final bool review = state.sentToReview;
           final Duration duration =
           Duration(milliseconds: review ? 2500 : 1500);
@@ -229,7 +224,7 @@ class _OwnerEditPropertyView extends StatelessWidget {
 
           await Future.delayed(duration);
 
-          if (context.mounted) context.pop(true); // tell the list to refresh
+          if (context.mounted) context.pop(true);
         },
         child: Scaffold(
           backgroundColor: theme.scaffoldBackgroundColor,
@@ -394,7 +389,6 @@ class _OwnerEditPropertyView extends StatelessWidget {
                           ),
                           SizedBox(height: 16 * heightScale),
 
-                          // Listing type
                           Padding(
                             padding: EdgeInsets.symmetric(
                               horizontal: 20 * widthScale,
@@ -427,7 +421,6 @@ class _OwnerEditPropertyView extends StatelessWidget {
                           ),
                           SizedBox(height: 16 * heightScale),
 
-                          // Property type
                           OwnerFormInputCard(
                             label: AppStrings.propertyType,
                             value: property.propertyType,
@@ -448,7 +441,6 @@ class _OwnerEditPropertyView extends StatelessWidget {
                           ),
                           SizedBox(height: 16 * heightScale),
 
-                          // Location (read-only)
                           OwnerFormInputCard(
                             label: AppStrings.location,
                             value: property.location,
@@ -463,7 +455,6 @@ class _OwnerEditPropertyView extends StatelessWidget {
                           ),
                           SizedBox(height: 16 * heightScale),
 
-                          // Price
                           OwnerFormInputCard(
                             label: AppStrings.price,
                             value: property.price,
@@ -492,7 +483,6 @@ class _OwnerEditPropertyView extends StatelessWidget {
                           ),
                           SizedBox(height: 16 * heightScale),
 
-                          // Price unit (rent only)
                           if (isRent) ...[
                             OwnerFormInputCard(
                               label: AppStrings.priceUnit,
@@ -518,7 +508,6 @@ class _OwnerEditPropertyView extends StatelessWidget {
                             SizedBox(height: 16 * heightScale),
                           ],
 
-                          // Area
                           OwnerFormInputCard(
                             label: AppStrings.area,
                             value: '${property.areaSqm}',
@@ -540,7 +529,6 @@ class _OwnerEditPropertyView extends StatelessWidget {
                           ),
                           SizedBox(height: 16 * heightScale),
 
-                          // Rooms
                           OwnerFormInputCard(
                             label: AppStrings.rooms,
                             value: '${property.rooms}',
@@ -557,7 +545,6 @@ class _OwnerEditPropertyView extends StatelessWidget {
                           ),
                           SizedBox(height: 16 * heightScale),
 
-                          // Bathrooms
                           OwnerFormInputCard(
                             label: AppStrings.bathrooms,
                             value: '${property.bathrooms}',
@@ -574,7 +561,6 @@ class _OwnerEditPropertyView extends StatelessWidget {
                           ),
                           SizedBox(height: 16 * heightScale),
 
-                          // Floor
                           OwnerFormInputCard(
                             label: AppStrings.floor,
                             value: property.floorNumber?.toString() ?? '-',
@@ -591,7 +577,6 @@ class _OwnerEditPropertyView extends StatelessWidget {
                           ),
                           SizedBox(height: 16 * heightScale),
 
-                          // Furnished
                           Padding(
                             padding: EdgeInsets.symmetric(
                               horizontal: 3 * widthScale,
@@ -612,7 +597,6 @@ class _OwnerEditPropertyView extends StatelessWidget {
                           ),
                           SizedBox(height: 16 * heightScale),
 
-                          // Features
                           OwnerFeaturesCard(
                             selected: property.features,
                             widthScale: widthScale,
@@ -620,7 +604,6 @@ class _OwnerEditPropertyView extends StatelessWidget {
                           ),
                           SizedBox(height: 16 * heightScale),
 
-                          // Description
                           OwnerFormInputCard(
                             label: AppStrings.description,
                             value: property.description,

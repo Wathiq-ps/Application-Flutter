@@ -8,15 +8,12 @@ import '../../../../core/extensions/media_query_extensions.dart';
 class OtpSuccessView extends StatelessWidget {
   const OtpSuccessView({super.key});
 
-  static const double _figmaWidth = 393;
-  static const double _figmaHeight = 852;
-
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
 
-    final widthScale = context.screenWidth / _figmaWidth;
-    final heightScale = context.screenHeight / _figmaHeight;
+    final widthScale = context.widthScale;
+    final heightScale = context.heightScale;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -63,7 +60,7 @@ class OtpSuccessView extends StatelessWidget {
             repeat: false,
           ),
         ),
-        SizedBox(height: 50*heightScale,)
+        SizedBox(height: 50 * heightScale)
       ],
     );
   }

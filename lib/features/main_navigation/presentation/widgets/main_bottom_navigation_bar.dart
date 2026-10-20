@@ -17,11 +17,8 @@ class MainBottomNavigationBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = context.screenWidth;
-
-    const figmaWidth = 394.0;
-    final scale = screenWidth / figmaWidth;
-    final navigationHeight = (62 * scale).clamp(56.0, 140.0);
+    final scale = context.widthScale;
+    final navigationHeight = context.bottomNavigationBarHeight;
 
     return Container(
       height: navigationHeight,

@@ -59,10 +59,8 @@ class _OwnerDeletePropertyView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const double figmaWidth = 393.0;
-    const double figmaHeight = 932.0;
-    final double widthScale = context.screenWidth / figmaWidth;
-    final double heightScale = context.screenHeight / figmaHeight;
+    final double widthScale = context.widthScale;
+    final double heightScale = context.heightScale;
     final ThemeData theme = Theme.of(context);
     final TextTheme textTheme = theme.textTheme;
 
@@ -80,7 +78,7 @@ class _OwnerDeletePropertyView extends StatelessWidget {
 
         await Future.delayed(const Duration(milliseconds: 1500));
 
-        if (context.mounted) context.pop(true); // tell the list to refresh
+        if (context.mounted) context.pop(true);
       },
       child: Scaffold(
         backgroundColor: theme.scaffoldBackgroundColor,
