@@ -272,6 +272,14 @@ class AppStrings {
   static String get signatureSaved => _l.signatureSaved;
   static String get noSignatureYet => _l.noSignatureYet;
   static String get imagePickFailed => _l.imagePickFailed;
+  static String get submit => _l.submit;
+  static String get tryAgain => _l.tryAgain;
+  static String get verificationRejected => _l.verificationRejected;
+  static String get verificationRejectedDescription => _l.verificationRejectedDescription;
+  static String get verificationFileTooLarge => _l.verificationFileTooLarge;
+  static String get verificationInvalidImages => _l.verificationInvalidImages;
+  static String get verificationAlreadySubmitted => _l.verificationAlreadySubmitted;
+  static String get pleaseTakeSelfieFirst => _l.pleaseTakeSelfieFirst;
 
   // ── Language switcher ────────────────────────────
   static String get selectLanguage => _l.selectLanguage;

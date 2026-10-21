@@ -264,7 +264,10 @@ class AppRoutes {
       ShellRoute(
         builder: (context, state, child) {
           return BlocProvider<VerificationCubit>(
-            create: (_) => VerificationCubit(Injector.verificationRepository),
+            create: (_) =>  VerificationCubit(
+              Injector.verificationRepository,
+              Injector.imagePickerService,
+            ),
             child: child,
           );
         },

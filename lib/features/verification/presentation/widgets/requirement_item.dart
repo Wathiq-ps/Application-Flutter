@@ -1,31 +1,49 @@
 import 'package:flutter/material.dart';
 
+import '../../../../config/theme/app_colors.dart';
+import '../../../../core/extensions/media_query_extensions.dart';
+
 class RequirementItem extends StatelessWidget {
+  const RequirementItem({
+    super.key,
+    required this.text,
+    this.circleOpacity = 0.07,
+  });
+
   final String text;
 
-  const RequirementItem({super.key, required this.text});
+  final double circleOpacity;
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    final widthScale = context.widthScale;
+
     return Row(
       children: [
         Container(
-          width: 42,
-          height: 42,
+          width: 24 * widthScale,
+          height: 24 * widthScale,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: const Color(0xff173563).withOpacity(0.8),
+            color: AppColors.white.withValues(alpha: circleOpacity),
           ),
-          child: const Icon(Icons.check, color: Colors.white, size: 24),
+          alignment: Alignment.center,
+          child: Icon(
+            Icons.check_rounded,
+            color: AppColors.white,
+            size: 12 * widthScale,
+          ),
         ),
-        const SizedBox(width: 18),
+        SizedBox(width: 12 * widthScale),
         Expanded(
           child: Text(
             text,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 19,
-              fontWeight: FontWeight.w600,
+            style: textTheme.bodyLarge?.copyWith(
+              color: AppColors.white,
+              fontSize: 16 * widthScale,
+              height: 24 / 16,
+              fontWeight: FontWeight.w400,
             ),
           ),
         ),

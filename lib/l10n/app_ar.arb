@@ -274,5 +274,13 @@
     "signatureUploaded": "تم رفع صورة التوقيع",
     "signatureSaved": "يوجد توقيع محفوظ مسبقًا",
     "noSignatureYet": "لم تتم إضافة توقيع بعد",
-    "imagePickFailed": "تعذر اختيار الصورة"
+    "imagePickFailed": "تعذر اختيار الصورة",
+    "submit": "إرسال",
+    "tryAgain": "حاول مرة أخرى",
+    "verificationRejected": "تم رفض التحقق",
+    "verificationRejectedDescription": "تم رفض مستنداتك. يرجى رفع صور واضحة والمحاولة مرة أخرى.",
+    "verificationFileTooLarge": "حجم الصورة كبير جدًا. يرجى اختيار صورة أصغر.",
+    "verificationInvalidImages": "تعذر قبول الصور. يرجى رفع صور واضحة والمحاولة مرة أخرى.",
+    "verificationAlreadySubmitted": "لقد أرسلت مستنداتك بالفعل وهي قيد المراجعة.",
+    "pleaseTakeSelfieFirst": "يرجى التقاط صورة السيلفي أولاً"
 }

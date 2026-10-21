@@ -274,5 +274,13 @@
     "signatureUploaded": "Signature image uploaded",
     "signatureSaved": "A signature is already saved",
     "noSignatureYet": "No signature added yet",
-    "imagePickFailed": "Couldn't pick the image"
+    "imagePickFailed": "Couldn't pick the image",
+    "submit": "Submit",
+    "tryAgain": "Try Again",
+    "verificationRejected": "Verification Rejected",
+    "verificationRejectedDescription": "Your documents were rejected. Please upload clear photos and try again.",
+    "verificationFileTooLarge": "The image is too large. Please choose a smaller one.",
+    "verificationInvalidImages": "We couldn't accept these images. Please upload clear photos and try again.",
+    "verificationAlreadySubmitted": "You've already submitted your documents and they're under review.",
+    "pleaseTakeSelfieFirst": "Please take your selfie first"
 }

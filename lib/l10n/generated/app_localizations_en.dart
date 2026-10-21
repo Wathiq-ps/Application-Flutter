@@ -841,4 +841,32 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get imagePickFailed => 'Couldn\'t pick the image';
+
+  @override
+  String get submit => 'Submit';
+
+  @override
+  String get tryAgain => 'Try Again';
+
+  @override
+  String get verificationRejected => 'Verification Rejected';
+
+  @override
+  String get verificationRejectedDescription =>
+      'Your documents were rejected. Please upload clear photos and try again.';
+
+  @override
+  String get verificationFileTooLarge =>
+      'The image is too large. Please choose a smaller one.';
+
+  @override
+  String get verificationInvalidImages =>
+      'We couldn\'t accept these images. Please upload clear photos and try again.';
+
+  @override
+  String get verificationAlreadySubmitted =>
+      'You\'ve already submitted your documents and they\'re under review.';
+
+  @override
+  String get pleaseTakeSelfieFirst => 'Please take your selfie first';
 }

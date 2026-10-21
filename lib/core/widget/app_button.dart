@@ -10,6 +10,7 @@ class AppElevatedButton extends StatelessWidget {
     required this.onPressed,
     this.backgroundColor,
     this.enabled = true,
+    this.isLoading = false,
     this.enableBorder = false,
     this.borderColor,
     this.borderWidth = 1,
@@ -30,6 +31,10 @@ class AppElevatedButton extends StatelessWidget {
   final String text;
   final VoidCallback? onPressed;
   final bool enabled;
+
+  /// Shows a spinner instead of the label and blocks taps, while keeping the
+  /// normal (enabled) colors.
+  final bool isLoading;
   final Color? backgroundColor;
   final Color? disabledBackgroundColor;
   final Color? disabledTextColor;
@@ -39,7 +44,7 @@ class AppElevatedButton extends StatelessWidget {
   final Widget? preIcon;
   final Widget? postIcon;
   final double? width;
-    final EdgeInsetsGeometry? padding;
+  final EdgeInsetsGeometry? padding;
 
   final double? height;
   final double? borderRadius;
@@ -61,23 +66,21 @@ class AppElevatedButton extends StatelessWidget {
     const double figmaFontSize = 16;
     const double figmaLineHeight = 24;
 
-    final double effectiveHeight =
-        height ?? (figmaButtonHeight * widthScale);
+    final double effectiveHeight = height ?? (figmaButtonHeight * widthScale);
 
     final double effectiveBorderRadius =
         borderRadius ?? (figmaBorderRadius * widthScale);
 
-    final double effectiveIconGap =
-        iconGap ?? (figmaIconGap * widthScale);
+    final double effectiveIconGap = iconGap ?? (figmaIconGap * widthScale);
 
-    final double effectiveIconSize =
-        iconSize ?? (figmaIconSize * widthScale);
+    final double effectiveIconSize = iconSize ?? (figmaIconSize * widthScale);
 
     // ------------------------------------------------------------
     // Button state.
     // ------------------------------------------------------------
 
     final bool isEnabled = enabled && onPressed != null;
+    final bool isTappable = isEnabled && !isLoading;
 
     final Color effectiveBackgroundColor = isEnabled
         ? (backgroundColor ?? theme.colorScheme.primary)
@@ -103,9 +106,7 @@ class AppElevatedButton extends StatelessWidget {
           height: figmaLineHeight / figmaFontSize,
           fontWeight: FontWeight.w500,
         ))
-        .copyWith(
-      color: effectiveTextColor,
-    );
+        .copyWith(color: effectiveTextColor);
 
     Widget? buildIcon(Widget? icon) {
       if (icon == null) {
@@ -130,21 +131,21 @@ class AppElevatedButton extends StatelessWidget {
       width: width ?? double.infinity,
       height: effectiveHeight,
       child: ElevatedButton(
-        onPressed: isEnabled ? onPressed : null,
+        onPressed: isTappable ? onPressed : null,
         style: ElevatedButton.styleFrom(
-          
           backgroundColor: effectiveBackgroundColor,
-          disabledBackgroundColor:
-          disabledBackgroundColor ?? AppColors.disabled,
+          // While loading the button is disabled but must not look gray.
+          disabledBackgroundColor: isLoading
+              ? effectiveBackgroundColor
+              : (disabledBackgroundColor ?? AppColors.disabled),
           foregroundColor: effectiveTextColor,
+          disabledForegroundColor: effectiveTextColor,
           elevation: elevation ?? 0,
           minimumSize: Size.zero,
-          padding: padding?? EdgeInsets.zero,
+          padding: padding ?? EdgeInsets.zero,
           textStyle: effectiveTextStyle,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(
-              effectiveBorderRadius,
-            ),
+            borderRadius: BorderRadius.circular(effectiveBorderRadius),
             side: enableBorder
                 ? BorderSide(
               color: borderColor ?? AppColors.border,
@@ -153,7 +154,16 @@ class AppElevatedButton extends StatelessWidget {
                 : BorderSide.none,
           ),
         ),
-        child: Row(
+        child: isLoading
+            ? SizedBox(
+          width: 22 * widthScale,
+          height: 22 * widthScale,
+          child: CircularProgressIndicator(
+            strokeWidth: 2.5,
+            color: effectiveTextColor,
+          ),
+        )
+            : Row(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -161,12 +171,7 @@ class AppElevatedButton extends StatelessWidget {
               effectivePreIcon,
               SizedBox(width: effectiveIconGap),
             ],
-
-            Text(
-              text,
-              style: effectiveTextStyle,
-            ),
-
+            Text(text, style: effectiveTextStyle),
             if (effectivePostIcon != null) ...[
               SizedBox(width: effectiveIconGap),
               effectivePostIcon,

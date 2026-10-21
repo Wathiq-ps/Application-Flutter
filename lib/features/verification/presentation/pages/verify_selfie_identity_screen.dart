@@ -1,289 +1,156 @@
-import 'dart:io';
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:image_picker/image_picker.dart';
-
-import 'package:mobile/config/routes/routes_names.dart';
+import '../../../../config/routes/routes_names.dart';
+import '../../../../config/theme/app_colors.dart';
+import '../../../../core/constant/strings.dart';
+import '../../../../core/extensions/media_query_extensions.dart';
+import '../../../../core/widget/app_button.dart';
 import '../cubit/verification_cubit.dart';
 import '../cubit/verification_state.dart';
+import '../widgets/identity_area.dart';
+import '../widgets/image_source_button.dart';
+import '../widgets/requirements_list.dart';
+import '../widgets/verification_background.dart';
+import '../widgets/verification_card_header.dart';
+import '../widgets/verification_glass_card.dart';
+import '../widgets/verification_header.dart';
+import '../widgets/verification_pending_sheet.dart';
+import '../widgets/verificattion_error_listener.dart';
 
-class VerifySelfieIdentityScreen extends StatefulWidget {
+class VerifySelfieIdentityScreen extends StatelessWidget {
   const VerifySelfieIdentityScreen({super.key});
 
-  @override
-  State<VerifySelfieIdentityScreen> createState() =>
-      _VerifySelfieIdentityScreenState();
-}
-
-class _VerifySelfieIdentityScreenState
-    extends State<VerifySelfieIdentityScreen> {
-  final ImagePicker _picker = ImagePicker();
-
-  Future<void> _pickSelfie() async {
-    try {
-      final XFile? image = await _picker.pickImage(
-        source: ImageSource.camera,
-        preferredCameraDevice: CameraDevice.front,
-        imageQuality: 90,
-      );
-      if (image != null) {
-        context.read<VerificationCubit>().setSelfieImage(image);
-      }
-    } catch (e) {
-      debugPrint('Image picker error: $e');
-    }
+  Future<void> _onSubmitted(BuildContext context) async {
+    await VerificationPendingSheet.show(context);
+    if (!context.mounted) return;
+    context.go(RouteNames.mainNavigation);
   }
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    final widthScale = context.widthScale;
+    final heightScale = context.heightScale;
+    final cubit = context.read<VerificationCubit>();
+
     return Scaffold(
+      backgroundColor: AppColors.primary,
       body: BlocListener<VerificationCubit, VerificationState>(
-        listenWhen: (previous, current) => previous.status != current.status,
-        listener: (context, state) {
-          if (state.status == RequestStatus.success) {
-            context.go(RouteNames.verificationPendingScreen);
-          } else if (state.status == RequestStatus.failure &&
-              state.errorMessage != null) {
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(SnackBar(content: Text(state.errorMessage!)));
-          }
-        },
-        child: Stack(
-          children: [
-            Positioned.fill(
-              child: Image.asset(
-                'assets/images/onboarding_background.jpg',
-                fit: BoxFit.cover,
-              ),
-            ),
-            Positioned.fill(
-              child: Container(
-                color: const Color(0xff001B4D).withOpacity(0.72),
-              ),
-            ),
-            Positioned.fill(
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
-                child: Container(color: Colors.transparent),
-              ),
-            ),
-            SafeArea(
+        listenWhen: (previous, current) =>
+        previous.status != current.status &&
+            current.status == RequestStatus.success,
+        listener: (context, state) => _onSubmitted(context),
+        child: VerificationBackground(
+          child: VerificationErrorListener(
+            child: SafeArea(
               child: Column(
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 16,
-                    ),
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            GestureDetector(
-                              onTap: () => Navigator.pop(context),
-                              child: const Icon(
-                                Icons.arrow_back,
-                                color: Colors.white,
-                                size: 32,
-                              ),
-                            ),
-                            const SizedBox(width: 10),
-                            const Expanded(
-                              child: Text(
-                                'Verify Your Identity',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 25,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 2),
-                        const Text(
-                          'Step 2 of 2',
-                          style: TextStyle(
-                            color: Colors.white70,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
+                  VerificationHeader(
+                    title: AppStrings.verifyYourIdentity,
+                    step: AppStrings.step2Of2,
                   ),
                   Expanded(
                     child: SingleChildScrollView(
-                      padding: const EdgeInsets.fromLTRB(20, 0, 20, 2),
-                      child: Column(
-                        children: [
-                          Container(
-                            width: double.infinity,
-                            padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
-                            decoration: BoxDecoration(
-                              color: const Color(0xff8392B8).withOpacity(0.72),
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(
-                                color: Colors.white.withOpacity(0.12),
-                              ),
-                            ),
-                            child: Column(
-                              children: [
-                                const Text(
-                                  'Take a selfie',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 28,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                                const SizedBox(height: 7),
-                                const Text(
-                                  'Make sure your face is clearly visible and well lit',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                    height: 1.45,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                                const SizedBox(height: 20),
-                                GestureDetector(
-                                  onTap: _pickSelfie,
-                                  child: Container(
-                                    width: double.infinity,
-                                    height: 260,
-                                    decoration: BoxDecoration(
-                                      color: Colors.white.withOpacity(0.08),
-                                      borderRadius: BorderRadius.circular(18),
-                                      border: Border.all(
-                                        color: Colors.white.withOpacity(0.65),
-                                        width: 2,
-                                      ),
-                                    ),
-                                    child: Builder(
-                                      builder: (context) {
-                                        final selfie = context
-                                            .watch<VerificationCubit>()
-                                            .selfieImage;
-
-                                        if (selfie == null) {
-                                          return Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              Container(
-                                                width: 70,
-                                                height: 70,
-                                                decoration: const BoxDecoration(
-                                                  shape: BoxShape.circle,
-                                                  color: Color(0xff001B4D),
-                                                ),
-                                                child: const Icon(
-                                                  Icons.camera_front_outlined,
-                                                  color: Colors.white,
-                                                  size: 40,
-                                                ),
-                                              ),
-                                              const SizedBox(height: 10),
-                                              const Text(
-                                                'Tap to take selfie',
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 19,
-                                                  fontWeight: FontWeight.w700,
-                                                ),
-                                              ),
-                                            ],
-                                          );
-                                        }
-
-                                        return ClipRRect(
-                                          borderRadius: BorderRadius.circular(
-                                            16,
-                                          ),
-                                          child: Image.file(
-                                            File(selfie.path),
-                                            width: double.infinity,
-                                            height: double.infinity,
-                                            fit: BoxFit.cover,
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: 24),
-                                BlocBuilder<
-                                  VerificationCubit,
-                                  VerificationState
-                                >(
-                                  builder: (context, state) {
-                                    final isLoading =
-                                        state.status == RequestStatus.loading;
-
-                                    return SizedBox(
-                                      width: double.infinity,
-                                      height: 60,
-                                      child: ElevatedButton(
-                                        onPressed: () {},
-                                        // onPressed: isLoading
-                                        //     ? null
-                                        //     : () => context
-                                        //           .read<VerificationCubit>()
-                                        //           .submitVerification(
-
-                                        //           ),
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: const Color(
-                                            0xff001B4D,
-                                          ),
-                                          foregroundColor: Colors.white,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              30,
-                                            ),
-                                          ),
-                                        ),
-                                        child: isLoading
-                                            ? const SizedBox(
-                                                width: 24,
-                                                height: 24,
-                                                child:
-                                                    CircularProgressIndicator(
-                                                      color: Colors.white,
-                                                      strokeWidth: 2.5,
-                                                    ),
-                                              )
-                                            : const Text(
-                                                'Submit',
-                                                style: TextStyle(
-                                                  fontSize: 18,
-                                                  fontWeight: FontWeight.w700,
-                                                ),
-                                              ),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 21.5 * widthScale,
                       ),
+                      child: BlocBuilder<VerificationCubit, VerificationState>(
+                        buildWhen: (p, c) =>
+                        p.selfieImage != c.selfieImage ||
+                            p.status != c.status,
+                        builder: (context, state) {
+                          return Column(
+                            children: [
+                              VerificationGlassCard(
+                                showGlow: true,
+                                child: Column(
+                                  children: [
+                                    VerificationCardHeader(
+                                      title: AppStrings.takeSelfieWithId,
+                                      subtitle: AppStrings.holdIdNextToFace,
+                                      titleFontSize: 24,
+                                      titleLineHeight: 32,
+                                      titleFontWeight: FontWeight.w600,
+                                      titleLetterSpacing: 0,
+                                    ),
+                                    SizedBox(height: 24 * widthScale),
+                                    IdentityUploadArea(
+                                      image: state.selfieImage,
+                                      onTap: state.isLoading
+                                          ? null
+                                          : () => cubit.pickSelfieImage(
+                                        fromCamera: true,
+                                      ),
+                                    ),
+                                    SizedBox(height: 24 * widthScale),
+                                    ImageSourceButtons(
+                                      enabled: !state.isLoading,
+                                      onCameraPressed: () =>
+                                          cubit.pickSelfieImage(
+                                            fromCamera: true,
+                                          ),
+                                      onGalleryPressed: () =>
+                                          cubit.pickSelfieImage(
+                                            fromCamera: false,
+                                          ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              SizedBox(height: 24 * heightScale),
+                              Padding(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 3 * widthScale,
+                                ),
+                                child: RequirementsList(
+                                  circleOpacity: 0.17,
+                                  items: [
+                                    AppStrings.faceAndIdClearlyVisible,
+                                    AppStrings.goodLightingNoShadows,
+                                    AppStrings.removeSunglassesOrHats,
+                                  ],
+                                ),
+                              ),
+                              SizedBox(height: 24 * heightScale),
+                            ],
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(
+                      25 * widthScale,
+                      8 * heightScale,
+                      25 * widthScale,
+                      24 * heightScale,
+                    ),
+                    child: BlocBuilder<VerificationCubit, VerificationState>(
+                      buildWhen: (p, c) => p.status != c.status,
+                      builder: (context, state) {
+                        return AppElevatedButton(
+                          text: AppStrings.submit,
+                          isLoading: state.isLoading,
+                          onPressed: cubit.submitVerification,
+                          backgroundColor: AppColors.primary,
+                          borderRadius: 9999,
+                          elevation: 4,
+                          textStyle: textTheme.labelMedium?.copyWith(
+                            color: AppColors.white,
+                            fontSize: 14 * widthScale,
+                            height: 20 / 14,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 0.14,
+                          ),
+                        );
+                      },
                     ),
                   ),
                 ],
               ),
             ),
-          ],
+          ),
         ),
       ),
     );

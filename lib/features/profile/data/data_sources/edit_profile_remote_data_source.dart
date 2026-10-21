@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:http_parser/http_parser.dart';
+import 'package:image_picker/image_picker.dart';
 import '../../../../core/constant/api_constants.dart';
 import '../../../../core/error/api_exception.dart';
 import '../../../../core/services/secure_storage_service.dart';
@@ -82,6 +84,14 @@ class EditProfileRemoteDataSourceImpl implements EditProfileRemoteDataSource {
     }
     final path = signature.filePath!;
     final ext = path.split('.').last.toLowerCase();
+    if (kIsWeb) {
+      final bytes = await XFile(path).readAsBytes();
+      return MultipartFile.fromBytes(
+        bytes,
+        filename: 'signature.$ext',
+        contentType: MediaType('image', ext == 'jpg' ? 'jpeg' : ext),
+      );
+    }
     return MultipartFile.fromFile(
       path,
       filename: 'signature.$ext',

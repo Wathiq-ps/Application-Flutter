@@ -835,4 +835,32 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get imagePickFailed => 'تعذر اختيار الصورة';
+
+  @override
+  String get submit => 'إرسال';
+
+  @override
+  String get tryAgain => 'حاول مرة أخرى';
+
+  @override
+  String get verificationRejected => 'تم رفض التحقق';
+
+  @override
+  String get verificationRejectedDescription =>
+      'تم رفض مستنداتك. يرجى رفع صور واضحة والمحاولة مرة أخرى.';
+
+  @override
+  String get verificationFileTooLarge =>
+      'حجم الصورة كبير جدًا. يرجى اختيار صورة أصغر.';
+
+  @override
+  String get verificationInvalidImages =>
+      'تعذر قبول الصور. يرجى رفع صور واضحة والمحاولة مرة أخرى.';
+
+  @override
+  String get verificationAlreadySubmitted =>
+      'لقد أرسلت مستنداتك بالفعل وهي قيد المراجعة.';
+
+  @override
+  String get pleaseTakeSelfieFirst => 'يرجى التقاط صورة السيلفي أولاً';
 }

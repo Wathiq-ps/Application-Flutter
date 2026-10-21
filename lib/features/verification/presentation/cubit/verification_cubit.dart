@@ -1,98 +1,94 @@
-import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
-
+import '../../../../core/constant/strings.dart';
+import '../../../../core/error/verification_exception.dart';
+import '../../../../core/services/image_picker_service.dart';
 import '../../domain/repositories/verify_repositories.dart';
 import 'verification_state.dart';
 
 class VerificationCubit extends Cubit<VerificationState> {
-  final VerificationRepository repository;
+  final VerificationRepository _repository;
+  final ImagePickerService _imagePicker;
 
-  VerificationCubit(this.repository) : super(const VerificationState());
+  VerificationCubit(this._repository, this._imagePicker)
+      : super(const VerificationState());
 
-  XFile? _idImage;
-  XFile? _selfieImage;
+  // ─────────────────────────────────────────
+  // Picking
+  // ─────────────────────────────────────────
 
-  XFile? get idImage => _idImage;
-  XFile? get selfieImage => _selfieImage;
-
-  void setIdImage(XFile image) {
-    _idImage = image;
-    emit(state.copyWith(status: RequestStatus.initial, clearError: true));
+  Future<void> pickIdImage({required bool fromCamera}) async {
+    final image = await _pick(fromCamera: fromCamera, frontCamera: false);
+    if (image == null) return;
+    emit(state.copyWith(
+      idImage: image,
+      status: RequestStatus.initial,
+      clearError: true,
+    ));
   }
 
-  void setSelfieImage(XFile image) {
-    _selfieImage = image;
-    emit(state.copyWith(status: RequestStatus.initial, clearError: true));
+  Future<void> pickSelfieImage({required bool fromCamera}) async {
+    final image = await _pick(fromCamera: fromCamera, frontCamera: true);
+    if (image == null) return;
+    emit(state.copyWith(
+      selfieImage: image,
+      status: RequestStatus.initial,
+      clearError: true,
+    ));
   }
 
-  void removeIdImage() {
-    _idImage = null;
-    emit(state.copyWith(status: RequestStatus.initial, clearError: true));
-  }
-
-  void removeSelfieImage() {
-    _selfieImage = null;
-    emit(state.copyWith(status: RequestStatus.initial, clearError: true));
-  }
-
-  Future<void> submitVerification(
-    String s, {
-    required String documentNumber,
+  Future<XFile?> _pick({
+    required bool fromCamera,
+    required bool frontCamera,
   }) async {
-    if (_idImage == null) {
-      emit(
-        state.copyWith(
-          status: RequestStatus.failure,
-          errorMessage: 'Please upload your ID first',
-        ),
-      );
+    try {
+      String? path;
+      if (fromCamera) {
+        path = await _imagePicker.takePhoto(useFrontCamera: frontCamera);
+      } else {
+        final paths = await _imagePicker.pickImages(limit: 1);
+        path = paths.isEmpty ? null : paths.first;
+      }
+      return path == null ? null : XFile(path);
+    } catch (_) {
+      _emitFailure(AppStrings.imagePickFailed);
+      return null;
+    }
+  }
+
+  // ─────────────────────────────────────────
+  // Submit
+  // ─────────────────────────────────────────
+
+  Future<void> submitVerification() async {
+    final idImage = state.idImage;
+    final selfieImage = state.selfieImage;
+
+    if (idImage == null) {
+      _emitFailure(AppStrings.pleaseUploadIdFirst);
       return;
     }
-
-    if (_selfieImage == null) {
-      emit(
-        state.copyWith(
-          status: RequestStatus.failure,
-          errorMessage: 'Please take a selfie first',
-        ),
-      );
-      return;
-    }
-
-    if (documentNumber.trim().isEmpty) {
-      emit(
-        state.copyWith(
-          status: RequestStatus.failure,
-          errorMessage: 'Please enter your document number',
-        ),
-      );
+    if (selfieImage == null) {
+      _emitFailure(AppStrings.pleaseTakeSelfieFirst);
       return;
     }
 
     emit(state.copyWith(status: RequestStatus.loading, clearError: true));
 
     try {
-      final verification = await repository.uploadIdAndSelfie(
-        idImage: _idImage!,
-        selfieImage: _selfieImage!,
-        documentNumber: documentNumber.trim(),
+      final verification = await _repository.uploadIdAndSelfie(
+        idImage: idImage,
+        selfieImage: selfieImage,
       );
-
-      emit(
-        state.copyWith(
-          status: RequestStatus.success,
-          verification: verification,
-          clearError: true,
-        ),
-      );
-    } catch (e) {
-      emit(
-        state.copyWith(
-          status: RequestStatus.failure,
-          errorMessage: _mapError(e),
-        ),
-      );
+      emit(state.copyWith(
+        status: RequestStatus.success,
+        verification: verification,
+        clearError: true,
+      ));
+    } on VerificationException catch (e) {
+      _emitFailure(e.message);
+    } catch (_) {
+      _emitFailure(AppStrings.somethingWentWrong);
     }
   }
 
@@ -100,42 +96,25 @@ class VerificationCubit extends Cubit<VerificationState> {
     emit(state.copyWith(status: RequestStatus.loading, clearError: true));
 
     try {
-      final verification = await repository.getVerificationStatus();
-
-      emit(
-        state.copyWith(
-          status: RequestStatus.success,
-          verification: verification,
-          clearError: true,
-        ),
-      );
-    } catch (e) {
-      emit(
-        state.copyWith(
-          status: RequestStatus.failure,
-          errorMessage: _mapError(e),
-        ),
-      );
+      final verification = await _repository.getVerificationStatus();
+      emit(state.copyWith(
+        status: RequestStatus.success,
+        verification: verification,
+        clearError: true,
+      ));
+    } on VerificationException catch (e) {
+      _emitFailure(e.message);
+    } catch (_) {
+      _emitFailure(AppStrings.somethingWentWrong);
     }
   }
 
-  void reset() {
-    _idImage = null;
-    _selfieImage = null;
-    emit(const VerificationState());
-  }
+  void reset() => emit(const VerificationState());
 
-  String _mapError(Object error) {
-    if (error is DioException) {
-      final data = error.response?.data;
-      if (data is Map && data['message'] != null) {
-        return data['message'].toString();
-      }
-      if (error.type == DioExceptionType.connectionError ||
-          error.type == DioExceptionType.connectionTimeout) {
-        return 'Check your internet connection and try again';
-      }
-    }
-    return 'Something went wrong. Please try again.';
+  /// Goes through `initial` first so the failure is always a status change and
+  /// the snackbar listener fires even for two identical errors in a row.
+  void _emitFailure(String message) {
+    emit(state.copyWith(status: RequestStatus.initial, clearError: true));
+    emit(state.copyWith(status: RequestStatus.failure, errorMessage: message));
   }
 }

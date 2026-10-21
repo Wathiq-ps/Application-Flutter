@@ -1693,6 +1693,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Couldn\'t pick the image'**
   String get imagePickFailed;
+
+  /// No description provided for @submit.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit'**
+  String get submit;
+
+  /// No description provided for @tryAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Try Again'**
+  String get tryAgain;
+
+  /// No description provided for @verificationRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Verification Rejected'**
+  String get verificationRejected;
+
+  /// No description provided for @verificationRejectedDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Your documents were rejected. Please upload clear photos and try again.'**
+  String get verificationRejectedDescription;
+
+  /// No description provided for @verificationFileTooLarge.
+  ///
+  /// In en, this message translates to:
+  /// **'The image is too large. Please choose a smaller one.'**
+  String get verificationFileTooLarge;
+
+  /// No description provided for @verificationInvalidImages.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t accept these images. Please upload clear photos and try again.'**
+  String get verificationInvalidImages;
+
+  /// No description provided for @verificationAlreadySubmitted.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve already submitted your documents and they\'re under review.'**
+  String get verificationAlreadySubmitted;
+
+  /// No description provided for @pleaseTakeSelfieFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Please take your selfie first'**
+  String get pleaseTakeSelfieFirst;
 }
 
 class _AppLocalizationsDelegate

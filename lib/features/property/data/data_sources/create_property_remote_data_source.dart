@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:mobile/core/constant/api_constants.dart';
 import 'package:mobile/core/services/secure_storage_service.dart';
 
@@ -84,17 +85,18 @@ class CreatePropertyRemoteDataSourceImpl
     }
 
     for (final photo in property.photos) {
-      formData.files.add(
-        MapEntry('photos[]', await MultipartFile.fromFile(photo.path)),
-      );
+      final fileName = photo.uri.pathSegments.isNotEmpty ? photo.uri.pathSegments.last : 'photo.jpg';
+      final multipartFile = kIsWeb
+          ? MultipartFile.fromBytes(await photo.readAsBytes(), filename: fileName)
+          : await MultipartFile.fromFile(photo.path, filename: fileName);
+      formData.files.add(MapEntry('photos[]', multipartFile));
     }
     for (final document in property.ownershipDocuments) {
-      formData.files.add(
-        MapEntry(
-          'ownership_documents[]',
-          await MultipartFile.fromFile(document.path),
-        ),
-      );
+      final fileName = document.uri.pathSegments.isNotEmpty ? document.uri.pathSegments.last : 'document.jpg';
+      final multipartFile = kIsWeb
+          ? MultipartFile.fromBytes(await document.readAsBytes(), filename: fileName)
+          : await MultipartFile.fromFile(document.path, filename: fileName);
+      formData.files.add(MapEntry('ownership_documents[]', multipartFile));
     }
 
     await dio.post(

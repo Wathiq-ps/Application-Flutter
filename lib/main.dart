@@ -13,6 +13,7 @@ import 'l10n/generated/app_localizations.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
+
   runApp(
     DevicePreview(
       enabled: !kReleaseMode,

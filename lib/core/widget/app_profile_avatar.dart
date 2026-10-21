@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../config/theme/app_colors.dart';
@@ -121,6 +122,15 @@ class AppProfileAvatar extends StatelessWidget {
 
   Widget _buildImage() {
     if (imageFile != null) {
+      if (kIsWeb) {
+        return Image.network(
+          imageFile!.path,
+          width: _dimension,
+          height: _dimension,
+          fit: BoxFit.cover,
+          errorBuilder: (_, __, ___) => _buildPlaceholderIcon(),
+        );
+      }
       return Image.file(
         imageFile!,
         width: _dimension,

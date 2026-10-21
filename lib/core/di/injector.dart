@@ -102,24 +102,13 @@ class Injector {
   );
 
   // ── Verification ──────────────────────────────────────
-  static final Dio _authDio = Dio(BaseOptions(baseUrl: ApiConstants.baseUrl))
-    ..interceptors.add(
-      InterceptorsWrapper(
-        onRequest: (options, handler) async {
-          final token = await secureStorage.getAccessToken();
-          if (token != null) {
-            options.headers['Authorization'] = 'Bearer $token';
-          }
-          handler.next(options);
-        },
-      ),
-    );
+
   static final EditProfileRepository editProfileRepository = EditProfileRepositoryImpl(
     EditProfileRemoteDataSourceImpl(_dio, secureStorage),
   );
 
   static final VerificationRepository verificationRepository =
-  VerificationRepositoryImpl(VerificationService(_authDio));
+  VerificationRepositoryImpl(VerificationService(_dio));
 
   static final ImagePickerService imagePickerService = ImagePickerService();
 
