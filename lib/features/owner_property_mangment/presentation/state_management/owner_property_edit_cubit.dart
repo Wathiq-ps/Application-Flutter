@@ -17,8 +17,60 @@ class OwnerPropertyEditCubit extends Cubit<OwnerPropertyEditState> {
   final OwnerPropertyRepository _repository;
   OwnerPropertyListItem _original;
 
-  void toggleListingActive() =>
-      _update((p) => p.copyWith(isListingActive: !p.isListingActive));
+  Future<void> toggleListingStatus() async {
+    if (state.toggleStatus == OwnerPropertySaveStatus.saving) return;
+
+    final id = state.property.id;
+    final wasActive = state.property.isListingActive;
+
+    emit(state.copyWith(
+      property: state.property.copyWith(isListingActive: !wasActive),
+      toggleStatus: OwnerPropertySaveStatus.saving,
+      clearToggleMessage: true,
+    ));
+
+    try {
+      final result = wasActive
+          ? await _repository.suspendProperty(id)
+          : await _repository.publishProperty(id);
+      if (isClosed) return;
+
+      final server = result.property;
+      final next = server != null
+          ? state.property.copyWith(
+        status: server.status,
+        isListingActive: server.isListingActive,
+      )
+          : state.property.copyWith(
+        status: wasActive ? PropertyStatus.suspended : PropertyStatus.active,
+      );
+      _original = _original.copyWith(
+        status: next.status,
+        isListingActive: next.isListingActive,
+      );
+
+      emit(state.copyWith(
+        property: next,
+        toggleStatus: OwnerPropertySaveStatus.success,
+        toggleMessage: result.message.isEmpty ? null : result.message,
+        listingToggled: true,
+      ));
+    } on ApiException catch (e) {
+      if (isClosed) return;
+      emit(state.copyWith(
+        property: state.property.copyWith(isListingActive: wasActive),
+        toggleStatus: OwnerPropertySaveStatus.error,
+        toggleMessage: e.message,
+      ));
+    } catch (_) {
+      if (isClosed) return;
+      emit(state.copyWith(
+        property: state.property.copyWith(isListingActive: wasActive),
+        toggleStatus: OwnerPropertySaveStatus.error,
+        toggleMessage: AppStrings.somethingWentWrong,
+      ));
+    }
+  }
 
   void updatePropertyType(String value) =>
       _update((p) => p.copyWith(propertyType: value));

@@ -1,6 +1,13 @@
-import 'dart:io';
+import 'dart:typed_data';
 
- 
+class PropertyUploadFile {
+  final String name;
+  final String? path;
+  final Uint8List? bytes;
+
+  const PropertyUploadFile({required this.name, this.path, this.bytes});
+}
+
 class CreatePropertyEntity {
   final String listingType;
   final String type;
@@ -19,8 +26,8 @@ class CreatePropertyEntity {
   final List<String>? features;
   final bool? isFurnished;
   final String? description;
-  final List<File> photos;
-  final List< File> ownershipDocuments;
+  final List<PropertyUploadFile> photos;
+  final List<PropertyUploadFile> ownershipDocuments;
   final String ownershipDocumentType;
 
   const CreatePropertyEntity({
@@ -46,4 +53,3 @@ class CreatePropertyEntity {
     required this.ownershipDocumentType,
   });
 }
-

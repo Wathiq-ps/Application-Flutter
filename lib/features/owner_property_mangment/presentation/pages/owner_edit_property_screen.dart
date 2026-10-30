@@ -44,7 +44,7 @@ class OwnerEditPropertyScreen extends StatelessWidget {
 class _OwnerEditPropertyView extends StatelessWidget {
   const _OwnerEditPropertyView();
 
-  static const Map<String, String> _rentUnitLabels = {
+  static Map<String, String> get _rentUnitLabels => {
     'per_hour': AppStrings.unitHour,
     'per_day': AppStrings.unitDay,
     'per_week': AppStrings.unitWeek,
@@ -65,7 +65,9 @@ class _OwnerEditPropertyView extends StatelessWidget {
       onSecondary: () => Navigator.of(context).pop(false),
     );
 
-    if (discard == true && context.mounted) context.pop();
+    if (discard == true && context.mounted) {
+      context.pop(context.read<OwnerPropertyEditCubit>().state.listingToggled);
+    }
   }
 
   Future<void> _confirmSave(BuildContext context) async {
@@ -100,9 +102,16 @@ class _OwnerEditPropertyView extends StatelessWidget {
         return Container(
           decoration: BoxDecoration(
             color: AppColors.background,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(24 * widthScale)),
+            borderRadius: BorderRadius.vertical(
+              top: Radius.circular(24 * widthScale),
+            ),
           ),
-          padding: EdgeInsets.fromLTRB(20 * widthScale, 12 * widthScale, 20 * widthScale, 24 * widthScale),
+          padding: EdgeInsets.fromLTRB(
+            20 * widthScale,
+            12 * widthScale,
+            20 * widthScale,
+            24 * widthScale,
+          ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -153,414 +162,464 @@ class _OwnerEditPropertyView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const double figmaWidth = 393.0;
-    const double figmaHeight = 932.0;
-    final double widthScale = context.screenWidth / figmaWidth;
-    final double heightScale = context.screenHeight / figmaHeight;
+    final double widthScale = context.widthScale;
+    final double heightScale = context.heightScale;
     final ThemeData theme = Theme.of(context);
     final TextTheme textTheme = theme.textTheme;
 
     return BlocListener<OwnerPropertyEditCubit, OwnerPropertyEditState>(
-      listenWhen: (previous, current) =>
-      previous.saveStatus != current.saveStatus &&
-          (current.saveStatus == OwnerPropertySaveStatus.success ||
-              current.saveStatus == OwnerPropertySaveStatus.error),
-      listener: (context, state) async {
-        if (state.saveStatus == OwnerPropertySaveStatus.error) {
+      listenWhen: (p, c) =>
+      p.toggleStatus != c.toggleStatus &&
+          (c.toggleStatus == OwnerPropertySaveStatus.success ||
+              c.toggleStatus == OwnerPropertySaveStatus.error),
+      listener: (context, state) {
+        if (state.toggleStatus == OwnerPropertySaveStatus.error) {
           AppTopSnackBar.show(
             context,
             title: AppStrings.saveFailed,
-            message: state.errorMessage ?? AppStrings.somethingWentWrong,
+            message: state.toggleMessage ?? AppStrings.somethingWentWrong,
             prefixIcon: AppIcons.error,
           );
-          context.read<OwnerPropertyEditCubit>().resetSaveStatus();
           return;
         }
-
-        // Success
-        final bool review = state.sentToReview;
-        final Duration duration = Duration(milliseconds: review ? 2500 : 1500);
-
         AppTopSnackBar.show(
           context,
-          title: review
-              ? AppStrings.editSentToReviewTitle
-              : AppStrings.propertyEditedSuccessfully,
-          message: review ? AppStrings.editSentToReviewMessage : null,
+          title: state.toggleMessage ??
+              (state.property.isListingActive
+                  ? AppStrings.propertyPublished
+                  : AppStrings.propertySuspended),
           prefixIcon: AppIcons.success,
-          duration: duration,
         );
-
-        await Future.delayed(duration);
-
-        if (context.mounted) context.pop(true); // tell the list to refresh
       },
-      child: Scaffold(
-        backgroundColor: theme.scaffoldBackgroundColor,
-        body: SafeArea(
-          child: Column(
-            children: [
-              PageHeader(
-                widthScale: widthScale,
-                expandCenter: true,
-                padding: EdgeInsets.symmetric(
-                  horizontal: 20 * widthScale,
-                  vertical: 12 * heightScale,
-                ),
-                left: AppSvgIconButton(
+      child: BlocListener<OwnerPropertyEditCubit, OwnerPropertyEditState>(
+        listenWhen: (previous, current) =>
+        previous.saveStatus != current.saveStatus &&
+            (current.saveStatus == OwnerPropertySaveStatus.success ||
+                current.saveStatus == OwnerPropertySaveStatus.error),
+        listener: (context, state) async {
+          if (state.saveStatus == OwnerPropertySaveStatus.error) {
+            AppTopSnackBar.show(
+              context,
+              title: AppStrings.saveFailed,
+              message: state.errorMessage ?? AppStrings.somethingWentWrong,
+              prefixIcon: AppIcons.error,
+            );
+            context.read<OwnerPropertyEditCubit>().resetSaveStatus();
+            return;
+          }
+
+          final bool review = state.sentToReview;
+          final Duration duration =
+          Duration(milliseconds: review ? 2500 : 1500);
+
+          AppTopSnackBar.show(
+            context,
+            title: review
+                ? AppStrings.editSentToReviewTitle
+                : AppStrings.propertyEditedSuccessfully,
+            message: review ? AppStrings.editSentToReviewMessage : null,
+            prefixIcon: AppIcons.success,
+            duration: duration,
+          );
+
+          await Future.delayed(duration);
+
+          if (context.mounted) context.pop(true);
+        },
+        child: Scaffold(
+          backgroundColor: theme.scaffoldBackgroundColor,
+          body: SafeArea(
+            child: Column(
+              children: [
+                PageHeader(
                   widthScale: widthScale,
-                  icon: AppIcons.backArrowProp,
-                  iconWidth: 20,
-                  iconHeight: 16,
-                  onTap: () => _confirmDiscard(context),
-                ),
-                center: Text(
-                  AppStrings.editProperty,
-                  textAlign: TextAlign.center,
-                  style: textTheme.bodyLarge?.copyWith(
-                    color: theme.colorScheme.onSurface,
-                    fontSize: 18 * widthScale,
-                    fontWeight: FontWeight.w500,
-                    height: 24 / 18,
-                    letterSpacing: -0.45,
+                  expandCenter: true,
+                  padding: EdgeInsets.symmetric(horizontal: 20 * widthScale),
+                  left: AppSvgIconButton(
+                    widthScale: widthScale,
+                    icon: AppIcons.backArrowProp,
+                    iconWidth: 20,
+                    iconHeight: 16,
+                    flipForRtl: true,
+                    onTap: () => _confirmDiscard(context),
                   ),
-                ),
-                right: BlocBuilder<OwnerPropertyEditCubit, OwnerPropertyEditState>(
-                  buildWhen: (previous, current) => previous.saveStatus != current.saveStatus,
-                  builder: (context, state) {
-                    final bool isSaving = state.saveStatus == OwnerPropertySaveStatus.saving;
-                    return GestureDetector(
-                      onTap: isSaving ? null : () => _confirmSave(context),
-                      behavior: HitTestBehavior.opaque,
-                      child: Text(
-                        AppStrings.saveAction,
-                        style: textTheme.bodyLarge?.copyWith(
-                          color: isSaving ? AppColors.disabled : theme.colorScheme.onSurface,
-                          fontSize: 18 * widthScale,
-                          fontWeight: FontWeight.w500,
-                          height: 24 / 18,
-                          letterSpacing: -0.45,
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 28 * widthScale),
-                child: BlocBuilder<OwnerPropertyEditCubit, OwnerPropertyEditState>(
-                  buildWhen: (previous, current) => previous.property != current.property,
-                  builder: (context, state) {
-                    final property = state.property;
-
-                    return Column(
-                      children: [
-                        SizedBox(height: 40 * widthScale),
-                        AppSectionRow(
-                          widthScale: widthScale,
-                          label: AppStrings.statusProperty,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          lineHeight: 1.0,
-                          letterSpacing: 0.44,
-                          trailing: ListingStatusToggle(
-                            isActive: property.isListingActive,
-                            widthScale: widthScale,
-                            onChanged: (_) =>
-                                context.read<OwnerPropertyEditCubit>().toggleListingActive(),
+                  center: Text(
+                    AppStrings.editProperty,
+                    textAlign: TextAlign.center,
+                    style: textTheme.bodyLarge?.copyWith(
+                      color: theme.colorScheme.onSurface,
+                      fontSize: 18 * widthScale,
+                      fontWeight: FontWeight.w500,
+                      height: 24 / 18,
+                      letterSpacing: -0.45,
+                    ),
+                  ),
+                  right: BlocBuilder<OwnerPropertyEditCubit,
+                      OwnerPropertyEditState>(
+                    buildWhen: (previous, current) =>
+                    previous.saveStatus != current.saveStatus,
+                    builder: (context, state) {
+                      final bool isSaving =
+                          state.saveStatus == OwnerPropertySaveStatus.saving;
+                      return GestureDetector(
+                        onTap: isSaving ? null : () => _confirmSave(context),
+                        behavior: HitTestBehavior.opaque,
+                        child: Text(
+                          AppStrings.saveAction,
+                          style: textTheme.bodyLarge?.copyWith(
+                            color: isSaving
+                                ? AppColors.disabled
+                                : theme.colorScheme.onSurface,
+                            fontSize: 18 * widthScale,
+                            fontWeight: FontWeight.w500,
+                            height: 24 / 18,
+                            letterSpacing: -0.45,
                           ),
                         ),
-                        SizedBox(height: 25 * widthScale),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 3 * widthScale),
-                          child: AppSectionRow(
+                      );
+                    },
+                  ),
+                ),
+
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 28 * widthScale),
+                  child: BlocBuilder<OwnerPropertyEditCubit,
+                      OwnerPropertyEditState>(
+                    buildWhen: (previous, current) =>
+                    previous.property != current.property ||
+                        previous.toggleStatus != current.toggleStatus,
+                    builder: (context, state) {
+                      final property = state.property;
+                      final bool toggling =
+                          state.toggleStatus == OwnerPropertySaveStatus.saving;
+
+                      return Column(
+                        children: [
+                          SizedBox(height: 40 * widthScale),
+                          AppSectionRow(
                             widthScale: widthScale,
-                            label: AppStrings.photo,
+                            label: AppStrings.statusProperty,
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
                             lineHeight: 1.0,
                             letterSpacing: 0.44,
-                            trailing: AppLabelIconTrigger(
-                              widthScale: widthScale,
-                              label: AppStrings.editAction,
-                              fontSize: 12 * heightScale,
-                              fontWeight: FontWeight.w500,
-                              icon: AppIcons.edit,
-                              switchIconText: true,
-                              iconHeight: 12 * widthScale,
-                              iconWidth: 16 * widthScale,
-                              onTap: () => _showUnavailable(context),
+                            trailing: IgnorePointer(
+                              ignoring: toggling,
+                              child: Opacity(
+                                opacity: toggling ? 0.5 : 1,
+                                child: ListingStatusToggle(
+                                  isActive: property.isListingActive,
+                                  widthScale: widthScale,
+                                  onChanged: (_) => context
+                                      .read<OwnerPropertyEditCubit>()
+                                      .toggleListingStatus(),
+                                ),
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    );
-                  },
-                ),
-              ),
-
-              SizedBox(height: 12 * widthScale),
-
-              Expanded(
-                child: BlocBuilder<OwnerPropertyEditCubit, OwnerPropertyEditState>(
-                  buildWhen: (previous, current) => previous.property != current.property,
-                  builder: (context, state) {
-                    final property = state.property;
-                    final cubit = context.read<OwnerPropertyEditCubit>();
-                    final bool isRent = property.listingType == 'rent';
-
-                    return ListView(
-                      padding: EdgeInsets.fromLTRB(
-                        20 * widthScale,
-                        8 * heightScale,
-                        20 * widthScale,
-                        32 * heightScale,
-                      ),
-                      children: [
-                        SizedBox(
-                          height: 120 * widthScale,
-                          child: ListView.separated(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: 2,
-                            separatorBuilder: (_, __) => SizedBox(width: 7 * widthScale),
-                            itemBuilder: (context, index) {
-                              return OwnerPropertyPhotoCard(
+                          SizedBox(height: 25 * widthScale),
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 3 * widthScale,
+                            ),
+                            child: AppSectionRow(
+                              widthScale: widthScale,
+                              label: AppStrings.photo,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              lineHeight: 1.0,
+                              letterSpacing: 0.44,
+                              trailing: AppLabelIconTrigger(
                                 widthScale: widthScale,
-                                imageUrl: ImagePath.villa,
-                                icon: AppIcons.circleCloseBlue,
-                                onEdit: () {
-                                  // TODO: replace photo at [index].
-                                },
-                              );
-                            },
-                          ),
-                        ),
-                        SizedBox(height: 16 * heightScale),
-
-                        // Listing type
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 20 * widthScale),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                AppStrings.listingType,
-                                style: TextStyle(
-                                  fontSize: 12 * widthScale,
-                                  fontWeight: FontWeight.w700,
-                                  letterSpacing: 0.24 * widthScale,
-                                  color: theme.colorScheme.primary,
-                                ),
+                                label: AppStrings.editAction,
+                                fontSize: 12 * heightScale,
+                                fontWeight: FontWeight.w500,
+                                icon: AppIcons.edit,
+                                switchIconText: true,
+                                iconHeight: 12 * widthScale,
+                                iconWidth: 16 * widthScale,
+                                onTap: () => _showUnavailable(context),
                               ),
-                              SizedBox(width: 45 * widthScale),
-                              Expanded(
-                                child: PropertyFilterChips(
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                ),
+
+                SizedBox(height: 12 * widthScale),
+
+                Expanded(
+                  child: BlocBuilder<OwnerPropertyEditCubit,
+                      OwnerPropertyEditState>(
+                    buildWhen: (previous, current) =>
+                    previous.property != current.property,
+                    builder: (context, state) {
+                      final property = state.property;
+                      final cubit = context.read<OwnerPropertyEditCubit>();
+                      final bool isRent = property.listingType == 'rent';
+
+                      return ListView(
+                        padding: EdgeInsets.fromLTRB(
+                          20 * widthScale,
+                          8 * heightScale,
+                          20 * widthScale,
+                          32 * heightScale,
+                        ),
+                        children: [
+                          SizedBox(
+                            height: 120 * widthScale,
+                            child: ListView.separated(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: 2,
+                              separatorBuilder: (_, __) =>
+                                  SizedBox(width: 7 * widthScale),
+                              itemBuilder: (context, index) {
+                                return OwnerPropertyPhotoCard(
                                   widthScale: widthScale,
-                                  selectedIndex: isRent ? 1 : 0,
-                                  onChanged: (index) =>
-                                      cubit.updateListingType(index == 1 ? 'rent' : 'sale'),
+                                  imageUrl: ImagePath.villa,
+                                  icon: AppIcons.circleCloseBlue,
+                                  onEdit: () {
+                                    // TODO: replace photo at [index].
+                                  },
+                                );
+                              },
+                            ),
+                          ),
+                          SizedBox(height: 16 * heightScale),
+
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 20 * widthScale,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  AppStrings.listingType,
+                                  style: TextStyle(
+                                    fontSize: 12 * widthScale,
+                                    fontWeight: FontWeight.w700,
+                                    letterSpacing: 0.24 * widthScale,
+                                    color: theme.colorScheme.primary,
+                                  ),
                                 ),
-                              ),
-                            ],
+                                SizedBox(width: 45 * widthScale),
+                                Expanded(
+                                  child: PropertyFilterChips(
+                                    widthScale: widthScale,
+                                    selectedIndex: isRent ? 1 : 0,
+                                    onChanged: (index) =>
+                                        cubit.updateListingType(
+                                          index == 1 ? 'rent' : 'sale',
+                                        ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                        SizedBox(height: 16 * heightScale),
+                          SizedBox(height: 16 * heightScale),
 
-                        // Property type
-                        OwnerFormInputCard(
-                          label: AppStrings.propertyType,
-                          value: property.propertyType,
-                          actionIcon: AppIcons.edit,
-                          suffixIcon: AppIcons.arrowDownAshen,
-                          suffixIconHeight: 8,
-                          suffixIconWidth: 6,
-                          widthScale: widthScale,
-                          dropdownOptions: const [
-                            AppStrings.propertyApartment,
-                            AppStrings.propertyVilla,
-                            AppStrings.propertyLand,
-                            AppStrings.propertyShop,
-                            AppStrings.propertyHouse,
-                          ],
-                          otherOptionLabel: AppStrings.propertyOther,
-                          onDropdownSelected: cubit.updatePropertyType,
-                        ),
-                        SizedBox(height: 16 * heightScale),
-
-                        // Location (read-only)
-                        OwnerFormInputCard(
-                          label: AppStrings.location,
-                          value: property.location,
-                          actionLabel: AppStrings.changeOnMap,
-                          actionIcon: AppIcons.viewOnMap,
-                          actionIconHeight: 10.5 * widthScale,
-                          actionIconWidth: 10.5 * widthScale,
-                          switchIconText: false,
-                          widthScale: widthScale,
-                          isEditable: false,
-                          onEdit: () => _showUnavailable(context),
-                        ),
-                        SizedBox(height: 16 * heightScale),
-
-                        // Price
-                        OwnerFormInputCard(
-                          label: AppStrings.price,
-                          value: property.price,
-                          suffixWidget: AppLabelIconTrigger(
-                            widthScale: widthScale,
-                            label: property.currency,
-                            icon: AppIcons.arrowDownAshen,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            iconWidth: 7,
-                            iconHeight: 5,
-                            gap: 4,
-                            onTap: () => _showCurrencySheet(context, widthScale),
-                          ),
-                          actionIcon: AppIcons.edit,
-                          widthScale: widthScale,
-                          valueFontSize: 16,
-                          valueFontWeight: FontWeight.w700,
-                          isEditable: true,
-                          keyboardType: TextInputType.number,
-                          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                          onValueChanged: cubit.updatePrice,
-                        ),
-                        SizedBox(height: 16 * heightScale),
-
-                        // Price unit (rent only)
-                        if (isRent) ...[
                           OwnerFormInputCard(
-                            label: AppStrings.priceUnit,
-                            value: _rentUnitLabels[property.rentUnit] ??
-                                AppStrings.selectPriceUnit,
+                            label: AppStrings.propertyType,
+                            value: property.propertyType,
                             actionIcon: AppIcons.edit,
                             suffixIcon: AppIcons.arrowDownAshen,
                             suffixIconHeight: 8,
                             suffixIconWidth: 6,
                             widthScale: widthScale,
-                            dropdownSheetTitle: AppStrings.selectPriceUnit,
-                            dropdownOptions: _rentUnitLabels.values.toList(),
-                            enableOtherCustomInput: false,
-                            onDropdownSelected: (selected) {
-                              final entry = _rentUnitLabels.entries
-                                  .where((e) => e.value == selected)
-                                  .toList();
-                              if (entry.isNotEmpty) {
-                                cubit.updateRentUnit(entry.first.key);
-                              }
-                            },
+                            dropdownOptions: [
+                              AppStrings.propertyApartment,
+                              AppStrings.propertyVilla,
+                              AppStrings.propertyLand,
+                              AppStrings.propertyShop,
+                              AppStrings.propertyHouse,
+                            ],
+                            otherOptionLabel: AppStrings.propertyOther,
+                            onDropdownSelected: cubit.updatePropertyType,
                           ),
                           SizedBox(height: 16 * heightScale),
-                        ],
 
-                        // Area
-                        OwnerFormInputCard(
-                          label: AppStrings.area,
-                          value: '${property.areaSqm}',
-                          suffixText: 'm²',
-                          actionIcon: AppIcons.edit,
-                          widthScale: widthScale,
-                          valueFontSize: 16,
-                          valueFontWeight: FontWeight.w700,
-                          isEditable: true,
-                          keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                          inputFormatters: [
-                            FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
-                          ],
-                          onValueChanged: cubit.updateArea,
-                        ),
-                        SizedBox(height: 16 * heightScale),
-
-                        // Rooms
-                        OwnerFormInputCard(
-                          label: AppStrings.rooms,
-                          value: '${property.rooms}',
-                          actionIcon: AppIcons.edit,
-                          widthScale: widthScale,
-                          valueFontSize: 16,
-                          valueFontWeight: FontWeight.w700,
-                          isEditable: true,
-                          keyboardType: TextInputType.number,
-                          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                          onValueChanged: cubit.updateRooms,
-                        ),
-                        SizedBox(height: 16 * heightScale),
-
-                        // Bathrooms
-                        OwnerFormInputCard(
-                          label: AppStrings.bathrooms,
-                          value: '${property.bathrooms}',
-                          actionIcon: AppIcons.edit,
-                          widthScale: widthScale,
-                          valueFontSize: 16,
-                          valueFontWeight: FontWeight.w700,
-                          isEditable: true,
-                          keyboardType: TextInputType.number,
-                          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                          onValueChanged: cubit.updateBathrooms,
-                        ),
-                        SizedBox(height: 16 * heightScale),
-
-                        // Floor
-                        OwnerFormInputCard(
-                          label: AppStrings.floor,
-                          value: property.floorNumber?.toString() ?? '-',
-                          actionIcon: AppIcons.edit,
-                          widthScale: widthScale,
-                          valueFontSize: 16,
-                          valueFontWeight: FontWeight.w700,
-                          isEditable: true,
-                          keyboardType: TextInputType.number,
-                          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                          onValueChanged: cubit.updateFloor,
-                        ),
-                        SizedBox(height: 16 * heightScale),
-
-                        // Furnished
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 3 * widthScale),
-                          child: AppSectionRow(
+                          OwnerFormInputCard(
+                            label: AppStrings.location,
+                            value: property.location,
+                            actionLabel: AppStrings.changeOnMap,
+                            actionIcon: AppIcons.viewOnMap,
+                            actionIconHeight: 10.5 * widthScale,
+                            actionIconWidth: 10.5 * widthScale,
+                            switchIconText: false,
                             widthScale: widthScale,
-                            label: AppStrings.furnished,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            lineHeight: 1.0,
-                            letterSpacing: 0.44,
-                            trailing: ListingStatusToggle(
-                              isActive: property.isFurnished,
+                            isEditable: false,
+                            onEdit: () => _showUnavailable(context),
+                          ),
+                          SizedBox(height: 16 * heightScale),
+
+                          OwnerFormInputCard(
+                            label: AppStrings.price,
+                            value: property.price,
+                            suffixWidget: AppLabelIconTrigger(
                               widthScale: widthScale,
-                              onChanged: cubit.updateFurnished,
+                              label: property.currency,
+                              icon: AppIcons.arrowDownAshen,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              iconWidth: 7,
+                              iconHeight: 5,
+                              gap: 4,
+                              onTap: () =>
+                                  _showCurrencySheet(context, widthScale),
+                            ),
+                            actionIcon: AppIcons.edit,
+                            widthScale: widthScale,
+                            valueFontSize: 16,
+                            valueFontWeight: FontWeight.w700,
+                            isEditable: true,
+                            keyboardType: TextInputType.number,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly,
+                            ],
+                            onValueChanged: cubit.updatePrice,
+                          ),
+                          SizedBox(height: 16 * heightScale),
+
+                          if (isRent) ...[
+                            OwnerFormInputCard(
+                              label: AppStrings.priceUnit,
+                              value: _rentUnitLabels[property.rentUnit] ??
+                                  AppStrings.selectPriceUnit,
+                              actionIcon: AppIcons.edit,
+                              suffixIcon: AppIcons.arrowDownAshen,
+                              suffixIconHeight: 8,
+                              suffixIconWidth: 6,
+                              widthScale: widthScale,
+                              dropdownSheetTitle: AppStrings.selectPriceUnit,
+                              dropdownOptions: _rentUnitLabels.values.toList(),
+                              enableOtherCustomInput: false,
+                              onDropdownSelected: (selected) {
+                                final entry = _rentUnitLabels.entries
+                                    .where((e) => e.value == selected)
+                                    .toList();
+                                if (entry.isNotEmpty) {
+                                  cubit.updateRentUnit(entry.first.key);
+                                }
+                              },
+                            ),
+                            SizedBox(height: 16 * heightScale),
+                          ],
+
+                          OwnerFormInputCard(
+                            label: AppStrings.area,
+                            value: '${property.areaSqm}',
+                            suffixText: 'm²',
+                            actionIcon: AppIcons.edit,
+                            widthScale: widthScale,
+                            valueFontSize: 16,
+                            valueFontWeight: FontWeight.w700,
+                            isEditable: true,
+                            keyboardType: const TextInputType.numberWithOptions(
+                              decimal: true,
+                            ),
+                            inputFormatters: [
+                              FilteringTextInputFormatter.allow(
+                                RegExp(r'^\d*\.?\d*'),
+                              ),
+                            ],
+                            onValueChanged: cubit.updateArea,
+                          ),
+                          SizedBox(height: 16 * heightScale),
+
+                          OwnerFormInputCard(
+                            label: AppStrings.rooms,
+                            value: '${property.rooms}',
+                            actionIcon: AppIcons.edit,
+                            widthScale: widthScale,
+                            valueFontSize: 16,
+                            valueFontWeight: FontWeight.w700,
+                            isEditable: true,
+                            keyboardType: TextInputType.number,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly,
+                            ],
+                            onValueChanged: cubit.updateRooms,
+                          ),
+                          SizedBox(height: 16 * heightScale),
+
+                          OwnerFormInputCard(
+                            label: AppStrings.bathrooms,
+                            value: '${property.bathrooms}',
+                            actionIcon: AppIcons.edit,
+                            widthScale: widthScale,
+                            valueFontSize: 16,
+                            valueFontWeight: FontWeight.w700,
+                            isEditable: true,
+                            keyboardType: TextInputType.number,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly,
+                            ],
+                            onValueChanged: cubit.updateBathrooms,
+                          ),
+                          SizedBox(height: 16 * heightScale),
+
+                          OwnerFormInputCard(
+                            label: AppStrings.floor,
+                            value: property.floorNumber?.toString() ?? '-',
+                            actionIcon: AppIcons.edit,
+                            widthScale: widthScale,
+                            valueFontSize: 16,
+                            valueFontWeight: FontWeight.w700,
+                            isEditable: true,
+                            keyboardType: TextInputType.number,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly,
+                            ],
+                            onValueChanged: cubit.updateFloor,
+                          ),
+                          SizedBox(height: 16 * heightScale),
+
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 3 * widthScale,
+                            ),
+                            child: AppSectionRow(
+                              widthScale: widthScale,
+                              label: AppStrings.furnished,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              lineHeight: 1.0,
+                              letterSpacing: 0.44,
+                              trailing: ListingStatusToggle(
+                                isActive: property.isFurnished,
+                                widthScale: widthScale,
+                                onChanged: cubit.updateFurnished,
+                              ),
                             ),
                           ),
-                        ),
-                        SizedBox(height: 16 * heightScale),
+                          SizedBox(height: 16 * heightScale),
 
-                        // Features
-                        OwnerFeaturesCard(
-                          selected: property.features,
-                          widthScale: widthScale,
-                          onChanged: cubit.updateFeatures,
-                        ),
-                        SizedBox(height: 16 * heightScale),
+                          OwnerFeaturesCard(
+                            selected: property.features,
+                            widthScale: widthScale,
+                            onChanged: cubit.updateFeatures,
+                          ),
+                          SizedBox(height: 16 * heightScale),
 
-                        // Description
-                        OwnerFormInputCard(
-                          label: AppStrings.description,
-                          value: property.description,
-                          actionIcon: AppIcons.edit,
-                          widthScale: widthScale,
-                          valueMaxLines: 3,
-                          isEditable: true,
-                          onValueChanged: cubit.updateDescription,
-                        ),
-                      ],
-                    );
-                  },
+                          OwnerFormInputCard(
+                            label: AppStrings.description,
+                            value: property.description,
+                            actionIcon: AppIcons.edit,
+                            widthScale: widthScale,
+                            valueMaxLines: 3,
+                            isEditable: true,
+                            onValueChanged: cubit.updateDescription,
+                          ),
+                        ],
+                      );
+                    },
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

@@ -96,8 +96,7 @@ class AppDialog extends StatelessWidget {
     final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
 
-    const double figmaWidth = 393.0;
-    final double widthScale = context.screenWidth / figmaWidth;
+    final double widthScale = context.widthScale;
 
     final double scaledWidth = width * widthScale;
     final double maxWidth = context.screenWidth - (32 * widthScale);

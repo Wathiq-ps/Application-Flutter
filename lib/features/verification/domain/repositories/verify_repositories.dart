@@ -6,7 +6,6 @@ abstract class VerificationRepository {
   Future<VerificationModel> uploadIdAndSelfie({
     required XFile idImage,
     required XFile selfieImage,
-    required String documentNumber,
   });
 
   Future<VerificationModel> getVerificationStatus();

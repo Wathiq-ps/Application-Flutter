@@ -48,7 +48,7 @@ class _OtpBottomSheetState extends State<OtpBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final widthScale = context.screenWidth / _OtpForm.figmaWidth;
+    final widthScale = context.widthScale;
 
     return Padding(
       padding: EdgeInsets.only(
@@ -102,9 +102,6 @@ class _OtpForm extends StatelessWidget {
 
   final TextEditingController controller;
 
-  static const double figmaWidth = 393;
-  static const double _figmaHeight = 852;
-
   static const int _otpLength = 6;
 
   double _fontSize(BuildContext context) {
@@ -121,8 +118,8 @@ class _OtpForm extends StatelessWidget {
     final cubit = context.read<AuthCubit>();
     final state = context.watch<AuthCubit>().state;
 
-    final widthScale = context.screenWidth / figmaWidth;
-    final heightScale = context.screenHeight / _figmaHeight;
+    final widthScale = context.widthScale;
+    final heightScale = context.heightScale;
 
     final defaultPinTheme = PinTheme(
       width: 48 * widthScale,

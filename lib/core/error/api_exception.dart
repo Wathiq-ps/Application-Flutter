@@ -1,5 +1,7 @@
 import 'package:dio/dio.dart';
 
+import '../constant/strings.dart';
+
 class ApiException implements Exception {
   final String message;
   final int? statusCode;
@@ -11,17 +13,29 @@ class ApiException implements Exception {
       case DioExceptionType.connectionTimeout:
       case DioExceptionType.sendTimeout:
       case DioExceptionType.receiveTimeout:
-        return const ApiException('The connection timed out. Please try again.');
+        return ApiException(AppStrings.connectionTimeout);
       case DioExceptionType.connectionError:
-        return const ApiException('No internet connection.');
+        return ApiException(AppStrings.checkInternetConnection);
       default:
-        final data = e.response?.data;
-        final serverMessage = data is Map ? data['message']?.toString() : null;
-        return ApiException(
-          serverMessage ?? 'Something went wrong. Please try again.',
-          statusCode: e.response?.statusCode,
-        );
+        break;
     }
+
+    final status = e.response?.statusCode;
+    if (status == 401) {
+      return ApiException(AppStrings.sessionExpired, statusCode: 401);
+    }
+    if (status == 429) {
+      return ApiException(AppStrings.tooManyAttempts, statusCode: 429);
+    }
+
+    final data = e.response?.data;
+    final server = data is Map ? data['message']?.toString() : null;
+    return ApiException(
+      (server != null && server.trim().isNotEmpty)
+          ? server
+          : AppStrings.somethingWentWrong,
+      statusCode: status,
+    );
   }
 
   @override

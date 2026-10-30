@@ -12,6 +12,7 @@ import 'package:mobile/core/widget/page_header.dart';
 import '../../../../config/routes/routes_names.dart';
 import '../state_management/profile_cubit.dart';
 import '../state_management/profile_state.dart';
+import '../widgets/language_picker_sheet.dart';
 import '../widgets/profile_menu_item.dart';
 import '../widgets/verified_status_badge.dart';
 
@@ -30,15 +31,10 @@ class ProfileScreen extends StatelessWidget {
 class _ProfileView extends StatelessWidget {
   const _ProfileView();
 
-  static const double figmaWidth = 393.0;
-  static const double figmaHeight = 852.0;
-
   @override
   Widget build(BuildContext context) {
-    final double screenWidth = context.screenWidth;
-    final double screenHeight = context.screenHeight;
-    final double widthScale = screenWidth / figmaWidth;
-    final double heightScale = screenHeight / figmaHeight;
+    final double widthScale = context.widthScale;
+    final double heightScale = context.heightScale;
     final double avatarSize = 112 * widthScale;
     final double sheetTopOffset = 198 * heightScale;
     final double avatarTopOffset = sheetTopOffset - (avatarSize / 2);
@@ -48,17 +44,12 @@ class _ProfileView extends StatelessWidget {
       child: Stack(
         children: [
           Positioned.fill(
-            child: Image.asset(
-              ImagePath.background,
-              fit: BoxFit.fill,
-            ),
+            child: Image.asset(ImagePath.background, fit: BoxFit.fill),
           ),
 
           // Background Overlay
           Positioned.fill(
-            child: Container(
-              color: AppColors.primary.withValues(alpha: 0.8),
-            ),
+            child: Container(color: AppColors.primary.withValues(alpha: 0.8)),
           ),
 
           // Page Header
@@ -102,20 +93,20 @@ class _ProfileView extends StatelessWidget {
                   bottom: 24 * heightScale,
                 ),
                 children: [
-                  // Name + verification badge (from GET /api/v1/profile)
                   BlocBuilder<ProfileCubit, ProfileState>(
                     builder: (context, state) {
                       if (state.isInitialFailure) {
                         return Column(
                           children: [
                             Text(
-                              state.errorMessage ?? AppStrings.somethingWentWrong,
+                              state.errorMessage ??
+                                  AppStrings.somethingWentWrong,
                               textAlign: TextAlign.center,
                               style: Theme.of(context).textTheme.bodyMedium,
                             ),
                             TextButton(
                               onPressed: profileCubit.load,
-                              child: const Text(AppStrings.retry),
+                              child: Text(AppStrings.retry),
                             ),
                           ],
                         );
@@ -135,8 +126,9 @@ class _ProfileView extends StatelessWidget {
                       }
 
                       final profile = state.data!;
-                      final String displayName =
-                      profile.name.trim().isNotEmpty ? profile.name : profile.email;
+                      final String displayName = profile.name.trim().isNotEmpty
+                          ? profile.name
+                          : profile.email;
 
                       return Column(
                         children: [
@@ -145,11 +137,12 @@ class _ProfileView extends StatelessWidget {
                             textAlign: TextAlign.center,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                              color: AppColors.primary,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 24 * widthScale,
-                            ),
+                            style: Theme.of(context).textTheme.headlineSmall
+                                ?.copyWith(
+                                  color: AppColors.primary,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 24 * widthScale,
+                                ),
                           ),
                           SizedBox(height: 8 * heightScale),
                           VerifiedStatusBadge(
@@ -215,7 +208,10 @@ class _ProfileView extends StatelessWidget {
                     title: AppStrings.language,
                     widthScale: widthScale,
                     heightScale: heightScale,
-                    onTap: () {},
+                    onTap: () => showLanguagePicker(
+                      context: context,
+                      widthScale: widthScale,
+                    ),
                   ),
 
                   ProfileMenuItem(
@@ -235,12 +231,34 @@ class _ProfileView extends StatelessWidget {
             top: avatarTopOffset,
             left: 0,
             right: 0,
-            child: Center(
-              child: AppProfileAvatar(
-                widthScale: widthScale,
-                imageAsset: null,
-                size: 112,
-              ),
+            child: BlocBuilder<ProfileCubit, ProfileState>(
+              builder: (context, state) {
+                final profile = state.data;
+                final name = profile?.name.trim() ?? '';
+                final displayName = name.isNotEmpty
+                    ? name
+                    : profile?.email.trim();
+
+                return Center(
+                  child: AppProfileAvatar(
+                    widthScale: widthScale,
+                    imageAsset: null,
+                    initialsSource: displayName,
+                    showInitialsFallback: true,
+                    backgroundColor: AppColors.profileAvatarBackground,
+                    initialsColor: AppColors.primary,
+                    initialsFontSize: 48,
+                    initialsFontWeight: FontWeight.w600,
+                    initialsLineHeight: 0.5,
+                    initialsLetterSpacing: 0,
+                    borderColor: AppColors.white,
+                    borderWidth: 4,
+                    shadowBlurRadius: 2,
+                    shadowOffset: const Offset(0, 1),
+                    size: 112,
+                  ),
+                );
+              },
             ),
           ),
         ],

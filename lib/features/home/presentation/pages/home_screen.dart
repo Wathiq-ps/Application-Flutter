@@ -16,17 +16,29 @@ import '../state_mangement/home_state.dart';
 import '../widgets/all_properties_section.dart';
 import '../widgets/home_greeting.dart';
 import '../widgets/home_loading_view.dart';
+import '../widgets/home_user_name.dart';
 import '../widgets/home_promo_banner.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  late final Future<String> _userNameFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _userNameFuture = loadHomeUserName();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    const double figmaWidth = 393.0;
-    const double figmaHeight = 852.0;
-    final double widthScale = context.screenWidth / figmaWidth;
-    final double heightScale = context.screenHeight / figmaHeight;
+    final double widthScale = context.widthScale;
+    final double heightScale = context.heightScale;
 
     final homeCubit = context.read<HomeCubit>();
     final navCubit = context.read<NavigationCubit>();
@@ -46,25 +58,28 @@ class HomeScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(height: 15 * heightScale),
-
                     PageHeader(
                       widthScale: widthScale,
+                      centered: false,
                       mainAxisAlignment: MainAxisAlignment.start,
                       leftGap: 10,
                       rightGap: 8,
                       left: AppProfileAvatar(
-                        widthScale: widthScale,
+                        widthScale: 1.0 * widthScale,
                         size: 36,
-                        initialsSource: 'samer',
                         showInitialsFallback: false,
-                        onTap: () {
-                          // TODO: open profile
-                        },
                       ),
-                      center: HomeGreeting(
-                        widthScale: widthScale,
-                        userName: 'Samer',
+                      center: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          FutureBuilder<String>(
+                            future: _userNameFuture,
+                            builder: (context, snapshot) => HomeGreeting(
+                              widthScale: widthScale,
+                              userName: snapshot.data ?? '',
+                            ),
+                          ),
+                        ],
                       ),
                       right: AppSvgIconButton(
                         widthScale: widthScale,
@@ -76,7 +91,6 @@ class HomeScreen extends StatelessWidget {
                           // TODO: open notifications
                         },
                       ),
-
                     ),
                     SizedBox(height: 25 * heightScale),
 
@@ -107,7 +121,8 @@ class HomeScreen extends StatelessWidget {
                         // Failed AND nothing cached -> retry screen
                         if (resource.isInitialFailure) {
                           return ErrorRetryView(
-                            message: resource.errorMessage ??
+                            message:
+                                resource.errorMessage ??
                                 AppStrings.somethingWentWrong,
                             onRetry: homeCubit.loadHome,
                           );

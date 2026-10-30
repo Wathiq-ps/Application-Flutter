@@ -36,8 +36,7 @@ class PropertyHomeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const double figmaWidth = 393.0;
-    final double widthScale = context.screenWidth / figmaWidth;
+    final double widthScale = context.widthScale;
     final double shownRating = rating ?? 0.0;
 
     return Padding(

@@ -88,10 +88,8 @@ class _SearchViewState extends State<_SearchView> {
 
   @override
   Widget build(BuildContext context) {
-    const double figmaWidth = 393.0;
-    const double figmaHeight = 852.0;
-    final double ws = context.screenWidth / figmaWidth;
-    final double hs = context.screenHeight / figmaHeight;
+    final double ws = context.widthScale;
+    final double hs = context.heightScale;
     final cubit = context.read<SearchCubit>();
 
     return BlocListener<NavigationCubit, NavigationState>(
@@ -105,16 +103,15 @@ class _SearchViewState extends State<_SearchView> {
           padding: EdgeInsets.symmetric(horizontal: 20 * ws),
           child: Column(
             children: [
-              SizedBox(height: 15 * hs),
-
               PageHeader(
                 widthScale: ws,
-                expandCenter: true,
+                padding: EdgeInsets.symmetric(vertical: 12 * hs),
                 left: AppSvgIconButton(
                   widthScale: ws,
                   icon: AppIcons.backArrowProp,
                   iconWidth: 20,
                   iconHeight: 16,
+                  flipForRtl: true,
                   onTap: () {
                     _focusNode.unfocus();
                     context.read<NavigationCubit>().changeTab(0); // Home
@@ -134,7 +131,11 @@ class _SearchViewState extends State<_SearchView> {
                 right: GestureDetector(
                   onTap: _showUnavailable, // TODO: filters sheet
                   behavior: HitTestBehavior.opaque,
-                  child: SvgPicture.asset(AppIcons.filter,height: 18 * ws,width: 18 * ws,),
+                  child: SvgPicture.asset(
+                    AppIcons.filter,
+                    height: 18 * ws,
+                    width: 18 * ws,
+                  ),
                 ),
               ),
 

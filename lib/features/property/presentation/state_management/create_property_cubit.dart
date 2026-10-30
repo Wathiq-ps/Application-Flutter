@@ -2,8 +2,12 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:mobile/core/constant/strings.dart';
 
+import '../../../../core/error/error_mapper.dart';
 import '../../domain/entities/create_property_entity.dart';
 import '../../domain/usecases/create_property_usecase.dart';
 import 'create_property_state.dart';
@@ -435,50 +439,56 @@ class CreatePropertyCubit extends Cubit<CreatePropertyState> {
       ),
     );
 
-    final photoFiles = state.proofPhotos.map((path) => File(path)).toList();
-
-    final documentFiles = state.proofDocuments
-        .where((file) => file.path != null)
-        .map((file) => File(file.path!))
-        .toList();
-
-    List<File> combinedOwnershipDocuments = [...photoFiles, ...documentFiles];
-
-    final photos = state.photos.map((path) => File(path)).toList();
-
-    final isFurnished = state.features.contains('furnished');
-
-    final apiFeatures = state.features
-        .where((feature) => feature != 'furnished')
-        .toList();
-    final property = CreatePropertyEntity(
-      listingType: state.listingType,
-      type: state.type,
-      city: state.city,
-      district: state.district,
-      buildingNumber: state.buildingNumber.isNotEmpty
-          ? state.buildingNumber
-          : null,
-      latitude: state.latitude,
-      longitude: state.longitude,
-      areaSqm: state.areaSqm!,
-      price: state.price!,
-      priceCurrency: state.priceCurrency,
-      priceUnit: state.listingType.toLowerCase() == 'sale'
-          ? null
-          : (state.priceUnit.isNotEmpty ? state.priceUnit : null),
-      rooms: state.rooms,
-      bathrooms: state.bathrooms,
-      floorNumber: state.floorNumber,
-      features: apiFeatures.isNotEmpty ? apiFeatures : null,
-      isFurnished: isFurnished,
-      description: state.description.isNotEmpty ? state.description : null,
-      photos: photos,
-      ownershipDocuments: combinedOwnershipDocuments,
-      ownershipDocumentType: state.ownershipDocumentType,
-    );
-
     try {
+      final photos = await Future.wait(
+        state.photos.map(
+          (path) => _uploadFileFromPath(path, fallbackName: 'photo.jpg'),
+        ),
+      );
+      final proofPhotos = await Future.wait(
+        state.proofPhotos.map(
+          (path) => _uploadFileFromPath(path, fallbackName: 'document.jpg'),
+        ),
+      );
+      final proofDocuments = state.proofDocuments
+          .map(_uploadFileFromPlatformFile)
+          .toList();
+      final ownershipDocuments = [
+        ...proofPhotos,
+        ...await Future.wait(proofDocuments),
+      ];
+
+      final isFurnished = state.features.contains('furnished');
+      final apiFeatures = state.features
+          .where((feature) => feature != 'furnished')
+          .toList();
+      final property = CreatePropertyEntity(
+        listingType: state.listingType,
+        type: state.type,
+        city: state.city,
+        district: state.district,
+        buildingNumber: state.buildingNumber.isNotEmpty
+            ? state.buildingNumber
+            : null,
+        latitude: state.latitude,
+        longitude: state.longitude,
+        areaSqm: state.areaSqm!,
+        price: state.price!,
+        priceCurrency: state.priceCurrency,
+        priceUnit: state.listingType.toLowerCase() == 'sale'
+            ? null
+            : (state.priceUnit.isNotEmpty ? state.priceUnit : null),
+        rooms: state.rooms,
+        bathrooms: state.bathrooms,
+        floorNumber: state.floorNumber,
+        features: apiFeatures.isNotEmpty ? apiFeatures : null,
+        isFurnished: isFurnished,
+        description: state.description.isNotEmpty ? state.description : null,
+        photos: photos,
+        ownershipDocuments: ownershipDocuments,
+        ownershipDocumentType: state.ownershipDocumentType,
+      );
+
       await _createPropertyUseCase(property);
 
       emit(
@@ -498,11 +508,52 @@ class CreatePropertyCubit extends Cubit<CreatePropertyState> {
       emit(
         state.copyWith(
           isLoading: false,
-          errorMessage: e.toString(),
+          errorMessage: e is DioException
+              ? AppErrorMapper.mapDioException(e)
+              : AppStrings.somethingWentWrong,
           status: CreatePropertyStatus.createError,
         ),
       );
     }
+  }
+
+  Future<PropertyUploadFile> _uploadFileFromPath(
+    String path, {
+    required String fallbackName,
+  }) async {
+    if (kIsWeb) {
+      final pathSegments = Uri.parse(path).pathSegments;
+      final selectedName = pathSegments.isNotEmpty ? pathSegments.last : '';
+      return PropertyUploadFile(
+        name: selectedName.contains('.') ? selectedName : fallbackName,
+        bytes: await XFile(path).readAsBytes(),
+      );
+    }
+
+    final file = File(path);
+    final pathSegments = file.uri.pathSegments;
+    return PropertyUploadFile(
+      name: pathSegments.isNotEmpty ? pathSegments.last : fallbackName,
+      path: path,
+    );
+  }
+
+  Future<PropertyUploadFile> _uploadFileFromPlatformFile(
+    PlatformFile file,
+  ) async {
+    if (kIsWeb) {
+      return PropertyUploadFile(
+        name: file.name,
+        bytes: await file.readAsBytes(),
+      );
+    }
+
+    final path = file.path;
+    if (path == null || path.isEmpty) {
+      throw StateError('The selected file "${file.name}" has no local path.');
+    }
+
+    return PropertyUploadFile(name: file.name, path: path);
   }
 
   void reset() {

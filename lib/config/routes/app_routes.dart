@@ -42,7 +42,8 @@ class AppRoutes {
   // ─────────────────────────────────────────────
 
   static final GoRouter router = GoRouter(
-    initialLocation: AppConfig.isTestMode ? RouteNames.mainNavigation : RouteNames.splash,
+    // initialLocation: AppConfig.isTestMode ? RouteNames.mainNavigation : RouteNames.splash,
+    initialLocation: RouteNames.splash ,
     routes: [
       // ─────────────────────────────────────────────
       // Splash
@@ -263,7 +264,10 @@ class AppRoutes {
       ShellRoute(
         builder: (context, state, child) {
           return BlocProvider<VerificationCubit>(
-            create: (_) => VerificationCubit(Injector.verificationRepository),
+            create: (_) =>  VerificationCubit(
+              Injector.verificationRepository,
+              Injector.imagePickerService,
+            ),
             child: child,
           );
         },

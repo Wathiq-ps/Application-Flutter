@@ -31,6 +31,8 @@ import '../../features/property/data/repositories/create_property_repository_imp
 import '../../features/property/domain/repository/create_property_repository.dart';
 import '../../features/property/domain/usecases/create_property_usecase.dart';
 import '../constant/api_constants.dart';
+import '../localization/locale_storage_service.dart';
+import '../network/api_headers_interceptor.dart';
 import '../services/image_picker_service.dart';
 import '../services/secure_storage_service.dart';
 
@@ -38,7 +40,14 @@ class Injector {
   Injector._();
 
   // ── Core ──────────────────────────────────────────────
-  static final Dio _dio = Dio(BaseOptions(baseUrl: ApiConstants.baseUrl));
+  static final Dio _dio = Dio(
+    BaseOptions(
+      baseUrl: ApiConstants.baseUrl,
+      connectTimeout: const Duration(seconds: 15),
+      sendTimeout: const Duration(seconds: 30),
+      receiveTimeout: const Duration(seconds: 30),
+    ),
+  )..interceptors.add(ApiHeadersInterceptor(secureStorage));
   static const SecureStorageService secureStorage = SecureStorageService();
   static const FavoritesLocalDataSource _favoritesLocalDataSource =
   FavoritesLocalDataSource();
@@ -93,24 +102,15 @@ class Injector {
   );
 
   // ── Verification ──────────────────────────────────────
-  static final Dio _authDio = Dio(BaseOptions(baseUrl: ApiConstants.baseUrl))
-    ..interceptors.add(
-      InterceptorsWrapper(
-        onRequest: (options, handler) async {
-          final token = await secureStorage.getAccessToken();
-          if (token != null) {
-            options.headers['Authorization'] = 'Bearer $token';
-          }
-          handler.next(options);
-        },
-      ),
-    );
+
   static final EditProfileRepository editProfileRepository = EditProfileRepositoryImpl(
     EditProfileRemoteDataSourceImpl(_dio, secureStorage),
   );
 
   static final VerificationRepository verificationRepository =
-  VerificationRepositoryImpl(VerificationService(_authDio));
+  VerificationRepositoryImpl(VerificationService(_dio));
 
   static final ImagePickerService imagePickerService = ImagePickerService();
+
+  static const LocaleStorageService localeStorageService = LocaleStorageService();
 }

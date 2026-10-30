@@ -20,8 +20,7 @@ class SavedScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const double figmaWidth = 393.0;
-    final double widthScale = context.screenWidth / figmaWidth;
+    final double widthScale = context.widthScale;
 
     return SafeArea(
       bottom: false,
@@ -30,13 +29,12 @@ class SavedScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: 15 * widthScale),
-
             PageHeader(
               widthScale: widthScale,
               right: SvgPicture.asset(
                 AppIcons.filter,
-                  height: 18 * widthScale,width: 18 * widthScale
+                height: 18 * widthScale,
+                width: 18 * widthScale,
               ),
               center: Text(
                 AppStrings.myFavorites,
@@ -75,7 +73,7 @@ class SavedScreen extends StatelessWidget {
                                 ? AppStrings.onePropertySaved
                                 : AppStrings.propertiesSavedCount(favorites.length),
                             color: AppColors.primary,
-                            fontSize: 11 * widthScale,
+                            fontSize: 11 * widthScale.clamp(0.1, 1.2),
                             fontWeight: FontWeight.w500,
                             trailing: AppLabelIconTrigger(
                               widthScale: widthScale,
@@ -105,7 +103,7 @@ class SavedScreen extends StatelessWidget {
                           delegate: SliverChildListDelegate([
                             for (final property in favorites)
                               Padding(
-                                padding:  EdgeInsets.only(bottom:16 * widthScale),
+                                padding: EdgeInsets.only(bottom: 16 * widthScale),
                                 child: PropertyCard(
                                   property: toDisplayItem(property),
                                   widthScale: widthScale,
@@ -116,7 +114,6 @@ class SavedScreen extends StatelessWidget {
                                   onViewDetails: () { /* TODO: navigate */ },
                                 ),
                               ),
-
                           ]),
                         ),
                     ],

@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:mobile/core/constant/api_constants.dart';
 import 'package:mobile/core/services/secure_storage_service.dart';
 
+import '../../domain/entities/create_property_entity.dart';
 import '../models/create_property_model.dart';
 
 abstract class CreatePropertyRemoteDataSource {
@@ -32,7 +33,9 @@ class CreatePropertyRemoteDataSourceImpl
     formData.fields.add(MapEntry('district', property.district));
 
     if (property.buildingNumber != null) {
-      formData.fields.add(MapEntry('building_number', property.buildingNumber!));
+      formData.fields.add(
+        MapEntry('building_number', property.buildingNumber!),
+      );
     }
 
     formData.fields.add(MapEntry('latitude', property.latitude.toString()));
@@ -84,16 +87,11 @@ class CreatePropertyRemoteDataSourceImpl
     }
 
     for (final photo in property.photos) {
-      formData.files.add(
-        MapEntry('photos[]', await MultipartFile.fromFile(photo.path)),
-      );
+      formData.files.add(MapEntry('photos[]', await _toMultipartFile(photo)));
     }
     for (final document in property.ownershipDocuments) {
       formData.files.add(
-        MapEntry(
-          'ownership_documents[]',
-          await MultipartFile.fromFile(document.path),
-        ),
+        MapEntry('ownership_documents[]', await _toMultipartFile(document)),
       );
     }
 
@@ -101,6 +99,8 @@ class CreatePropertyRemoteDataSourceImpl
       ApiConstants.createPropertyEndPoint,
       data: formData,
       options: Options(
+        sendTimeout: const Duration(minutes: 2),
+        receiveTimeout: const Duration(seconds: 60),
         headers: {
           'Content-Type': 'multipart/form-data',
           if (token != null && token.isNotEmpty)
@@ -108,5 +108,19 @@ class CreatePropertyRemoteDataSourceImpl
         },
       ),
     );
+  }
+
+  Future<MultipartFile> _toMultipartFile(PropertyUploadFile file) async {
+    final bytes = file.bytes;
+    if (bytes != null) {
+      return MultipartFile.fromBytes(bytes, filename: file.name);
+    }
+
+    final path = file.path;
+    if (path == null || path.isEmpty) {
+      throw StateError('Upload file has neither bytes nor a file path.');
+    }
+
+    return MultipartFile.fromFile(path, filename: file.name);
   }
 }

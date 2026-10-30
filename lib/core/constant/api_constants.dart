@@ -13,5 +13,8 @@ class ApiConstants {
   static String propertyByIdEndpoint(String id) => '/api/v1/properties/$id';
   static const String profileEndpoint = '/api/v1/profile';
   static const String searchPropertiesEndpoint = '/api/v1/properties/search';
-
+  static String publishPropertyEndpoint(String id) => '/api/v1/properties/$id/publish';
+  static String suspendPropertyEndpoint(String id) => '/api/v1/properties/$id/suspend';
+  static const String kycDocumentsEndpoint = '/api/v1/kyc/documents';
+  static const String kycStatusEndpoint = '/api/v1/kyc/status';
 }

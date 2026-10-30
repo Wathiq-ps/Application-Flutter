@@ -1,6 +1,16 @@
-import 'dart:io';
-
 import '../../domain/entities/create_property_entity.dart';
+
+List<PropertyUploadFile> _uploadFilesFromJson(dynamic value) {
+  return (value as List<dynamic>?)?.map((item) {
+        final path = item.toString();
+        final pathSegments = Uri.parse(path).pathSegments;
+        return PropertyUploadFile(
+          name: pathSegments.isNotEmpty ? pathSegments.last : path,
+          path: path,
+        );
+      }).toList() ??
+      const [];
+}
 
 class CreatePropertyModel extends CreatePropertyEntity {
   const CreatePropertyModel({
@@ -33,8 +43,8 @@ class CreatePropertyModel extends CreatePropertyEntity {
       type: json['type'] as String? ?? '',
       city: json['city'] as String? ?? '',
       district: json['district'] as String? ?? '',
-      buildingNumber:
-          (json['building_number'] ?? json['buildingNumber'])?.toString(),
+      buildingNumber: (json['building_number'] ?? json['buildingNumber'])
+          ?.toString(),
       latitude: (json['latitude'] ?? '')?.toString() ?? '',
       longitude: (json['longitude'] ?? '')?.toString() ?? '',
       areaSqm:
@@ -51,18 +61,12 @@ class CreatePropertyModel extends CreatePropertyEntity {
           .toList(),
       isFurnished: (json['is_furnished'] ?? json['isFurnished']) as bool?,
       description: json['description'] as String?,
-      photos: (json['photos'] as List<dynamic>?)
-              ?.map((e) => File(e.toString()))
-              .toList() ??
-          const [],
-      ownershipDocuments: (json['ownership_documents'] as List<dynamic>?)
-              ?.map((e) => File(e.toString()))
-              .toList() ??
-          const [],
+      photos: _uploadFilesFromJson(json['photos']),
+      ownershipDocuments: _uploadFilesFromJson(json['ownership_documents']),
       ownershipDocumentType:
           (json['ownership_document_type'] ?? json['ownershipDocumentType'])
-                  as String? ??
-              '',
+              as String? ??
+          '',
     );
   }
 
@@ -111,9 +115,10 @@ class CreatePropertyModel extends CreatePropertyEntity {
       'features': features,
       'is_furnished': isFurnished,
       'description': description,
-      'photos': photos.map((e) => e.path).toList(),
-      'ownership_documents':
-          ownershipDocuments.map((e) => e.path).toList(),
+      'photos': photos.map((file) => file.path ?? file.name).toList(),
+      'ownership_documents': ownershipDocuments
+          .map((file) => file.path ?? file.name)
+          .toList(),
       'ownership_document_type': ownershipDocumentType,
     };
   }
@@ -143,4 +148,3 @@ class CreatePropertyModel extends CreatePropertyEntity {
     );
   }
 }
-

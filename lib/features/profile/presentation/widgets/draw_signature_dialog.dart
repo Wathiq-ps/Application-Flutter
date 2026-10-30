@@ -81,8 +81,7 @@ class _DrawSignatureDialogState extends State<_DrawSignatureDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final double widthScale =
-        context.screenWidth / 393.0;
+    final double widthScale = context.widthScale;
 
     return Dialog(
       backgroundColor: Colors.transparent,
