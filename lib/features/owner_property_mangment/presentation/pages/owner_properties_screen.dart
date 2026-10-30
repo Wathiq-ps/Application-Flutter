@@ -152,7 +152,6 @@ class OwnerPropertiesScreen extends StatelessWidget {
                             if (bodyIndex == 0) {
                               return EmptyStateView(
                                 widthScale: widthScale,
-                                icon: AppIcons.noProperty,
                                 title: AppStrings.noPropertiesFound,
                               );
                             }

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -16,9 +17,7 @@ import '../widgets/header_widget.dart';
 import '../widgets/submit_button_widget.dart';
 
 class ReviewListingPage extends StatefulWidget {
-  const ReviewListingPage({
-    super.key,
-  });
+  const ReviewListingPage({super.key});
 
   @override
   State<ReviewListingPage> createState() => _ReviewListingPageState();
@@ -77,10 +76,9 @@ class _ReviewListingPageState extends State<ReviewListingPage> {
 
     final unit =
         unitMap[state.priceUnit.toLowerCase()] ??
-            (state.priceUnit.isNotEmpty &&
-                state.priceUnit.toLowerCase() != 'total'
-                ? ' / ${state.priceUnit.replaceAll('_', ' ')}'
-                : '');
+        (state.priceUnit.isNotEmpty && state.priceUnit.toLowerCase() != 'total'
+            ? ' / ${state.priceUnit.replaceAll('_', ' ')}'
+            : '');
 
     return '$priceVal$currency$unit';
   }
@@ -126,10 +124,9 @@ class _ReviewListingPageState extends State<ReviewListingPage> {
             .replaceAll('_', ' ')
             .split(' ')
             .map(
-              (w) => w.isNotEmpty
-              ? '${w[0].toUpperCase()}${w.substring(1)}'
-              : '',
-        )
+              (w) =>
+                  w.isNotEmpty ? '${w[0].toUpperCase()}${w.substring(1)}' : '',
+            )
             .join(' ');
   }
 
@@ -142,8 +139,7 @@ class _ReviewListingPageState extends State<ReviewListingPage> {
       'municipal_record': AppStrings.municipalRecord,
     };
 
-    return documentTypes[type.toLowerCase()] ??
-        (type.isNotEmpty ? type : '-');
+    return documentTypes[type.toLowerCase()] ?? (type.isNotEmpty ? type : '-');
   }
 
   @override
@@ -151,36 +147,21 @@ class _ReviewListingPageState extends State<ReviewListingPage> {
     return BlocConsumer<CreatePropertyCubit, CreatePropertyState>(
       listener: (context, state) {
         if (state.status == CreatePropertyStatus.created) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Listing submitted successfully'),
-            ),
-          );
-
           context.read<CreatePropertyCubit>().reset();
-
-          Navigator.of(context).popUntil(
-                (route) => route.isFirst,
-          );
+          context.go(RouteNames.verificationPendingScreen);
         }
 
         if (state.status == CreatePropertyStatus.createError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(
-                state.errorMessage ?? 'Failed to submit listing',
-              ),
+              content: Text(state.errorMessage ?? 'Failed to submit listing'),
             ),
           );
         }
 
         if (state.status == CreatePropertyStatus.validationError) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                state.errorMessage ?? 'Invalid data',
-              ),
-            ),
+            SnackBar(content: Text(state.errorMessage ?? 'Invalid data')),
           );
         }
       },
@@ -191,10 +172,7 @@ class _ReviewListingPageState extends State<ReviewListingPage> {
             children: [
               // Background image
               Positioned.fill(
-                child: Image.asset(
-                  ImagePath.background,
-                  fit: BoxFit.cover,
-                ),
+                child: Image.asset(ImagePath.background, fit: BoxFit.cover),
               ),
 
               SafeArea(
@@ -208,9 +186,7 @@ class _ReviewListingPageState extends State<ReviewListingPage> {
                     Expanded(
                       child: SingleChildScrollView(
                         physics: const BouncingScrollPhysics(),
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 16,
-                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 16),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -227,8 +203,7 @@ class _ReviewListingPageState extends State<ReviewListingPage> {
                                   title: AppStrings.photos,
                                   onEdit: () {
                                     context.push(
-                                      RouteNames
-                                          .listPropertyPhotosScreen,
+                                      RouteNames.listPropertyPhotosScreen,
                                       extra: {'isEdit': true},
                                     );
                                   },
@@ -244,11 +219,10 @@ class _ReviewListingPageState extends State<ReviewListingPage> {
                                     horizontal: 24,
                                   ),
                                   scrollDirection: Axis.horizontal,
-                                  physics:
-                                  const BouncingScrollPhysics(),
+                                  physics: const BouncingScrollPhysics(),
                                   itemCount: state.photos.length,
                                   separatorBuilder: (_, _) =>
-                                  const SizedBox(width: 14),
+                                      const SizedBox(width: 14),
                                   itemBuilder: (context, index) {
                                     final photo = state.photos[index];
 
@@ -265,8 +239,7 @@ class _ReviewListingPageState extends State<ReviewListingPage> {
                                 horizontal: 24,
                               ),
                               child: Column(
-                                crossAxisAlignment:
-                                CrossAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   // =========================================
                                   // Property Type
@@ -276,8 +249,7 @@ class _ReviewListingPageState extends State<ReviewListingPage> {
                                     title: AppStrings.propertyType,
                                     onEdit: () {
                                       context.push(
-                                        RouteNames
-                                            .listPropertyTypeScreen,
+                                        RouteNames.listPropertyTypeScreen,
                                         extra: {'isEdit': true},
                                       );
                                     },
@@ -288,9 +260,7 @@ class _ReviewListingPageState extends State<ReviewListingPage> {
                                   _detailRow(
                                     context,
                                     AppStrings.listingType,
-                                    _formatListingType(
-                                      state.listingType,
-                                    ),
+                                    _formatListingType(state.listingType),
                                   ),
 
                                   _divider(),
@@ -311,8 +281,7 @@ class _ReviewListingPageState extends State<ReviewListingPage> {
                                     title: AppStrings.basicDetailsTitle,
                                     onEdit: () {
                                       context.push(
-                                        RouteNames
-                                            .propertyLocationScreen,
+                                        RouteNames.propertyLocationScreen,
                                         extra: {'isEdit': true},
                                       );
                                     },
@@ -383,8 +352,7 @@ class _ReviewListingPageState extends State<ReviewListingPage> {
                                     title: AppStrings.features,
                                     onEdit: () {
                                       context.push(
-                                        RouteNames
-                                            .listPropertyFeaturesScreen,
+                                        RouteNames.listPropertyFeaturesScreen,
                                         extra: {'isEdit': true},
                                       );
                                     },
@@ -392,10 +360,7 @@ class _ReviewListingPageState extends State<ReviewListingPage> {
 
                                   const SizedBox(height: 14),
 
-                                  _buildFeaturesGrid(
-                                    context,
-                                    state.features,
-                                  ),
+                                  _buildFeaturesGrid(context, state.features),
 
                                   const SizedBox(height: 28),
 
@@ -407,8 +372,7 @@ class _ReviewListingPageState extends State<ReviewListingPage> {
                                     title: AppStrings.description,
                                     onEdit: () {
                                       context.push(
-                                        RouteNames
-                                            .listPropertyFeaturesScreen,
+                                        RouteNames.listPropertyFeaturesScreen,
                                         extra: {'isEdit': true},
                                       );
                                     },
@@ -426,11 +390,11 @@ class _ReviewListingPageState extends State<ReviewListingPage> {
                                         .textTheme
                                         .bodyMedium
                                         ?.copyWith(
-                                      color: AppColors.white70,
-                                      fontSize: 15,
-                                      height: 1.5,
-                                      fontWeight: FontWeight.w400,
-                                    ),
+                                          color: AppColors.white70,
+                                          fontSize: 15,
+                                          height: 1.5,
+                                          fontWeight: FontWeight.w400,
+                                        ),
                                   ),
 
                                   const SizedBox(height: 28),
@@ -440,12 +404,11 @@ class _ReviewListingPageState extends State<ReviewListingPage> {
                                   // =========================================
                                   _sectionTitle(
                                     context: context,
-                                    title: AppStrings
-                                        .listYourPropertyPage5Title,
+                                    title:
+                                        AppStrings.listYourPropertyPage5Title,
                                     onEdit: () {
                                       context.push(
-                                        RouteNames
-                                            .proofOfOwnershipPage,
+                                        RouteNames.proofOfOwnershipPage,
                                         extra: {'isEdit': true},
                                       );
                                     },
@@ -463,24 +426,23 @@ class _ReviewListingPageState extends State<ReviewListingPage> {
 
                                   if (state.proofPhotos.isNotEmpty) ...[
                                     const SizedBox(height: 14),
-                                    _buildProofPhotosGrid(
-                                      state.proofPhotos,
-                                    ),
+                                    _buildProofPhotosGrid(state.proofPhotos),
                                   ],
 
                                   if (state.proofDocuments
                                       .where(
-                                        (file) => !state.proofPhotos
-                                        .contains(file.path),
-                                  )
+                                        (file) => !state.proofPhotos.contains(
+                                          file.path,
+                                        ),
+                                      )
                                       .isNotEmpty) ...[
                                     const SizedBox(height: 14),
                                     _buildProofFilesList(
                                       state.proofDocuments
                                           .where(
                                             (file) => !state.proofPhotos
-                                            .contains(file.path),
-                                      )
+                                                .contains(file.path),
+                                          )
                                           .toList(),
                                     ),
                                   ],
@@ -512,9 +474,7 @@ class _ReviewListingPageState extends State<ReviewListingPage> {
                   child: Container(
                     color: Colors.black54,
                     child: const Center(
-                      child: CircularProgressIndicator(
-                        color: AppColors.white,
-                      ),
+                      child: CircularProgressIndicator(color: AppColors.white),
                     ),
                   ),
                 ),
@@ -527,36 +487,43 @@ class _ReviewListingPageState extends State<ReviewListingPage> {
 
   // =============================================================
   Widget _propertyImage(String image) {
-    final file = File(image);
-
     return ClipRRect(
       borderRadius: BorderRadius.circular(16),
       child: SizedBox(
         width: 210,
         height: 140,
-        child: file.existsSync()
-            ? Image.file(
-          file,
-          fit: BoxFit.cover,
-          errorBuilder: (_, __, ___) => _imagePlaceholder(),
-        )
-            : Image.asset(
-          image,
-          fit: BoxFit.cover,
-          errorBuilder: (_, __, ___) => _imagePlaceholder(),
-        ),
+        child: kIsWeb
+            ? Image.network(
+                image,
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => _imagePlaceholder(),
+              )
+            : _buildNativePropertyImage(image),
       ),
     );
+  }
+
+  Widget _buildNativePropertyImage(String image) {
+    final file = File(image);
+
+    return file.existsSync()
+        ? Image.file(
+            file,
+            fit: BoxFit.cover,
+            errorBuilder: (_, __, ___) => _imagePlaceholder(),
+          )
+        : Image.asset(
+            image,
+            fit: BoxFit.cover,
+            errorBuilder: (_, __, ___) => _imagePlaceholder(),
+          );
   }
 
   Widget _imagePlaceholder() {
     return Container(
       color: AppColors.cardBorder,
       child: const Center(
-        child: Icon(
-          Icons.broken_image_outlined,
-          color: AppColors.white70,
-        ),
+        child: Icon(Icons.broken_image_outlined, color: AppColors.white70),
       ),
     );
   }
@@ -609,11 +576,7 @@ class _ReviewListingPageState extends State<ReviewListingPage> {
   }
 
   // =============================================================
-  Widget _detailRow(
-      BuildContext context,
-      String title,
-      String value,
-      ) {
+  Widget _detailRow(BuildContext context, String title, String value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 11),
       child: Row(
@@ -642,17 +605,11 @@ class _ReviewListingPageState extends State<ReviewListingPage> {
 
   // =============================================================
   Widget _divider() {
-    return Container(
-      height: 1,
-      color: AppColors.cardBorder,
-    );
+    return Container(height: 1, color: AppColors.cardBorder);
   }
 
   // =============================================================
-  Widget _buildFeaturesGrid(
-      BuildContext context,
-      List<String> features,
-      ) {
+  Widget _buildFeaturesGrid(BuildContext context, List<String> features) {
     if (features.isEmpty) {
       return Text(
         '-',
@@ -703,13 +660,21 @@ class _ReviewListingPageState extends State<ReviewListingPage> {
 
         return ClipRRect(
           borderRadius: BorderRadius.circular(12),
-          child: Image.file(
-            File(photo),
-            width: double.infinity,
-            height: double.infinity,
-            fit: BoxFit.cover,
-            errorBuilder: (_, __, ___) => _imagePlaceholder(),
-          ),
+          child: kIsWeb
+              ? Image.network(
+                  photo,
+                  width: double.infinity,
+                  height: double.infinity,
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) => _imagePlaceholder(),
+                )
+              : Image.file(
+                  File(photo),
+                  width: double.infinity,
+                  height: double.infinity,
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) => _imagePlaceholder(),
+                ),
         );
       },
     );
@@ -726,14 +691,9 @@ class _ReviewListingPageState extends State<ReviewListingPage> {
         final file = files[index];
 
         return Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 12,
-            vertical: 10,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
           decoration: BoxDecoration(
-            border: Border.all(
-              color: Colors.grey.shade300,
-            ),
+            border: Border.all(color: Colors.grey.shade300),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Row(
@@ -745,12 +705,9 @@ class _ReviewListingPageState extends State<ReviewListingPage> {
                   file.name,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyMedium
-                      ?.copyWith(
-                    color: AppColors.white,
-                  ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium?.copyWith(color: AppColors.white),
                 ),
               ),
             ],

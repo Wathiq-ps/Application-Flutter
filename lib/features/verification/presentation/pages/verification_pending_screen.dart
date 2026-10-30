@@ -14,8 +14,6 @@ import '../widgets/verification_background.dart';
 import '../widgets/verification_status_card.dart';
 import '../widgets/verificattion_error_listener.dart';
 
-/// Standalone status screen (e.g. opened from the profile). Right after a
-/// successful upload the user sees `VerificationPendingSheet` instead.
 class VerificationPendingScreen extends StatefulWidget {
   const VerificationPendingScreen({super.key});
 
@@ -42,7 +40,6 @@ class _VerificationPendingScreenState extends State<VerificationPendingScreen> {
         previous.verification?.status != current.verification?.status,
         listener: (context, state) {
           if (state.verification?.status == VerificationStatus.approved) {
-            // TODO: point this to your Home/Dashboard route.
             context.go(RouteNames.lsitpro);
           }
         },
