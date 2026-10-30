@@ -199,6 +199,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get optional => '(اختياري)';
 
   @override
+  String get propertySubmissionFailed => 'تعذر إرسال الإعلان';
+
+  @override
   String get currencyJod => 'دينار';
 
   @override

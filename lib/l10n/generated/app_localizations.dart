@@ -470,6 +470,12 @@ abstract class AppLocalizations {
   /// **'(Optional)'**
   String get optional;
 
+  /// No description provided for @propertySubmissionFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Listing submission failed'**
+  String get propertySubmissionFailed;
+
   /// No description provided for @currencyJod.
   ///
   /// In en, this message translates to:

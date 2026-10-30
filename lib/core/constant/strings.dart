@@ -70,6 +70,7 @@ class AppStrings {
   static String get pricePerMonth => _l.pricePerMonth;
   static String get pricePerYear => _l.pricePerYear;
   static String get optional => _l.optional;
+  static String get propertySubmissionFailed => _l.propertySubmissionFailed;
   static String get currencyJod => _l.currencyJod;
   static String get currencyUsd => _l.currencyUsd;
   static String get currencyIls => _l.currencyIls;

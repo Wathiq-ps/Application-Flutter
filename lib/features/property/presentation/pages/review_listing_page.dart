@@ -11,6 +11,7 @@ import 'package:mobile/config/theme/app_colors.dart';
 import 'package:mobile/core/constant/app_icons.dart';
 import 'package:mobile/core/constant/images_path.dart';
 import 'package:mobile/core/constant/strings.dart';
+import 'package:mobile/core/widget/app_top_snackbar.dart';
 import '../state_management/create_property_cubit.dart';
 import '../state_management/create_property_state.dart';
 import '../widgets/header_widget.dart';
@@ -168,16 +169,20 @@ class _ReviewListingPageState extends State<ReviewListingPage> {
         }
 
         if (state.status == CreatePropertyStatus.createError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.errorMessage ?? 'Failed to submit listing'),
-            ),
+          AppTopSnackBar.show(
+            context,
+            title: AppStrings.propertySubmissionFailed,
+            message: state.errorMessage ?? AppStrings.somethingWentWrong,
+            prefixIcon: AppIcons.error,
           );
         }
 
         if (state.status == CreatePropertyStatus.validationError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.errorMessage ?? 'Invalid data')),
+          AppTopSnackBar.show(
+            context,
+            title: AppStrings.propertySubmissionFailed,
+            message: state.errorMessage ?? AppStrings.somethingWentWrong,
+            prefixIcon: AppIcons.error,
           );
         }
       },

@@ -5,7 +5,9 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:mobile/core/constant/strings.dart';
 
+import '../../../../core/error/error_mapper.dart';
 import '../../domain/entities/create_property_entity.dart';
 import '../../domain/usecases/create_property_usecase.dart';
 import 'create_property_state.dart';
@@ -506,7 +508,9 @@ class CreatePropertyCubit extends Cubit<CreatePropertyState> {
       emit(
         state.copyWith(
           isLoading: false,
-          errorMessage: e.toString(),
+          errorMessage: e is DioException
+              ? AppErrorMapper.mapDioException(e)
+              : AppStrings.somethingWentWrong,
           status: CreatePropertyStatus.createError,
         ),
       );

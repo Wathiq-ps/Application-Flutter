@@ -62,6 +62,7 @@
   "pricePerMonth": "Per Month",
   "pricePerYear": "Per Year",
   "optional": "(Optional)",
+  "propertySubmissionFailed": "Listing submission failed",
   "currencyJod": "JOD",
   "currencyUsd": "USD",
   "currencyIls": "ILS",

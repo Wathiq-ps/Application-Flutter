@@ -198,6 +198,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get optional => '(Optional)';
 
   @override
+  String get propertySubmissionFailed => 'Listing submission failed';
+
+  @override
   String get currencyJod => 'JOD';
 
   @override
