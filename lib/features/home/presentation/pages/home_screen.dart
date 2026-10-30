@@ -19,8 +19,21 @@ import '../widgets/home_loading_view.dart';
 import '../widgets/home_user_name.dart';
 import '../widgets/home_promo_banner.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  late final Future<String> _userNameFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _userNameFuture = loadHomeUserName();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,26 +58,27 @@ class HomeScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-
                     PageHeader(
                       widthScale: widthScale,
                       centered: false,
                       mainAxisAlignment: MainAxisAlignment.start,
                       leftGap: 10,
                       rightGap: 8,
-                      left: const AppProfileAvatar(
-                        widthScale: 1.0,
+                      left: AppProfileAvatar(
+                        widthScale: 1.0 * widthScale,
                         size: 36,
                         showInitialsFallback: false,
                       ),
                       center: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          HomeGreeting(
-                            widthScale: widthScale,
-                            userName: '',
+                          FutureBuilder<String>(
+                            future: _userNameFuture,
+                            builder: (context, snapshot) => HomeGreeting(
+                              widthScale: widthScale,
+                              userName: snapshot.data ?? '',
+                            ),
                           ),
-                          const HomeUserName(),
                         ],
                       ),
                       right: AppSvgIconButton(
@@ -107,7 +121,8 @@ class HomeScreen extends StatelessWidget {
                         // Failed AND nothing cached -> retry screen
                         if (resource.isInitialFailure) {
                           return ErrorRetryView(
-                            message: resource.errorMessage ??
+                            message:
+                                resource.errorMessage ??
                                 AppStrings.somethingWentWrong,
                             onRetry: homeCubit.loadHome,
                           );
