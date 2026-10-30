@@ -103,6 +103,18 @@ class AppLocalizationsAr extends AppLocalizations {
   String get propertyOther => 'أخرى';
 
   @override
+  String get propertyOffice => 'مكتب';
+
+  @override
+  String get propertyWarehouse => 'مستودع';
+
+  @override
+  String get propertyBuilding => 'مبنى';
+
+  @override
+  String get propertyFarm => 'مزرعة';
+
+  @override
   String get specifyPropertyType => 'حدد نوع العقار';
 
   @override
@@ -170,6 +182,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get pricePerHour => 'بالساعة';
+
+  @override
+  String get pricePerDay => 'يوميًا';
 
   @override
   String get pricePerWeek => 'أسبوعيًا';

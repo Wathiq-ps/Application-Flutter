@@ -57,7 +57,7 @@ class _ReviewListingPageState extends State<ReviewListingPage> {
         : state.price!.toString();
 
     final currency = state.priceCurrency.isNotEmpty
-        ? ' ${state.priceCurrency}'
+        ? ' ${_formatCurrency(state.priceCurrency)}'
         : '';
 
     // Prohibited if listing_type is sale.
@@ -66,12 +66,12 @@ class _ReviewListingPageState extends State<ReviewListingPage> {
     }
 
     // Required for rent: per_month, per_year, per_week, per_day, per_hour.
-    const unitMap = {
-      'per_month': '/ month',
-      'per_year': '/ year',
-      'per_week': '/ week',
-      'per_day': '/ day',
-      'per_hour': '/ hour',
+    final unitMap = {
+      'per_month': AppStrings.pricePerMonth,
+      'per_year': AppStrings.pricePerYear,
+      'per_week': AppStrings.pricePerWeek,
+      'per_day': AppStrings.pricePerDay,
+      'per_hour': AppStrings.pricePerHour,
     };
 
     final unit =
@@ -80,28 +80,42 @@ class _ReviewListingPageState extends State<ReviewListingPage> {
             ? ' / ${state.priceUnit.replaceAll('_', ' ')}'
             : '');
 
-    return '$priceVal$currency$unit';
+    return '$priceVal$currency${unit.isNotEmpty ? ' $unit' : ''}';
+  }
+
+  String _formatCurrency(String currency) {
+    return switch (currency.toUpperCase()) {
+      'JOD' => AppStrings.currencyJod,
+      'USD' => AppStrings.currencyUsd,
+      'ILS' => AppStrings.currencyIls,
+      _ => currency,
+    };
   }
 
   String _formatListingType(String type) {
-    if (type.toLowerCase() == 'sale') return 'For Sale';
-    if (type.toLowerCase() == 'rent') return 'For Rent';
+    if (type.toLowerCase() == 'sale') return AppStrings.forSale;
+    if (type.toLowerCase() == 'rent') return AppStrings.forRent;
 
     return type.isNotEmpty ? type : '-';
   }
 
-  String _formatPropertyType(String type) {
-    const typeMap = {
-      'apartment': 'Apartment',
-      'house': 'House',
-      'villa': 'Villa',
-      'land': 'Land',
-      'office': 'Office',
-      'shop': 'Shop',
-      'warehouse': 'Warehouse',
-      'building': 'Building',
-      'farm': 'Farm',
+  String _formatPropertyType(String type, {String? customType}) {
+    final typeMap = {
+      'apartment': AppStrings.propertyApartment,
+      'house': AppStrings.propertyHouse,
+      'villa': AppStrings.propertyVilla,
+      'land': AppStrings.propertyLand,
+      'office': AppStrings.propertyOffice,
+      'shop': AppStrings.propertyShop,
+      'warehouse': AppStrings.propertyWarehouse,
+      'building': AppStrings.propertyBuilding,
+      'farm': AppStrings.propertyFarm,
+      'other': AppStrings.propertyOther,
     };
+
+    if (type.toLowerCase() == 'other' && customType?.isNotEmpty == true) {
+      return customType!;
+    }
 
     return typeMap[type.toLowerCase()] ??
         (type.isNotEmpty
@@ -110,13 +124,15 @@ class _ReviewListingPageState extends State<ReviewListingPage> {
   }
 
   String _formatFeatureName(String feature) {
-    const featureMap = {
-      'elevator': 'Elevator',
-      'parking': 'Parking',
-      'garden': 'Garden',
-      'water': 'Water',
-      'electricity': 'Electricity',
-      'internet': 'Internet',
+    final featureMap = {
+      'elevator': AppStrings.elevator,
+      'parking': AppStrings.parking,
+      'garden': AppStrings.garden,
+      'water': AppStrings.water,
+      'electricity': AppStrings.electricity,
+      'internet': AppStrings.wifi,
+      'wifi': AppStrings.wifi,
+      'furnished': AppStrings.furnished,
     };
 
     return featureMap[feature.toLowerCase()] ??
@@ -268,7 +284,10 @@ class _ReviewListingPageState extends State<ReviewListingPage> {
                                   _detailRow(
                                     context,
                                     AppStrings.propertyType,
-                                    _formatPropertyType(state.type),
+                                    _formatPropertyType(
+                                      state.type,
+                                      customType: state.customType,
+                                    ),
                                   ),
 
                                   const SizedBox(height: 28),
@@ -337,7 +356,7 @@ class _ReviewListingPageState extends State<ReviewListingPage> {
 
                                     _detailRow(
                                       context,
-                                      'Floor',
+                                      AppStrings.floor,
                                       state.floorNumber.toString(),
                                     ),
                                   ],

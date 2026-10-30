@@ -278,6 +278,30 @@ abstract class AppLocalizations {
   /// **'Other'**
   String get propertyOther;
 
+  /// No description provided for @propertyOffice.
+  ///
+  /// In en, this message translates to:
+  /// **'Office'**
+  String get propertyOffice;
+
+  /// No description provided for @propertyWarehouse.
+  ///
+  /// In en, this message translates to:
+  /// **'Warehouse'**
+  String get propertyWarehouse;
+
+  /// No description provided for @propertyBuilding.
+  ///
+  /// In en, this message translates to:
+  /// **'Building'**
+  String get propertyBuilding;
+
+  /// No description provided for @propertyFarm.
+  ///
+  /// In en, this message translates to:
+  /// **'Farm'**
+  String get propertyFarm;
+
   /// No description provided for @specifyPropertyType.
   ///
   /// In en, this message translates to:
@@ -415,6 +439,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Per Hour'**
   String get pricePerHour;
+
+  /// No description provided for @pricePerDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Per Day'**
+  String get pricePerDay;
 
   /// No description provided for @pricePerWeek.
   ///

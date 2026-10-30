@@ -102,6 +102,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get propertyOther => 'Other';
 
   @override
+  String get propertyOffice => 'Office';
+
+  @override
+  String get propertyWarehouse => 'Warehouse';
+
+  @override
+  String get propertyBuilding => 'Building';
+
+  @override
+  String get propertyFarm => 'Farm';
+
+  @override
   String get specifyPropertyType => 'Specify property type';
 
   @override
@@ -169,6 +181,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get pricePerHour => 'Per Hour';
+
+  @override
+  String get pricePerDay => 'Per Day';
 
   @override
   String get pricePerWeek => 'Weekly';

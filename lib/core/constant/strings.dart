@@ -1,4 +1,3 @@
-
 import '../../l10n/generated/app_localizations.dart';
 import '../../l10n/generated/app_localizations_en.dart';
 
@@ -39,6 +38,10 @@ class AppStrings {
   static String get propertyLand => _l.propertyLand;
   static String get propertyShop => _l.propertyShop;
   static String get propertyOther => _l.propertyOther;
+  static String get propertyOffice => _l.propertyOffice;
+  static String get propertyWarehouse => _l.propertyWarehouse;
+  static String get propertyBuilding => _l.propertyBuilding;
+  static String get propertyFarm => _l.propertyFarm;
   static String get specifyPropertyType => _l.specifyPropertyType;
   static String get specifyPropertyTypeHint => _l.specifyPropertyTypeHint;
   static String get continueText => _l.continueText;
@@ -62,6 +65,7 @@ class AppStrings {
   static String get selectPriceUnit => _l.selectPriceUnit;
   static String get pleaseSelectPriceUnit => _l.pleaseSelectPriceUnit;
   static String get pricePerHour => _l.pricePerHour;
+  static String get pricePerDay => _l.pricePerDay;
   static String get pricePerWeek => _l.pricePerWeek;
   static String get pricePerMonth => _l.pricePerMonth;
   static String get pricePerYear => _l.pricePerYear;
