@@ -61,6 +61,14 @@ class AppStrings {
   static String get priceUnit => _l.priceUnit;
   static String get selectPriceUnit => _l.selectPriceUnit;
   static String get pleaseSelectPriceUnit => _l.pleaseSelectPriceUnit;
+  static String get pricePerHour => _l.pricePerHour;
+  static String get pricePerWeek => _l.pricePerWeek;
+  static String get pricePerMonth => _l.pricePerMonth;
+  static String get pricePerYear => _l.pricePerYear;
+  static String get optional => _l.optional;
+  static String get currencyJod => _l.currencyJod;
+  static String get currencyUsd => _l.currencyUsd;
+  static String get currencyIls => _l.currencyIls;
   static String get elevator => _l.elevator;
   static String get parking => _l.parking;
   static String get electricity => _l.electricity;

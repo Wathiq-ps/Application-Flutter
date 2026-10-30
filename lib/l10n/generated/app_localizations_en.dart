@@ -168,6 +168,30 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pleaseSelectPriceUnit => 'Please select price unit';
 
   @override
+  String get pricePerHour => 'Per Hour';
+
+  @override
+  String get pricePerWeek => 'Weekly';
+
+  @override
+  String get pricePerMonth => 'Per Month';
+
+  @override
+  String get pricePerYear => 'Per Year';
+
+  @override
+  String get optional => '(Optional)';
+
+  @override
+  String get currencyJod => 'JOD';
+
+  @override
+  String get currencyUsd => 'USD';
+
+  @override
+  String get currencyIls => 'ILS';
+
+  @override
   String get elevator => 'Elevator';
 
   @override

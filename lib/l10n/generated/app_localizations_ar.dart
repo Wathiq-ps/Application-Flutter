@@ -169,6 +169,30 @@ class AppLocalizationsAr extends AppLocalizations {
   String get pleaseSelectPriceUnit => 'يرجى اختيار وحدة السعر';
 
   @override
+  String get pricePerHour => 'بالساعة';
+
+  @override
+  String get pricePerWeek => 'أسبوعيًا';
+
+  @override
+  String get pricePerMonth => 'شهريًا';
+
+  @override
+  String get pricePerYear => 'سنويًا';
+
+  @override
+  String get optional => '(اختياري)';
+
+  @override
+  String get currencyJod => 'دينار';
+
+  @override
+  String get currencyUsd => 'دولار';
+
+  @override
+  String get currencyIls => 'شيكل';
+
+  @override
   String get elevator => 'مصعد';
 
   @override

@@ -410,6 +410,54 @@ abstract class AppLocalizations {
   /// **'Please select price unit'**
   String get pleaseSelectPriceUnit;
 
+  /// No description provided for @pricePerHour.
+  ///
+  /// In en, this message translates to:
+  /// **'Per Hour'**
+  String get pricePerHour;
+
+  /// No description provided for @pricePerWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly'**
+  String get pricePerWeek;
+
+  /// No description provided for @pricePerMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Per Month'**
+  String get pricePerMonth;
+
+  /// No description provided for @pricePerYear.
+  ///
+  /// In en, this message translates to:
+  /// **'Per Year'**
+  String get pricePerYear;
+
+  /// No description provided for @optional.
+  ///
+  /// In en, this message translates to:
+  /// **'(Optional)'**
+  String get optional;
+
+  /// No description provided for @currencyJod.
+  ///
+  /// In en, this message translates to:
+  /// **'JOD'**
+  String get currencyJod;
+
+  /// No description provided for @currencyUsd.
+  ///
+  /// In en, this message translates to:
+  /// **'USD'**
+  String get currencyUsd;
+
+  /// No description provided for @currencyIls.
+  ///
+  /// In en, this message translates to:
+  /// **'ILS'**
+  String get currencyIls;
+
   /// No description provided for @elevator.
   ///
   /// In en, this message translates to:

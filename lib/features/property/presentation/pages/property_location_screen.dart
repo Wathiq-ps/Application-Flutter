@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile/features/property/presentation/widgets/property_input_field_widget.dart';
-
 import '../../../../../../../../config/theme/app_colors.dart';
 import '../../../../../../../../core/constant/app_icons.dart';
 import '../../../../../../../../core/constant/images_path.dart';
@@ -53,14 +52,33 @@ class _PropertyLocationScreenState extends State<PropertyLocationScreen> {
   String? _selectedPriceUnit;
   String? _priceUnitError;
   static const List<Map<String, String>> _priceUnits = [
-    {'value': 'per_hour', 'label': 'Per Hour'},
-    {'value': 'per_week', 'label': 'Weekly'},
-    {'value': 'per_month', 'label': 'Per Month'},
-    {'value': 'per_year', 'label': 'Per Year'},
+    {'value': 'per_hour'},
+    {'value': 'per_week'},
+    {'value': 'per_month'},
+    {'value': 'per_year'},
   ];
 
   String _selectedCurrency = 'JOD';
   static const List<String> _currencies = ['JOD', 'USD', 'ILS'];
+
+  String _currencyLabel(String currency) {
+    return switch (currency) {
+      'JOD' => AppStrings.currencyJod,
+      'USD' => AppStrings.currencyUsd,
+      'ILS' => AppStrings.currencyIls,
+      _ => currency,
+    };
+  }
+
+  String _priceUnitLabel(String unit) {
+    return switch (unit) {
+      'per_hour' => AppStrings.pricePerHour,
+      'per_week' => AppStrings.pricePerWeek,
+      'per_month' => AppStrings.pricePerMonth,
+      'per_year' => AppStrings.pricePerYear,
+      _ => unit,
+    };
+  }
 
   @override
   void initState() {
@@ -138,7 +156,12 @@ class _PropertyLocationScreenState extends State<PropertyLocationScreen> {
     ];
 
     final priceUnitItems = [
-      ..._priceUnits,
+      ..._priceUnits.map(
+        (unit) => {
+          'value': unit['value']!,
+          'label': _priceUnitLabel(unit['value']!),
+        },
+      ),
       if (_selectedPriceUnit != null &&
           _selectedPriceUnit!.isNotEmpty &&
           !_priceUnits.any((u) => u['value'] == _selectedPriceUnit))
@@ -500,7 +523,7 @@ class _PropertyLocationScreenState extends State<PropertyLocationScreen> {
                                                 return Align(
                                                   alignment: Alignment.centerLeft,
                                                   child: Text(
-                                                    currency,
+                                                    _currencyLabel(currency),
                                                     style: const TextStyle(
                                                       color: AppColors.white,
                                                       fontWeight: FontWeight.bold,
@@ -515,7 +538,7 @@ class _PropertyLocationScreenState extends State<PropertyLocationScreen> {
                                                 value: currency,
 
                                                 child: Text(
-                                                  currency,
+                                                  _currencyLabel(currency),
                                                   style: const TextStyle(
                                                     color: AppColors.primary,
                                                     fontWeight: FontWeight.bold,
@@ -868,7 +891,7 @@ class _PropertyLocationScreenState extends State<PropertyLocationScreen> {
               if (isOptional) ...[
                 const SizedBox(width: 6),
                 Text(
-                  '(Optional)',
+                  AppStrings.optional,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: AppColors.white60,
                     fontSize: 12,
@@ -929,7 +952,7 @@ class _PropertyLocationScreenState extends State<PropertyLocationScreen> {
               if (isOptional) ...[
                 const SizedBox(width: 6),
                 Text(
-                  '(Optional)',
+                  AppStrings.optional,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: AppColors.white60,
                     fontSize: 12,
