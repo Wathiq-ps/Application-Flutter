@@ -50,10 +50,11 @@ class AppColors {
   static const Color verifiedStatusText = Color(0xFF007146);
   static const Color verifiedStatusBg = Color(0x1F007146); // ~12% opacity
   static const Color unverifiedStatusText = Color(0xff464646);
-  static  Color unverifiedStatusBg = Color(0xff819389).withValues(alpha: 0.2);
+  static Color unverifiedStatusBg = Color(0xff819389).withValues(alpha: 0.2);
   static const Color profileItemText = Color(0xFF1A1C1E);
   static const Color profileItemIconBg = Color(0xFFD3D5DA);
   static const Color profileItemSubtitleText = Color(0xFF006D43);
+  static const Color profileAvatarBackground = Color(0xFFE8E8EA);
   static const Color propertyActiveBg = Color(0xE6D1FAE5);
   static const Color propertyActiveDot = Color(0xFF059669);
   static const Color propertyActiveText = Color(0xFF065F46);
