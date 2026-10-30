@@ -46,7 +46,6 @@ dependencies:
   # Routing
   # ─────────────────────────────────────────────
   pinput: ^6.0.2
-  device_preview: ^1.2.0
 
   # ─────────────────────────────────────────────
   # State Management
@@ -102,4 +101,3 @@ flutter:
     - assets/images/
     - assets/svg/
     - assets/lottie_json/
-
