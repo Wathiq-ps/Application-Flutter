@@ -17,11 +17,8 @@ class MainBottomNavigationBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = context.screenWidth;
-
-    const figmaWidth = 394.0;
-    final scale = screenWidth / figmaWidth;
-    final navigationHeight = (62 * scale).clamp(56.0, 140.0);
+    final scale = context.widthScale;
+    final navigationHeight = context.bottomNavigationBarHeight;
 
     return Container(
       height: navigationHeight,
@@ -41,9 +38,10 @@ class MainBottomNavigationBar extends StatelessWidget {
         top: false,
         bottom: false,
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 34 * scale, vertical: 14 * scale),
+          padding: EdgeInsets.symmetric(horizontal: 20 * scale),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               NavigationItem(
                 isSelected: selectedIndex == 0,
@@ -57,7 +55,7 @@ class MainBottomNavigationBar extends StatelessWidget {
                 isSelected: selectedIndex == 1,
                 selectedIcon: AppIcons.favouriteSelected,
                 unselectedIcon: AppIcons.favouriteUnselected,
-                label: AppStrings.favourite,
+                label: AppStrings.saved,
                 scale: scale,
                 onTap: () => onTabSelected(1),
               ),

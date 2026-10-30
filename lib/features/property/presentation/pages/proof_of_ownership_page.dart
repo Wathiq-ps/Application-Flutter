@@ -1,5 +1,5 @@
 import 'dart:io';
- 
+import 'package:flutter/foundation.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
  import 'package:flutter_bloc/flutter_bloc.dart';
@@ -7,7 +7,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile/core/widget/app_button.dart';
 import 'package:mobile/features/property/presentation/widgets/submit_button_widget.dart';
-
 import '../../../../config/routes/routes_names.dart';
 import '../../../../config/theme/app_colors.dart';
 import '../../../../core/constant/app_icons.dart';
@@ -38,7 +37,7 @@ class _ProofOfOwnershipPageState extends State<ProofOfOwnershipPage> {
   final ImagePickerService _imagePickerService = ImagePickerService();
   String? _selectedDocumentType;
 
-  static const Map<String, String> _documentTypes = {
+  static  Map<String, String> _documentTypes = {
     'title_deed': AppStrings.titleDeed,
     'sale_contract': AppStrings.saleContract,
     'inheritance_deed': AppStrings.inheritanceDeed,
@@ -177,12 +176,19 @@ class _ProofOfOwnershipPageState extends State<ProofOfOwnershipPage> {
       children: [
         ClipRRect(
           borderRadius: BorderRadius.circular(12),
-          child: Image.file(
-            File(photo),
-            width: double.infinity,
-            height: double.infinity,
-            fit: BoxFit.cover,
-          ),
+          child: kIsWeb
+              ? Image.network(
+                  photo,
+                  width: double.infinity,
+                  height: double.infinity,
+                  fit: BoxFit.cover,
+                )
+              : Image.file(
+                  File(photo),
+                  width: double.infinity,
+                  height: double.infinity,
+                  fit: BoxFit.cover,
+                ),
         ),
 
         Positioned(
@@ -228,65 +234,69 @@ class _ProofOfOwnershipPageState extends State<ProofOfOwnershipPage> {
               width: 1,
             ),
           ),
-          child: DropdownButtonHideUnderline(
-            child: DropdownButton<String>(
-              value: _selectedDocumentType,
-              isExpanded: true,
-              borderRadius: BorderRadius.circular(12),
-              hint: Text(
-                AppStrings.selectDocumentType,
-                style: Theme.of(
-                  context,
-                ).textTheme.bodyMedium?.copyWith(color: AppColors.white),
-              ),
-              icon: const Icon(
-                Icons.keyboard_arrow_down_rounded,
-                color: AppColors.white,
-              ),
-              dropdownColor: AppColors.white,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: AppColors.white,
-                fontWeight: FontWeight.w500,
-              ),
-              selectedItemBuilder: (BuildContext context) {
-                return _documentTypes.entries.map<Widget>((entry) {
-                  return Align(
-                    alignment: Alignment.centerLeft,
+          child: Directionality(
+            textDirection:
+                Localizations.localeOf(context).languageCode == 'ar'
+                    ? TextDirection.rtl
+                    : TextDirection.ltr,
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<String>(
+                value: _selectedDocumentType,
+                isExpanded: true,
+                borderRadius: BorderRadius.circular(12),
+                hint: Text(
+                  AppStrings.selectDocumentType,
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium?.copyWith(color: AppColors.white),
+                ),
+                icon: const Icon(
+                  Icons.keyboard_arrow_down_rounded,
+                  color: AppColors.white,
+                ),
+                dropdownColor: AppColors.white,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: AppColors.white,
+                  fontWeight: FontWeight.w500,
+                ),
+                selectedItemBuilder: (BuildContext context) {
+                  return _documentTypes.entries.map<Widget>((entry) {
+                    return Align(
+                      alignment: AlignmentDirectional.centerStart,
+                      child: Text(
+                        entry.value,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: AppColors.white,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    );
+                  }).toList();
+                },
+                items: _documentTypes.entries.map((entry) {
+                  return DropdownMenuItem<String>(
+                    value: entry.key,
                     child: Text(
                       entry.value,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: AppColors.white,
+                        color: AppColors.primary,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
                   );
-                }).toList();
-              },
-              items: _documentTypes.entries.map((entry) {
-                return DropdownMenuItem<String>(
-                  value: entry.key,
-                  child: Text(
-                    entry.value,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: AppColors.primary,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                );
-              }).toList(),
-              onChanged: (value) {
-                setState(() {
-                  _selectedDocumentType = value;
-                  _documentTypeError = null;
-                });
-                if (value != null) {
-                  context
-                      .read<CreatePropertyCubit>()
-                      .ownershipDocumentTypeChanged(
-                        value,
-                      );
-                }
-              },
+                }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    _selectedDocumentType = value;
+                    _documentTypeError = null;
+                  });
+                  if (value != null) {
+                    context
+                        .read<CreatePropertyCubit>()
+                        .ownershipDocumentTypeChanged(value);
+                  }
+                },
+              ),
             ),
           ),
         ),

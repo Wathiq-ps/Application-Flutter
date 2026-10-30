@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
@@ -18,46 +17,42 @@ class OnBoardingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    final _figmaWidth = 393 ;
-    final _figmaHeight = 852 ;
-    final _currentScreenWidth = context.screenWidth ;
-    final _currentScreenHeight = context.screenHeight ;
-    final _widthScale = (_currentScreenWidth / _figmaWidth) ;
-    final _heightScale = (_currentScreenHeight / _figmaHeight);
-    final _horizantalPadding = _widthScale * 32 ;
-
+    final widthScale = context.widthScale;
+    final heightScale = context.heightScale;
+    final horizontalPadding = widthScale * 32;
 
     return Scaffold(
       body: Stack(
-            fit: StackFit.expand,
-            children: [
+        fit: StackFit.expand,
+        children: [
+          Positioned.fill(
+            child: Image.asset(
+              ImagePath.background,
+              fit: BoxFit.fill,
+            ),
+          ),
 
-              Positioned.fill(
-                child: Image.asset(
-                  ImagePath.background,
-                  fit: BoxFit.fill,
+          Positioned.fill(
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.black.withValues(alpha: 0.10),
+                    Colors.black.withValues(alpha: 0.50),
+                    AppColors.backgroundGradient.withValues(alpha: 0.95),
+                  ],
                 ),
               ),
+            ),
+          ),
 
-              Positioned.fill(
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Colors.black.withValues(alpha: 0.10),
-                        Colors.black.withValues(alpha: 0.50),
-                        AppColors.backgroundGradient.withValues(alpha: 0.95),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-
-
-              Padding(
-                padding:  EdgeInsets.symmetric(horizontal: _horizantalPadding),
+          Center(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: context.authFormMaxWidth),
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -67,27 +62,27 @@ class OnBoardingScreen extends StatelessWidget {
                       textAlign: TextAlign.center,
                       style: textTheme.headlineLarge?.copyWith(
                         color: AppColors.white,
-                        fontSize: _widthScale * 34,
-                        height:  (45 / 36),
+                        fontSize: widthScale * 34,
+                        height: (45 / 36),
                         fontWeight: FontWeight.w700,
                         letterSpacing: -0.9,
                       ),
                     ),
 
-                     SizedBox(height: _heightScale *  16),
+                    SizedBox(height: heightScale * 16),
 
-                     Text(
-                        AppStrings.onboardingSubtitle,
-                        textAlign: TextAlign.center,
-                        style: textTheme.bodyLarge?.copyWith(
-                          color: AppColors.secondary,
-                          fontSize:_widthScale * 18,
-                          height:  (28 / 18),
-                          fontWeight: FontWeight.w500,
-                        ),
+                    Text(
+                      AppStrings.onboardingSubtitle,
+                      textAlign: TextAlign.center,
+                      style: textTheme.bodyLarge?.copyWith(
+                        color: AppColors.secondary,
+                        fontSize: widthScale * 18,
+                        height: (28 / 18),
+                        fontWeight: FontWeight.w500,
                       ),
+                    ),
 
-                    SizedBox(height: _heightScale * 64),
+                    SizedBox(height: heightScale * 64),
 
                     AppElevatedButton(
                       text: AppStrings.continueWithEmail,
@@ -97,60 +92,58 @@ class OnBoardingScreen extends StatelessWidget {
                         );
                       },
                       backgroundColor: AppColors.white,
-                      height: (_widthScale * 56).clamp(20, 100),
+                      height: (widthScale * 56).clamp(20, 100),
                       width: double.infinity,
                       borderRadius: 50,
                       preIcon: SvgPicture.asset(
                         AppIcons.gmail,
-                        width: _widthScale * 20,
-                        height: _widthScale *  20,
-                        excludeFromSemantics: true,),
-                      textStyle:
-                      textTheme.bodyMedium?.copyWith(
-                        fontSize: _widthScale * 16 ,
-                        height: ( 24 / 16),
+                        width: widthScale * 20,
+                        height: widthScale * 20,
+                        excludeFromSemantics: true,
+                      ),
+                      textStyle: textTheme.bodyMedium?.copyWith(
+                        fontSize: widthScale * 16,
+                        height: (24 / 16),
                         fontWeight: FontWeight.w500,
                         color: AppColors.textPrimary,
                       ),
-                      iconGap: 13 * _widthScale,
+                      iconGap: 13 * widthScale,
                     ),
 
-                     SizedBox(height: _heightScale *  16),
+                    SizedBox(height: heightScale * 16),
 
                     AppElevatedButton(
                       text: AppStrings.continueWithPhone,
                       onPressed: () {
                         AppTopSnackBar.show(
                           context,
-                          title:AppStrings.featureNotAvailable ,
+                          title: AppStrings.featureNotAvailable,
                           message: AppStrings.featureWillBeAvailbleLater,
                           prefixIcon: AppIcons.error,
                         );
                       },
                       backgroundColor: AppColors.transparent,
                       enableBorder: true,
-                      borderColor:
-                      AppColors.border.withValues(alpha: 0.5),
-                      height: (_widthScale * 56).clamp(20, 100),
+                      borderColor: AppColors.border.withValues(alpha: 0.5),
+                      height: (widthScale * 56).clamp(20, 100),
                       width: double.infinity,
                       borderRadius: 9999,
                       preIcon: SvgPicture.asset(
                         AppIcons.phone,
-                        width: _widthScale * 20,
-                        height: _widthScale * 20,
+                        width: widthScale * 20,
+                        height: widthScale * 20,
                         excludeFromSemantics: true,
                       ),
-                      textStyle:
-                      textTheme.bodyMedium?.copyWith(
-                        fontSize: 16 * _widthScale,
+                      textStyle: textTheme.bodyMedium?.copyWith(
+                        fontSize: 16 * widthScale,
                         height: 24 / 16,
                         fontWeight: FontWeight.w500,
                         color: AppColors.white,
                       ),
-                      iconGap: 13 * _widthScale,
+                      iconGap: 13 * widthScale,
                     ),
 
-                     SizedBox(height: _heightScale *   41),
+                    SizedBox(height: heightScale * 41),
 
                     AuthActionRow(
                       message: AppStrings.alreadyHaveAccount,
@@ -162,15 +155,17 @@ class OnBoardingScreen extends StatelessWidget {
                           RouteNames.onboardingLoginScreen,
                         );
                       },
-                      textFontSize: 14 * _widthScale,
-                      gap: 4 * _widthScale,
+                      textFontSize: 14 * widthScale,
+                      gap: 4 * widthScale,
                     ),
-                    SizedBox(height: _heightScale *   39),
+                    SizedBox(height: heightScale * 39),
                   ],
                 ),
               ),
-            ],
-          )
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

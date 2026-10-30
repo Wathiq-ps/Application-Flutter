@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -10,6 +11,7 @@ import 'package:mobile/config/theme/app_colors.dart';
 import 'package:mobile/core/constant/app_icons.dart';
 import 'package:mobile/core/constant/images_path.dart';
 import 'package:mobile/core/constant/strings.dart';
+import 'package:mobile/core/widget/app_top_snackbar.dart';
 import '../state_management/create_property_cubit.dart';
 import '../state_management/create_property_state.dart';
 import '../widgets/header_widget.dart';
@@ -32,39 +34,45 @@ class _ReviewListingPageState extends State<ReviewListingPage> {
       state.city,
       state.district,
     ].where((s) => s.trim().isNotEmpty).toList();
+
     if (parts.isEmpty) return '-';
+
     return parts.join(', ');
   }
 
   String _formatArea(CreatePropertyState state) {
     if (state.areaSqm == null) return '-';
+
     final areaVal = state.areaSqm! % 1 == 0
         ? state.areaSqm!.toInt().toString()
         : state.areaSqm!.toString();
+
     return '$areaVal m²';
   }
 
   String _formatPrice(CreatePropertyState state) {
     if (state.price == null) return '-';
+
     final priceVal = state.price! % 1 == 0
         ? state.price!.toInt().toString()
         : state.price!.toString();
+
     final currency = state.priceCurrency.isNotEmpty
-        ? ' ${state.priceCurrency}'
+        ? ' ${_formatCurrency(state.priceCurrency)}'
         : '';
 
-    // Prohibited if listing_type is sale
+    // Prohibited if listing_type is sale.
     if (state.listingType.toLowerCase() == 'sale') {
       return '$priceVal$currency';
     }
 
-    // Required for rent: per_month, per_year, per_week, per_day, per_hour
-    const unitMap = {
-      'per_month': '/ month',
-      'per_year': '/ year',
-      'per_week': '/ week',
-      'per_day': '/ day',
-      'per_hour': '/ hour',
+    // Required for rent: per_month, per_year, per_week, per_day, per_hour.
+    final unitMap = {
+      'per_month': AppStrings.pricePerMonth,
+      'per_year': AppStrings.pricePerYear,
+      'per_week': AppStrings.pricePerWeek,
+      'per_day': AppStrings.pricePerDay,
+      'per_hour': AppStrings.pricePerHour,
     };
 
     final unit =
@@ -72,27 +80,44 @@ class _ReviewListingPageState extends State<ReviewListingPage> {
         (state.priceUnit.isNotEmpty && state.priceUnit.toLowerCase() != 'total'
             ? ' / ${state.priceUnit.replaceAll('_', ' ')}'
             : '');
-    return '$priceVal$currency$unit';
+
+    return '$priceVal$currency${unit.isNotEmpty ? ' $unit' : ''}';
+  }
+
+  String _formatCurrency(String currency) {
+    return switch (currency.toUpperCase()) {
+      'JOD' => AppStrings.currencyJod,
+      'USD' => AppStrings.currencyUsd,
+      'ILS' => AppStrings.currencyIls,
+      _ => currency,
+    };
   }
 
   String _formatListingType(String type) {
-    if (type.toLowerCase() == 'sale') return 'For Sale';
-    if (type.toLowerCase() == 'rent') return 'For Rent';
+    if (type.toLowerCase() == 'sale') return AppStrings.forSale;
+    if (type.toLowerCase() == 'rent') return AppStrings.forRent;
+
     return type.isNotEmpty ? type : '-';
   }
 
-  String _formatPropertyType(String type) {
-    const typeMap = {
-      'apartment': 'Apartment',
-      'house': 'House',
-      'villa': 'Villa',
-      'land': 'Land',
-      'office': 'Office',
-      'shop': 'Shop',
-      'warehouse': 'Warehouse',
-      'building': 'Building',
-      'farm': 'Farm',
+  String _formatPropertyType(String type, {String? customType}) {
+    final typeMap = {
+      'apartment': AppStrings.propertyApartment,
+      'house': AppStrings.propertyHouse,
+      'villa': AppStrings.propertyVilla,
+      'land': AppStrings.propertyLand,
+      'office': AppStrings.propertyOffice,
+      'shop': AppStrings.propertyShop,
+      'warehouse': AppStrings.propertyWarehouse,
+      'building': AppStrings.propertyBuilding,
+      'farm': AppStrings.propertyFarm,
+      'other': AppStrings.propertyOther,
     };
+
+    if (type.toLowerCase() == 'other' && customType?.isNotEmpty == true) {
+      return customType!;
+    }
+
     return typeMap[type.toLowerCase()] ??
         (type.isNotEmpty
             ? '${type[0].toUpperCase()}${type.substring(1)}'
@@ -100,14 +125,17 @@ class _ReviewListingPageState extends State<ReviewListingPage> {
   }
 
   String _formatFeatureName(String feature) {
-    const featureMap = {
-      'elevator': 'Elevator',
-      'parking': 'Parking',
-      'garden': 'Garden',
-      'water': 'Water',
-      'electricity': 'Electricity',
-      'internet': 'Internet',
+    final featureMap = {
+      'elevator': AppStrings.elevator,
+      'parking': AppStrings.parking,
+      'garden': AppStrings.garden,
+      'water': AppStrings.water,
+      'electricity': AppStrings.electricity,
+      'internet': AppStrings.wifi,
+      'wifi': AppStrings.wifi,
+      'furnished': AppStrings.furnished,
     };
+
     return featureMap[feature.toLowerCase()] ??
         feature
             .replaceAll('_', ' ')
@@ -120,13 +148,14 @@ class _ReviewListingPageState extends State<ReviewListingPage> {
   }
 
   String _formatDocumentType(String type) {
-    const documentTypes = {
+    final documentTypes = <String, String>{
       'title_deed': AppStrings.titleDeed,
       'sale_contract': AppStrings.saleContract,
       'inheritance_deed': AppStrings.inheritanceDeed,
       'power_of_attorney': AppStrings.powerOfAttorney,
       'municipal_record': AppStrings.municipalRecord,
     };
+
     return documentTypes[type.toLowerCase()] ?? (type.isNotEmpty ? type : '-');
   }
 
@@ -135,24 +164,25 @@ class _ReviewListingPageState extends State<ReviewListingPage> {
     return BlocConsumer<CreatePropertyCubit, CreatePropertyState>(
       listener: (context, state) {
         if (state.status == CreatePropertyStatus.created) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Listing submitted successfully')),
-          );
           context.read<CreatePropertyCubit>().reset();
-          Navigator.of(context).popUntil((route) => route.isFirst);
+          context.go(RouteNames.verificationPendingScreen);
         }
 
         if (state.status == CreatePropertyStatus.createError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.errorMessage ?? 'Failed to submit listing'),
-            ),
+          AppTopSnackBar.show(
+            context,
+            title: AppStrings.propertySubmissionFailed,
+            message: state.errorMessage ?? AppStrings.somethingWentWrong,
+            prefixIcon: AppIcons.error,
           );
         }
 
         if (state.status == CreatePropertyStatus.validationError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.errorMessage ?? 'Invalid data')),
+          AppTopSnackBar.show(
+            context,
+            title: AppStrings.propertySubmissionFailed,
+            message: state.errorMessage ?? AppStrings.somethingWentWrong,
+            prefixIcon: AppIcons.error,
           );
         }
       },
@@ -200,7 +230,9 @@ class _ReviewListingPageState extends State<ReviewListingPage> {
                                   },
                                 ),
                               ),
+
                               const SizedBox(height: 14),
+
                               SizedBox(
                                 height: 140,
                                 child: ListView.separated(
@@ -214,10 +246,12 @@ class _ReviewListingPageState extends State<ReviewListingPage> {
                                       const SizedBox(width: 14),
                                   itemBuilder: (context, index) {
                                     final photo = state.photos[index];
+
                                     return _propertyImage(photo);
                                   },
                                 ),
                               ),
+
                               const SizedBox(height: 28),
                             ],
 
@@ -249,11 +283,16 @@ class _ReviewListingPageState extends State<ReviewListingPage> {
                                     AppStrings.listingType,
                                     _formatListingType(state.listingType),
                                   ),
+
                                   _divider(),
+
                                   _detailRow(
                                     context,
                                     AppStrings.propertyType,
-                                    _formatPropertyType(state.type),
+                                    _formatPropertyType(
+                                      state.type,
+                                      customType: state.customType,
+                                    ),
                                   ),
 
                                   const SizedBox(height: 28),
@@ -279,19 +318,25 @@ class _ReviewListingPageState extends State<ReviewListingPage> {
                                     AppStrings.location,
                                     _formatLocation(state),
                                   ),
+
                                   _divider(),
+
                                   _detailRow(
                                     context,
                                     AppStrings.area,
                                     _formatArea(state),
                                   ),
+
                                   _divider(),
+
                                   _detailRow(
                                     context,
                                     AppStrings.price,
                                     _formatPrice(state),
                                   ),
+
                                   _divider(),
+
                                   _detailRow(
                                     context,
                                     AppStrings.rooms,
@@ -299,7 +344,9 @@ class _ReviewListingPageState extends State<ReviewListingPage> {
                                         ? state.rooms.toString()
                                         : '-',
                                   ),
+
                                   _divider(),
+
                                   _detailRow(
                                     context,
                                     AppStrings.bathrooms,
@@ -307,12 +354,14 @@ class _ReviewListingPageState extends State<ReviewListingPage> {
                                         ? state.bathrooms.toString()
                                         : '-',
                                   ),
+
                                   if (state.floorNumber != null &&
                                       state.floorNumber! > 0) ...[
                                     _divider(),
+
                                     _detailRow(
                                       context,
-                                      'Floor',
+                                      AppStrings.floor,
                                       state.floorNumber.toString(),
                                     ),
                                   ],
@@ -438,6 +487,7 @@ class _ReviewListingPageState extends State<ReviewListingPage> {
                         }
                       },
                     ),
+
                     const SizedBox(height: 33),
                   ],
                 ),
@@ -461,25 +511,36 @@ class _ReviewListingPageState extends State<ReviewListingPage> {
 
   // =============================================================
   Widget _propertyImage(String image) {
-    final file = File(image);
     return ClipRRect(
       borderRadius: BorderRadius.circular(16),
       child: SizedBox(
         width: 210,
         height: 140,
-        child: file.existsSync()
-            ? Image.file(
-                file,
-                fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => _imagePlaceholder(),
-              )
-            : Image.asset(
+        child: kIsWeb
+            ? Image.network(
                 image,
                 fit: BoxFit.cover,
                 errorBuilder: (_, __, ___) => _imagePlaceholder(),
-              ),
+              )
+            : _buildNativePropertyImage(image),
       ),
     );
+  }
+
+  Widget _buildNativePropertyImage(String image) {
+    final file = File(image);
+
+    return file.existsSync()
+        ? Image.file(
+            file,
+            fit: BoxFit.cover,
+            errorBuilder: (_, __, ___) => _imagePlaceholder(),
+          )
+        : Image.asset(
+            image,
+            fit: BoxFit.cover,
+            errorBuilder: (_, __, ___) => _imagePlaceholder(),
+          );
   }
 
   Widget _imagePlaceholder() {
@@ -517,7 +578,10 @@ class _ReviewListingPageState extends State<ReviewListingPage> {
                 AppIcons.edit,
                 width: 16,
                 height: 16,
-                colorFilter: ColorFilter.mode(AppColors.white, BlendMode.srcIn),
+                colorFilter: const ColorFilter.mode(
+                  AppColors.white,
+                  BlendMode.srcIn,
+                ),
               ),
               const SizedBox(width: 5),
               Text(
@@ -579,6 +643,7 @@ class _ReviewListingPageState extends State<ReviewListingPage> {
         ),
       );
     }
+
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -616,15 +681,24 @@ class _ReviewListingPageState extends State<ReviewListingPage> {
       itemCount: photos.length,
       itemBuilder: (context, index) {
         final photo = photos[index];
+
         return ClipRRect(
           borderRadius: BorderRadius.circular(12),
-          child: Image.file(
-            File(photo),
-            width: double.infinity,
-            height: double.infinity,
-            fit: BoxFit.cover,
-            errorBuilder: (_, __, ___) => _imagePlaceholder(),
-          ),
+          child: kIsWeb
+              ? Image.network(
+                  photo,
+                  width: double.infinity,
+                  height: double.infinity,
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) => _imagePlaceholder(),
+                )
+              : Image.file(
+                  File(photo),
+                  width: double.infinity,
+                  height: double.infinity,
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) => _imagePlaceholder(),
+                ),
         );
       },
     );
@@ -639,6 +713,7 @@ class _ReviewListingPageState extends State<ReviewListingPage> {
       separatorBuilder: (_, _) => const SizedBox(height: 8),
       itemBuilder: (context, index) {
         final file = files[index];
+
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
           decoration: BoxDecoration(

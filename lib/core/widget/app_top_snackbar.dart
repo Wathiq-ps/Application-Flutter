@@ -41,9 +41,6 @@ class AppTopSnackBar extends StatelessWidget {
   final double titleFontSize;
   final double messageFontSize;
 
-  static const double _figmaWidth = 393;
-  static const double _figmaHeight = 852;
-
   static void show(
       BuildContext context, {
         required String title,
@@ -56,8 +53,7 @@ class AppTopSnackBar extends StatelessWidget {
       }) {
     final overlay = Overlay.of(context);
 
-    final currentScreenWidth = context.screenWidth;
-    final widthScale = currentScreenWidth / _figmaWidth;
+    final widthScale = context.widthScale;
 
     late OverlayEntry overlayEntry;
 
@@ -131,8 +127,8 @@ class AppTopSnackBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final currentScreenWidth = context.screenWidth;
     final currentScreenHeight = context.screenHeight;
-    final widthScale = currentScreenWidth / _figmaWidth;
-    final heightScale = currentScreenHeight / _figmaHeight;
+    final widthScale = context.widthScale;
+    final heightScale = context.heightScale;
 
     final responsiveTextHeight = _getResponsiveScale(
       currentScreenWidth,

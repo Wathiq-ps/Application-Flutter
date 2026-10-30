@@ -1,46 +1,31 @@
 import 'package:equatable/equatable.dart';
-
+import 'package:mobile/core/resource/resource_state.dart';
+import '../../domain/entities/owner_properties_page.dart';
 import '../../domain/entities/owner_property_list_item.dart';
-
-enum OwnerPropertySaveStatus {
-  idle,
-  saving,
-  success,
-  error,
-}
 
 class OwnerPropertyState extends Equatable {
   const OwnerPropertyState({
-    this.properties = const [],
-    this.showStatusBadge = true,
-    this.saveStatus = OwnerPropertySaveStatus.idle,
-    this.errorMessage,
+    this.resource = const ResourceState<OwnerPropertiesPage>(),
+    this.isLoadingMore = false,
   });
 
-  final List<OwnerPropertyListItem> properties;
-  final bool showStatusBadge;
-  final OwnerPropertySaveStatus saveStatus;
-  final String? errorMessage;
+  final ResourceState<OwnerPropertiesPage> resource;
+  final bool isLoadingMore;
+
+  List<OwnerPropertyListItem> get properties => resource.data?.items ?? const [];
+  bool get hasMore => resource.data?.hasMore ?? false;
+  int get currentPage => resource.data?.currentPage ?? 1;
 
   OwnerPropertyState copyWith({
-    List<OwnerPropertyListItem>? properties,
-    bool? showStatusBadge,
-    OwnerPropertySaveStatus? saveStatus,
-    String? errorMessage,
+    ResourceState<OwnerPropertiesPage>? resource,
+    bool? isLoadingMore,
   }) {
     return OwnerPropertyState(
-      properties: properties ?? this.properties,
-      showStatusBadge: showStatusBadge ?? this.showStatusBadge,
-      saveStatus: saveStatus ?? this.saveStatus,
-      errorMessage: errorMessage ?? this.errorMessage,
+      resource: resource ?? this.resource,
+      isLoadingMore: isLoadingMore ?? this.isLoadingMore,
     );
   }
 
   @override
-  List<Object?> get props => [
-    properties,
-    showStatusBadge,
-    saveStatus,
-    errorMessage,
-  ];
+  List<Object?> get props => [resource, isLoadingMore];
 }

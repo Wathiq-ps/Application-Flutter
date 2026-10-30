@@ -14,6 +14,7 @@ class AppSvgIconButton extends StatelessWidget {
     this.backgroundColor,
     this.borderRadius,
     this.semanticLabel,
+    this.flipForRtl = false,
   });
 
   final double widthScale;
@@ -27,8 +28,28 @@ class AppSvgIconButton extends StatelessWidget {
   final double? borderRadius;
   final String? semanticLabel;
 
+  final bool flipForRtl;
+
   @override
   Widget build(BuildContext context) {
+    final bool shouldFlip =
+        flipForRtl && Directionality.of(context) == TextDirection.rtl;
+
+    Widget svg = SvgPicture.asset(
+      icon,
+      width: (iconWidth ?? boxSize) * widthScale,
+      height: (iconHeight ?? boxSize) * widthScale,
+      fit: BoxFit.contain,
+      semanticsLabel: semanticLabel,
+      colorFilter: color == null
+          ? null
+          : ColorFilter.mode(color!, BlendMode.srcIn),
+    );
+
+    if (shouldFlip) {
+      svg = Transform.flip(flipX: true, child: svg);
+    }
+
     return GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
@@ -44,16 +65,7 @@ class AppSvgIconButton extends StatelessWidget {
           ),
         ),
         alignment: Alignment.center,
-        child: SvgPicture.asset(
-          icon,
-          width: (iconWidth ?? boxSize) * widthScale,
-          height: (iconHeight ?? boxSize) * widthScale,
-          fit: BoxFit.contain,
-          semanticsLabel: semanticLabel,
-          colorFilter: color == null
-              ? null
-              : ColorFilter.mode(color!, BlendMode.srcIn),
-        ),
+        child: svg,
       ),
     );
   }

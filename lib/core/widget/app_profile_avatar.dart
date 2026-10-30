@@ -1,10 +1,9 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../config/theme/app_colors.dart';
 import '../constant/app_icons.dart';
-
-
 
 class AppProfileAvatar extends StatelessWidget {
   const AppProfileAvatar({
@@ -18,6 +17,10 @@ class AppProfileAvatar extends StatelessWidget {
     this.imageAsset,
     this.initialsSource,
     this.showInitialsFallback = false,
+    this.initialsFontSize = 12,
+    this.initialsFontWeight = FontWeight.w700,
+    this.initialsLineHeight = 16 / 12,
+    this.initialsLetterSpacing = 0.24,
     this.backgroundColor,
     this.placeholderBackgroundColor,
     this.initialsColor,
@@ -26,9 +29,10 @@ class AppProfileAvatar extends StatelessWidget {
     this.borderColor,
     this.borderWidth = 0,
     this.showShadow = true,
+    this.shadowBlurRadius = 4,
+    this.shadowOffset = Offset.zero,
     this.onTap,
   });
-
 
   final double widthScale;
   final double size;
@@ -39,6 +43,10 @@ class AppProfileAvatar extends StatelessWidget {
   final String? imageAsset;
   final String? initialsSource;
   final bool showInitialsFallback;
+  final double initialsFontSize;
+  final FontWeight initialsFontWeight;
+  final double initialsLineHeight;
+  final double initialsLetterSpacing;
   final Color? backgroundColor;
   final Color? placeholderBackgroundColor;
   final Color? initialsColor;
@@ -47,17 +55,19 @@ class AppProfileAvatar extends StatelessWidget {
   final Color? borderColor;
   final double borderWidth;
   final bool showShadow;
+  final double shadowBlurRadius;
+  final Offset shadowOffset;
   final VoidCallback? onTap;
 
   bool get _hasImage =>
       imageFile != null ||
-          (imageUrl != null && imageUrl!.trim().isNotEmpty) ||
-          (imageAsset != null && imageAsset!.trim().isNotEmpty);
+      (imageUrl != null && imageUrl!.trim().isNotEmpty) ||
+      (imageAsset != null && imageAsset!.trim().isNotEmpty);
 
   bool get _hasInitials =>
       showInitialsFallback &&
-          initialsSource != null &&
-          initialsSource!.trim().isNotEmpty;
+      initialsSource != null &&
+      initialsSource!.trim().isNotEmpty;
 
   bool get _isCircle => borderRadius == null;
 
@@ -86,17 +96,18 @@ class AppProfileAvatar extends StatelessWidget {
         borderRadius: _shapeRadius,
         border: borderWidth > 0
             ? Border.all(
-          color: borderColor ?? AppColors.primary,
-          width: borderWidth * widthScale,
-        )
+                color: borderColor ?? AppColors.primary,
+                width: borderWidth * widthScale,
+              )
             : null,
         boxShadow: showShadow
             ? [
-          BoxShadow(
-            color: AppColors.black.withValues(alpha: 0.08),
-            blurRadius: 4 * widthScale,
-          ),
-        ]
+                BoxShadow(
+                  color: AppColors.black.withValues(alpha: 0.08),
+                  blurRadius: shadowBlurRadius * widthScale,
+                  offset: shadowOffset * widthScale,
+                ),
+              ]
             : null,
       ),
       clipBehavior: Clip.antiAlias,
@@ -121,6 +132,15 @@ class AppProfileAvatar extends StatelessWidget {
 
   Widget _buildImage() {
     if (imageFile != null) {
+      if (kIsWeb) {
+        return Image.network(
+          imageFile!.path,
+          width: _dimension,
+          height: _dimension,
+          fit: BoxFit.cover,
+          errorBuilder: (_, __, ___) => _buildPlaceholderIcon(),
+        );
+      }
       return Image.file(
         imageFile!,
         width: _dimension,
@@ -167,17 +187,17 @@ class AppProfileAvatar extends StatelessWidget {
     return Text(
       letter,
       style: TextStyle(
-        color: initialsColor ?? AppColors.secondary,
-        fontSize: 12 * widthScale,
-        fontWeight: FontWeight.w700,
-        height: 16 / 12,
-        letterSpacing: 0.24,
+        color: initialsColor ?? AppColors.white,
+        fontSize: initialsFontSize * widthScale,
+        fontWeight: initialsFontWeight,
+        height: initialsLineHeight,
+        letterSpacing: initialsLetterSpacing * widthScale,
       ),
     );
   }
 
   Widget _buildPlaceholderIcon() {
-    final double iconSize = _dimension * placeholderIconRatio;
+    final double iconSize = (_dimension * placeholderIconRatio) / 2;
     return Center(
       child: SvgPicture.asset(
         placeholderIcon,

@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../../../../core/constant/api_constants.dart';
+import '../../../../core/error/verification_exception.dart';
 import '../models/verification_model.dart';
 
 class VerificationService {
@@ -8,34 +10,51 @@ class VerificationService {
 
   VerificationService(this.dio);
 
+  /// POST /api/v1/kyc/documents  (multipart: front_image + selfie_image)
   Future<VerificationModel> uploadIdAndSelfie({
     required XFile idImage,
     required XFile selfieImage,
-    required String documentNumber,
   }) async {
-    final formData = FormData.fromMap({
-      'type': 'national_id',
-      'document_number': documentNumber,
+    try {
+      final formData = FormData.fromMap({
+        'front_image': await _toMultipart(idImage, 'front_image.jpg'),
+        'selfie_image': await _toMultipart(selfieImage, 'selfie_image.jpg'),
+      });
 
-      'front_image': await MultipartFile.fromFile(
-        idImage.path,
-        filename: idImage.name,
-      ),
+      final response = await dio.post(
+        ApiConstants.kycDocumentsEndpoint,
+        data: formData,
+      );
 
-      'selfie_image': await MultipartFile.fromFile(
-        selfieImage.path,
-        filename: selfieImage.name,
-      ),
-    });
-
-    final response = await dio.post('/api/v1/kyc/documents', data: formData);
-
-    return VerificationModel.fromJson(response.data['data'] ?? response.data);
+      return _parse(response.data);
+    } on DioException catch (e) {
+      throw VerificationException.fromDioException(e);
+    }
   }
 
   Future<VerificationModel> getVerificationStatus() async {
-    final response = await dio.get('/api/v1/kyc/status');
+    try {
+      final response = await dio.get(ApiConstants.kycStatusEndpoint);
+      return _parse(response.data);
+    } on DioException catch (e) {
+      throw VerificationException.fromDioException(e);
+    }
+  }
 
-    return VerificationModel.fromJson(response.data['data'] ?? response.data);
+  Future<MultipartFile> _toMultipart(XFile file, String fallbackName) async {
+    final bytes = await file.readAsBytes();
+    var name = file.name.isNotEmpty ? file.name : fallbackName;
+    // Web blobs can come without an extension; the backend needs one.
+    if (!name.contains('.')) name = '$name.jpg';
+    return MultipartFile.fromBytes(bytes, filename: name);
+  }
+
+  VerificationModel _parse(dynamic body) {
+    if (body is Map) {
+      final inner = body['data'];
+      final json = inner is Map ? inner : body;
+      return VerificationModel.fromJson(Map<String, dynamic>.from(json));
+    }
+    return const VerificationModel();
   }
 }

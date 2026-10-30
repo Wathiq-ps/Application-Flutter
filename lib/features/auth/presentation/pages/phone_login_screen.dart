@@ -31,144 +31,135 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
 
-// Figma design dimensions.
-    const figmaWidth = 393.0;
-    const figmaHeight = 852.0;
-
-// Current screen dimensions.
-    final currentScreenWidth = context.screenWidth;
-    final currentScreenHeight = context.screenHeight;
-
-// Responsive scale factors.
-    final widthScale = currentScreenWidth / figmaWidth;
-    final heightScale = currentScreenHeight / figmaHeight;
-
-// Responsive horizontal padding.
+    final widthScale = context.widthScale;
+    final heightScale = context.heightScale;
     final horizontalPadding = widthScale * 27;
 
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
           onPressed: () => Navigator.maybePop(context),
-          icon: SvgPicture.asset(
-            AppIcons.back,
-            width: widthScale * 24,
-            height: widthScale * 24,
-            excludeFromSemantics: true,
+          icon: Transform.flip(
+            flipX: Directionality.of(context) == TextDirection.rtl,
+            child: SvgPicture.asset(
+              AppIcons.back,
+              width: widthScale * 24,
+              height: widthScale * 24,
+              excludeFromSemantics: true,
+            ),
           ),
         ),
       ),
       body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: horizontalPadding,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(
-                height: heightScale * 48,
+        child: Center(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: context.authFormMaxWidth),
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: horizontalPadding,
               ),
-
-// Welcome title.
-              Text(
-                AppStrings.welcomeBack,
-                style: textTheme.headlineLarge?.copyWith(
-                  color: AppColors.primary,
-                  fontSize: heightScale * 36,
-                  height: 45 / 36,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: -0.9,
-                ),
-              ),
-
-              SizedBox(
-                height: heightScale * 16,
-              ),
-
-// Description.
-              Text(
-                AppStrings.enterPhoneNumberToSignIn,
-                style: textTheme.bodyLarge?.copyWith(
-                  color: AppColors.textSecondary,
-                  fontSize: heightScale * 18,
-                  height: 28 / 18,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-
-              SizedBox(
-                height: heightScale * 24,
-              ),
-
-// Phone number label.
-              Text(
-                AppStrings.enterPhoneNumber,
-                style: textTheme.labelMedium?.copyWith(
-                  color: AppColors.textPrimary,
-                  fontSize: widthScale * 14,
-                  height: 20 / 14,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-
-              SizedBox(
-                height: heightScale * 12,
-              ),
-
-// Phone number input.
-              PhoneNumberField(
-                controller: _phoneNumberController,
-              ),
-
-              SizedBox(
-                height: heightScale * 24,
-              ),
-
-// Send code button.
-              SizedBox(
-                width: double.infinity,
-                child: AppElevatedButton(
-                  text: AppStrings.sendCode,
-                  onPressed: null,
-                  enabled: false,
-                  backgroundColor: AppColors.primary,
-                  disabledBackgroundColor: AppColors.disabled,
-                  disabledTextColor: AppColors.textSecondary,
-                  height: heightScale * 56,
-                  borderRadius: 9999,
-                  postIcon: Icon(
-                    Icons.arrow_forward,
-                    size: widthScale * 16,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    height: heightScale * 48,
                   ),
-                  textStyle: textTheme.bodyMedium?.copyWith(
-                    fontSize: widthScale * 16,
-                    height: 24 / 16,
-                    fontWeight: FontWeight.w500,
+
+                  Text(
+                    AppStrings.welcomeBack,
+                    style: textTheme.headlineLarge?.copyWith(
+                      color: AppColors.primary,
+                      fontSize: heightScale * 36,
+                      height: 45 / 36,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: -0.9,
+                    ),
                   ),
-                ),
-              ),
 
-              const Spacer(),
+                  SizedBox(
+                    height: heightScale * 16,
+                  ),
 
-// Register section.
-              AuthActionRow(
-                message: AppStrings.dontHaveAccount,
-                actionText: AppStrings.signUp,
-                messageColor: AppColors.textSecondary,
-                actionColor: AppColors.primary,
-                onActionPressed: () {
-                  context.go(
-                    RouteNames.onboardingScreen,
-                  );
-                },
-                textFontSize: widthScale * 14,
-                gap: widthScale * 4,
+                  Text(
+                    AppStrings.enterPhoneNumberToSignIn,
+                    style: textTheme.bodyLarge?.copyWith(
+                      color: AppColors.textSecondary,
+                      fontSize: heightScale * 18,
+                      height: 28 / 18,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+
+                  SizedBox(
+                    height: heightScale * 24,
+                  ),
+
+                  Text(
+                    AppStrings.enterPhoneNumber,
+                    style: textTheme.labelMedium?.copyWith(
+                      color: AppColors.textPrimary,
+                      fontSize: widthScale * 14,
+                      height: 20 / 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+
+                  SizedBox(
+                    height: heightScale * 12,
+                  ),
+
+                  PhoneNumberField(
+                    controller: _phoneNumberController,
+                  ),
+
+                  SizedBox(
+                    height: heightScale * 24,
+                  ),
+
+                  SizedBox(
+                    width: double.infinity,
+                    child: AppElevatedButton(
+                      text: AppStrings.sendCode,
+                      onPressed: null,
+                      enabled: false,
+                      backgroundColor: AppColors.primary,
+                      disabledBackgroundColor: AppColors.disabled,
+                      disabledTextColor: AppColors.textSecondary,
+                      height: heightScale * 56,
+                      borderRadius: 9999,
+                      postIcon: Icon(
+                        Icons.arrow_forward,
+                        size: widthScale * 16,
+                      ),
+                      textStyle: textTheme.bodyMedium?.copyWith(
+                        fontSize: widthScale * 16,
+                        height: 24 / 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+
+                  const Spacer(),
+
+                  AuthActionRow(
+                    message: AppStrings.dontHaveAccount,
+                    actionText: AppStrings.signUp,
+                    messageColor: AppColors.textSecondary,
+                    actionColor: AppColors.primary,
+                    onActionPressed: () {
+                      context.go(
+                        RouteNames.onboardingScreen,
+                      );
+                    },
+                    textFontSize: widthScale * 14,
+                    gap: widthScale * 4,
+                  ),
+                  SizedBox(
+                    height: heightScale * 24,
+                  ),
+                ],
               ),
-              SizedBox(
-                height: heightScale * 24,
-              ),
-            ],
+            ),
           ),
         ),
       ),

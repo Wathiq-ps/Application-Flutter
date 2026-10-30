@@ -4,6 +4,8 @@ import 'package:mobile/config/routes/routes_names.dart';
 import 'package:mobile/config/theme/app_colors.dart';
 import 'package:mobile/core/constant/images_path.dart';
 
+import '../../../core/di/injector.dart';
+
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -117,11 +119,11 @@ class _SplashScreenState extends State<SplashScreen>
       const Duration(milliseconds: 700),
     );
 
+    final bool isLoggedIn = await Injector.secureStorage.hasValidSession();
     if (!mounted) return;
 
-    context.go(
-      RouteNames.onboardingScreen,
-    );
+    context.go(isLoggedIn ? RouteNames.mainNavigation : RouteNames.onboardingScreen);
+
   }
 
   @override

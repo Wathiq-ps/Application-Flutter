@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-
+import 'package:go_router/go_router.dart';
 import '../../../../config/theme/app_colors.dart';
 import '../../../../core/constant/app_icons.dart';
- 
+
 class HeaderWidget extends StatelessWidget {
   final String title;
   final String subTitle;
@@ -16,14 +16,17 @@ class HeaderWidget extends StatelessWidget {
       child: Row(
         children: [
           IconButton(
-            onPressed: () => Navigator.maybePop(context),
-            icon: SvgPicture.asset(
-              AppIcons.back,
-              width: 20,
-              height: 20,
-              colorFilter: const ColorFilter.mode(
-                AppColors.white,
-                BlendMode.srcIn,
+            onPressed: () => context.pop(),
+            icon: Transform.flip(
+              flipX: Directionality.of(context) == TextDirection.rtl,
+              child: SvgPicture.asset(
+                AppIcons.back,
+                width: 20,
+                height: 20,
+                colorFilter: const ColorFilter.mode(
+                  AppColors.white,
+                  BlendMode.srcIn,
+                ),
               ),
             ),
           ),

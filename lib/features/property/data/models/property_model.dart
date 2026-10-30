@@ -55,6 +55,67 @@ class PropertyModel extends PropertyEntity {
     );
   }
 
+  factory PropertyModel.fromEntity(PropertyEntity e) {
+    return PropertyModel(
+      id: e.id,
+      reference: e.reference,
+      publishedAt: e.publishedAt,
+      listingType: e.listingType,
+      type: e.type,
+      title: e.title,
+      description: e.description,
+      city: e.city,
+      district: e.district,
+      buildingNumber: e.buildingNumber,
+      addressLine: e.addressLine,
+      areaSqm: e.areaSqm,
+      price: e.price,
+      priceCurrency: e.priceCurrency,
+      priceUnit: e.priceUnit,
+      rooms: e.rooms,
+      bathrooms: e.bathrooms,
+      floorNumber: e.floorNumber,
+      isFurnished: e.isFurnished,
+      features: e.features,
+      photos: e.photos,
+      averageRating: e.averageRating,
+      ratingsCount: e.ratingsCount,
+    );
+  }
+
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'reference': reference,
+      'published_at': publishedAt?.toIso8601String(),
+      'listing_type': switch (listingType) {
+        PropertyListingType.sale => 'sale',
+        PropertyListingType.rent => 'rent',
+        PropertyListingType.unknown => null,
+      },
+      'type': type,
+      'title': title,
+      'description': description,
+      'city': city,
+      'district': district,
+      'building_number': buildingNumber,
+      'address_line': addressLine,
+      'area_sqm': areaSqm,
+      'price': price,
+      'price_currency': priceCurrency,
+      'price_unit': priceUnit,
+      'rooms': rooms,
+      'bathrooms': bathrooms,
+      'floor_number': floorNumber,
+      'is_furnished': isFurnished,
+      'features': features,
+      'photos': photos,
+      'average_rating': averageRating,
+      'ratings_count': ratingsCount,
+    };
+  }
+
   static double? _toDouble(dynamic v) {
     if (v is num) return v.toDouble();
     if (v is String) return double.tryParse(v);

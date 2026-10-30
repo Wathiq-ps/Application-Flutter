@@ -60,6 +60,8 @@ class AppErrorMapper {
       case DioExceptionType.connectionTimeout:
       case DioExceptionType.sendTimeout:
       case DioExceptionType.receiveTimeout:
+        return AppStrings.connectionTimeout;
+
       case DioExceptionType.connectionError:
         return AppStrings.checkInternetConnection;
 

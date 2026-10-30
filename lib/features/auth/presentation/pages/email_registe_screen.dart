@@ -80,13 +80,9 @@ class _EmailRegisterScreenState extends State<EmailRegisterScreen> {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
 
-    final _figmaWidth = 393;
-    final _figmaHeight = 852;
-    final _currentScreenWidth = context.screenWidth;
-    final _currentScreenHeight = context.screenHeight;
-    final _widthScale = (_currentScreenWidth / _figmaWidth);
-    final _heightScale = (_currentScreenHeight / _figmaHeight);
-    final _horizantalPadding = _widthScale * 32;
+    final widthScale = context.widthScale;
+    final heightScale = context.heightScale;
+    final horizontalPadding = widthScale * 32;
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -95,12 +91,15 @@ class _EmailRegisterScreenState extends State<EmailRegisterScreen> {
         elevation: 0,
         surfaceTintColor: AppColors.transparent,
         leading: IconButton(
-          padding: EdgeInsets.only(left: 5 * _widthScale),
+          padding: EdgeInsets.only(left: 5 * widthScale),
           onPressed: () => context.pop(),
-          icon: SvgPicture.asset(
-            AppIcons.back,
-            width: _widthScale * 20,
-            height: _widthScale * 20,
+          icon: Transform.flip(
+            flipX: Directionality.of(context) == TextDirection.rtl,
+            child: SvgPicture.asset(
+              AppIcons.back,
+              width: widthScale * 20,
+              height: widthScale * 20,
+            ),
           ),
         ),
       ),
@@ -132,121 +131,126 @@ class _EmailRegisterScreenState extends State<EmailRegisterScreen> {
             ),
           ),
 
-          Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: _horizantalPadding,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Spacer(),
-
-                Text(
-                  AppStrings.getStarted,
-                  style: textTheme.headlineLarge?.copyWith(
-                    color: AppColors.white,
-                    fontSize: _heightScale * 32,
-                    height: (40 / 32),
-                    fontWeight: FontWeight.w700,
-                  ),
+          Center(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: context.authFormMaxWidth),
+              child: Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: horizontalPadding,
                 ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Spacer(),
 
-                SizedBox(height: _heightScale * 16),
+                    Text(
+                      AppStrings.getStarted,
+                      style: textTheme.headlineLarge?.copyWith(
+                        color: AppColors.white,
+                        fontSize: heightScale * 32,
+                        height: (40 / 32),
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
 
-                Text(
-                  AppStrings.enterYourEmailAdd,
-                  style: textTheme.bodyLarge?.copyWith(
-                    color: AppColors.white,
-                    fontSize: _heightScale * 16,
-                    height: (24 / 16),
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
+                    SizedBox(height: heightScale * 16),
 
-                SizedBox(height: _heightScale * 24),
+                    Text(
+                      AppStrings.enterYourEmailAdd,
+                      style: textTheme.bodyLarge?.copyWith(
+                        color: AppColors.white,
+                        fontSize: heightScale * 16,
+                        height: (24 / 16),
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
 
-                Text(
-                  AppStrings.enterEmail,
-                  style: textTheme.labelMedium?.copyWith(
-                    color: AppColors.white,
-                    fontSize: _heightScale * 14,
-                    height: (20 / 14),
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
+                    SizedBox(height: heightScale * 24),
 
-                SizedBox(height: _heightScale * 12),
-                BlocListener<AuthCubit, AuthState>(
-                  listenWhen: (previous, current) =>
-                  previous.status != current.status &&
-                      current.status == AuthStatus.requestError,
-                  listener: (context, state) {
-                    AppTopSnackBar.show(
-                      context,
-                      title: AppStrings.verificationFailed,
-                      message: state.errorMessage ?? AppStrings.somethingWentWrong,
-                      prefixIcon: AppIcons.error,
-                    );
-                  },
-                  child: BlocBuilder<AuthCubit, AuthState>(
-                    builder: (BuildContext context, AuthState state) {
-                      return InputFieldWidget(
-                        hint: AppStrings.emailHintText,
-                        controller: _emailController,
-                        errorText: state.status == AuthStatus.validationError
-                            ? state.errorMessage
-                            : null,
-                        onChanged: (value) {
-                          context.read<AuthCubit>().emailChange(value);
+                    Text(
+                      AppStrings.enterEmail,
+                      style: textTheme.labelMedium?.copyWith(
+                        color: AppColors.white,
+                        fontSize: heightScale * 14,
+                        height: (20 / 14),
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+
+                    SizedBox(height: heightScale * 12),
+                    BlocListener<AuthCubit, AuthState>(
+                      listenWhen: (previous, current) =>
+                      previous.status != current.status &&
+                          current.status == AuthStatus.requestError,
+                      listener: (context, state) {
+                        AppTopSnackBar.show(
+                          context,
+                          title: AppStrings.verificationFailed,
+                          message: state.errorMessage ?? AppStrings.somethingWentWrong,
+                          prefixIcon: AppIcons.error,
+                        );
+                      },
+                      child: BlocBuilder<AuthCubit, AuthState>(
+                        builder: (BuildContext context, AuthState state) {
+                          return InputFieldWidget(
+                            hint: AppStrings.emailHintText,
+                            controller: _emailController,
+                            errorText: state.status == AuthStatus.validationError
+                                ? state.errorMessage
+                                : null,
+                            onChanged: (value) {
+                              context.read<AuthCubit>().emailChange(value);
+                            },
+                          );
                         },
-                      );
-                    },
-                  ),
-                ),
+                      ),
+                    ),
 
-                SizedBox(height: _heightScale * 24),
+                    SizedBox(height: heightScale * 24),
 
-                BlocListener<AuthCubit, AuthState>(
-                  listenWhen: (previous, current) =>
-                  previous.status != current.status &&
-                      current.status == AuthStatus.otpRequested,
-                  listener: (context, state) {
-                    _handleRegisterSuccess(context);
-                  },
-                  child: BlocBuilder<AuthCubit, AuthState>(
-                    builder: (BuildContext context, AuthState state) {
-                      return AppElevatedButton(
-                        text: AppStrings.sendCode,
-                        onPressed: state.isLoading
-                            ? null
-                            : () {
-                          context.read<AuthCubit>().emailValidate();
+                    BlocListener<AuthCubit, AuthState>(
+                      listenWhen: (previous, current) =>
+                      previous.status != current.status &&
+                          current.status == AuthStatus.otpRequested,
+                      listener: (context, state) {
+                        _handleRegisterSuccess(context);
+                      },
+                      child: BlocBuilder<AuthCubit, AuthState>(
+                        builder: (BuildContext context, AuthState state) {
+                          return AppElevatedButton(
+                            text: AppStrings.sendCode,
+                            onPressed: state.isLoading
+                                ? null
+                                : () {
+                              context.read<AuthCubit>().emailValidate();
+                            },
+                            backgroundColor: AppColors.primary,
+                            borderWidth: 1,
+                            height: (widthScale * 58).clamp(20, 130),
+                            borderRadius: 9999,
+                            postIcon: SvgPicture.asset(AppIcons.send),
+                            iconSize: 15 * widthScale,
+                            iconGap: 8 * widthScale,
+                          );
                         },
-                        backgroundColor: AppColors.primary,
-                        borderWidth: 1,
-                        height: (_widthScale * 58).clamp(20, 130),
-                        borderRadius: 9999,
-                        postIcon: SvgPicture.asset(AppIcons.send),
-                        iconSize: 15 * _widthScale,
-                        iconGap: 8 * _widthScale,
-                      );
-                    },
-                  ),
+                      ),
+                    ),
+
+                    const Spacer(),
+
+                    AuthActionRow(
+                      message: AppStrings.alreadyHaveAccount,
+                      actionText: AppStrings.signIn,
+                      onActionPressed: () {
+                        context.go(RouteNames.onboardingLoginScreen);
+                      },
+                      textFontSize: 14 * widthScale,
+                    ),
+
+                    SizedBox(height: heightScale * 32),
+                  ],
                 ),
-
-                const Spacer(),
-
-                AuthActionRow(
-                  message: AppStrings.alreadyHaveAccount,
-                  actionText: AppStrings.signIn,
-                  onActionPressed: () {
-                    context.go(RouteNames.onboardingLoginScreen);
-                  },
-                  textFontSize: 14 * _widthScale,
-                ),
-
-                SizedBox(height: _heightScale * 32),
-              ],
+              ),
             ),
           ),
 

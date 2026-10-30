@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-
 import 'property_status.dart';
 
 class OwnerPropertyListItem extends Equatable {
@@ -19,6 +18,16 @@ class OwnerPropertyListItem extends Equatable {
     this.isListingActive = true,
     this.propertyType = '',
     this.description = '',
+    this.listingType = 'sale',
+    this.city = '',
+    this.district = '',
+    this.buildingNumber = '',
+    this.latitude = 0,
+    this.longitude = 0,
+    this.features = const [],
+    this.isFurnished = false,
+    this.rentUnit,
+    this.floorNumber,
   });
 
   final String id;
@@ -29,13 +38,29 @@ class OwnerPropertyListItem extends Equatable {
   final int bathrooms;
   final int areaSqm;
   final String price;
+
+  /// Display label only, e.g. "USD /".
   final String priceUnit;
   final String currency;
   final PropertyStatus status;
   final bool isListingActive;
+
+  /// Display suffix only, e.g. " month".
   final String pricePeriod;
   final String propertyType;
   final String description;
+  final String listingType;
+  final String city;
+  final String district;
+  final String buildingNumber;
+  final double latitude;
+  final double longitude;
+  final List<String> features;
+  final bool isFurnished;
+
+  /// Raw API value: per_hour | per_day | per_week | per_month (null for sale).
+  final String? rentUnit;
+  final int? floorNumber;
 
   OwnerPropertyListItem copyWith({
     String? id,
@@ -53,6 +78,16 @@ class OwnerPropertyListItem extends Equatable {
     bool? isListingActive,
     String? propertyType,
     String? description,
+    String? listingType,
+    String? city,
+    String? district,
+    String? buildingNumber,
+    double? latitude,
+    double? longitude,
+    List<String>? features,
+    bool? isFurnished,
+    String? rentUnit,
+    int? floorNumber,
   }) {
     return OwnerPropertyListItem(
       id: id ?? this.id,
@@ -70,6 +105,16 @@ class OwnerPropertyListItem extends Equatable {
       isListingActive: isListingActive ?? this.isListingActive,
       propertyType: propertyType ?? this.propertyType,
       description: description ?? this.description,
+      listingType: listingType ?? this.listingType,
+      city: city ?? this.city,
+      district: district ?? this.district,
+      buildingNumber: buildingNumber ?? this.buildingNumber,
+      latitude: latitude ?? this.latitude,
+      longitude: longitude ?? this.longitude,
+      features: features ?? this.features,
+      isFurnished: isFurnished ?? this.isFurnished,
+      rentUnit: rentUnit ?? this.rentUnit,
+      floorNumber: floorNumber ?? this.floorNumber,
     );
   }
 
@@ -90,5 +135,15 @@ class OwnerPropertyListItem extends Equatable {
     isListingActive,
     propertyType,
     description,
+    listingType,
+    city,
+    district,
+    buildingNumber,
+    latitude,
+    longitude,
+    features,
+    isFurnished,
+    rentUnit,
+    floorNumber,
   ];
 }
