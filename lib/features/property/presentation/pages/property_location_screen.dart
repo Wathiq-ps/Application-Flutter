@@ -575,8 +575,16 @@ class _PropertyLocationScreenState extends State<PropertyLocationScreen> {
                                     padding: const EdgeInsets.symmetric(
                                       horizontal: 8.0,
                                     ),
-                                    child: DropdownButtonHideUnderline(
-                                      child: DropdownButton<String>(
+                                    child: Directionality(
+                                      textDirection:
+                                          Localizations.localeOf(
+                                                context,
+                                              ).languageCode ==
+                                              'ar'
+                                          ? TextDirection.rtl
+                                          : TextDirection.ltr,
+                                      child: DropdownButtonHideUnderline(
+                                        child: DropdownButton<String>(
                                         borderRadius: BorderRadius.circular(12),
                                         value: _selectedPriceUnit,
                                         dropdownColor: AppColors.background,
@@ -610,7 +618,8 @@ class _PropertyLocationScreenState extends State<PropertyLocationScreen> {
                                             unit,
                                           ) {
                                             return Align(
-                                              alignment: Alignment.centerLeft,
+                                              alignment:
+                                                  AlignmentDirectional.centerStart,
                                               child: Text(
                                                 unit['label']!,
                                                 style: const TextStyle(
@@ -647,6 +656,7 @@ class _PropertyLocationScreenState extends State<PropertyLocationScreen> {
                                           }
                                         },
                                       ),
+                                    ),
                                     ),
                                   ),
                                   isRequired: true,

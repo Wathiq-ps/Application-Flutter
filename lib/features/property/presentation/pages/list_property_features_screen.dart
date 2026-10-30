@@ -125,7 +125,7 @@ class _ListPropertyFeaturesScreenState
                                   ),
                                   const SizedBox(width: 6),
                                   Text(
-                                    '(Optional)',
+                                    AppStrings.optional,
                                     style: Theme.of(context).textTheme.bodySmall
                                         ?.copyWith(
                                           color: AppColors.white60,
@@ -185,7 +185,7 @@ class _ListPropertyFeaturesScreenState
             ),
             const SizedBox(width: 6),
             Text(
-              '(Optional)',
+              AppStrings.optional,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                 color: AppColors.white60,
                 fontSize: 12,

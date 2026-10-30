@@ -234,65 +234,69 @@ class _ProofOfOwnershipPageState extends State<ProofOfOwnershipPage> {
               width: 1,
             ),
           ),
-          child: DropdownButtonHideUnderline(
-            child: DropdownButton<String>(
-              value: _selectedDocumentType,
-              isExpanded: true,
-              borderRadius: BorderRadius.circular(12),
-              hint: Text(
-                AppStrings.selectDocumentType,
-                style: Theme.of(
-                  context,
-                ).textTheme.bodyMedium?.copyWith(color: AppColors.white),
-              ),
-              icon: const Icon(
-                Icons.keyboard_arrow_down_rounded,
-                color: AppColors.white,
-              ),
-              dropdownColor: AppColors.white,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: AppColors.white,
-                fontWeight: FontWeight.w500,
-              ),
-              selectedItemBuilder: (BuildContext context) {
-                return _documentTypes.entries.map<Widget>((entry) {
-                  return Align(
-                    alignment: Alignment.centerLeft,
+          child: Directionality(
+            textDirection:
+                Localizations.localeOf(context).languageCode == 'ar'
+                    ? TextDirection.rtl
+                    : TextDirection.ltr,
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<String>(
+                value: _selectedDocumentType,
+                isExpanded: true,
+                borderRadius: BorderRadius.circular(12),
+                hint: Text(
+                  AppStrings.selectDocumentType,
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium?.copyWith(color: AppColors.white),
+                ),
+                icon: const Icon(
+                  Icons.keyboard_arrow_down_rounded,
+                  color: AppColors.white,
+                ),
+                dropdownColor: AppColors.white,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: AppColors.white,
+                  fontWeight: FontWeight.w500,
+                ),
+                selectedItemBuilder: (BuildContext context) {
+                  return _documentTypes.entries.map<Widget>((entry) {
+                    return Align(
+                      alignment: AlignmentDirectional.centerStart,
+                      child: Text(
+                        entry.value,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: AppColors.white,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    );
+                  }).toList();
+                },
+                items: _documentTypes.entries.map((entry) {
+                  return DropdownMenuItem<String>(
+                    value: entry.key,
                     child: Text(
                       entry.value,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: AppColors.white,
+                        color: AppColors.primary,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
                   );
-                }).toList();
-              },
-              items: _documentTypes.entries.map((entry) {
-                return DropdownMenuItem<String>(
-                  value: entry.key,
-                  child: Text(
-                    entry.value,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: AppColors.primary,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                );
-              }).toList(),
-              onChanged: (value) {
-                setState(() {
-                  _selectedDocumentType = value;
-                  _documentTypeError = null;
-                });
-                if (value != null) {
-                  context
-                      .read<CreatePropertyCubit>()
-                      .ownershipDocumentTypeChanged(
-                        value,
-                      );
-                }
-              },
+                }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    _selectedDocumentType = value;
+                    _documentTypeError = null;
+                  });
+                  if (value != null) {
+                    context
+                        .read<CreatePropertyCubit>()
+                        .ownershipDocumentTypeChanged(value);
+                  }
+                },
+              ),
             ),
           ),
         ),
