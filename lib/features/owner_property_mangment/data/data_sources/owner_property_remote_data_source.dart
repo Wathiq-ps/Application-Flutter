@@ -83,7 +83,7 @@ class OwnerPropertyRemoteDataSourceImpl implements OwnerPropertyRemoteDataSource
   @override
   Future<Map<String, dynamic>> publishProperty(String id) async {
     try {
-      final response = await _dio.post(
+      final response = await _dio.patch(
         ApiConstants.publishPropertyEndpoint(id),
         options: await _authOptions(),
       );
@@ -96,7 +96,7 @@ class OwnerPropertyRemoteDataSourceImpl implements OwnerPropertyRemoteDataSource
   @override
   Future<Map<String, dynamic>> suspendProperty(String id) async {
     try {
-      final response = await _dio.get(
+      final response = await _dio.patch(
         ApiConstants.suspendPropertyEndpoint(id),
         options: await _authOptions(),
       );

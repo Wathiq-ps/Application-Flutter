@@ -2,7 +2,17 @@ import 'package:equatable/equatable.dart';
 import '../../domain/entities/edit_profile_user_entity.dart';
 import '../../domain/repository/edit_profile_repository.dart';
 
-enum EditProfileStatus { initial, loading, loadFailed, ready, saving, saveFailed, saved }
+enum EditProfileStatus {
+  initial,
+  loading,
+  loadFailed,
+  ready,
+  uploadingAvatar,
+  avatarUploadFailed,
+  saving,
+  saveFailed,
+  saved,
+}
 
 class EditProfileState extends Equatable {
   const EditProfileState({
@@ -38,6 +48,7 @@ class EditProfileState extends Equatable {
   bool get isLoading => status == EditProfileStatus.loading;
   bool get isLoadFailed => status == EditProfileStatus.loadFailed;
   bool get isSaving => status == EditProfileStatus.saving;
+  bool get isAvatarUploading => status == EditProfileStatus.uploadingAvatar;
   bool get hasSignatureToShow => pendingSignature != null || hasExistingSignature;
 
   EditProfileState copyWith({

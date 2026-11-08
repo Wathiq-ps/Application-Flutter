@@ -1,3 +1,5 @@
+import 'package:device_preview/device_preview.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'config/routes/app_routes.dart';
@@ -12,9 +14,12 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
   runApp(
-    BlocProvider(
-      create: (_) => LocaleCubit(Injector.localeStorageService)..load(),
-      child: const WathiqApp(),
+    DevicePreview(
+      enabled: !kReleaseMode,
+      builder: (context) => BlocProvider(
+        create: (_) => LocaleCubit(Injector.localeStorageService)..load(),
+        child: const WathiqApp(),
+      ),
     ),
   );
 }
@@ -32,9 +37,10 @@ class WathiqApp extends StatelessWidget {
         return MaterialApp.router(
           locale: currentLocale,
           builder: (context, child) {
+            final previewChild = DevicePreview.appBuilder(context, child);
             return KeyedSubtree(
               key: ValueKey(state.locale.code),
-              child: child ?? const SizedBox.shrink(),
+              child: previewChild,
             );
           },
           debugShowCheckedModeBanner: false,

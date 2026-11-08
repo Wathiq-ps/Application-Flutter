@@ -15,6 +15,10 @@ class EditProfileRepositoryImpl implements EditProfileRepository {
   }
 
   @override
+  Future<void> uploadProfileImage(String path) =>
+      _dataSource.uploadProfileImage(path);
+
+  @override
   Future<EditProfileUserEntity> updateProfile({
     required String name,
     required String nationality,

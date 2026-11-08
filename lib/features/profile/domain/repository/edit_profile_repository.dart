@@ -1,7 +1,5 @@
 import 'dart:typed_data';
 import '../entities/edit_profile_user_entity.dart';
-
-
 class SignatureInput {
   const SignatureInput.file(String path)
       : filePath = path,
@@ -17,6 +15,8 @@ class SignatureInput {
 
 abstract class EditProfileRepository {
   Future<EditProfileUserEntity> getProfile();
+
+  Future<void> uploadProfileImage(String path);
 
   Future<EditProfileUserEntity> updateProfile({
     required String name,

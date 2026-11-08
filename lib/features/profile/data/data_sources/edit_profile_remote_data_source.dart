@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http_parser/http_parser.dart';
@@ -6,14 +5,16 @@ import 'package:image_picker/image_picker.dart';
 import '../../../../core/constant/api_constants.dart';
 import '../../../../core/error/api_exception.dart';
 import '../../../../core/services/secure_storage_service.dart';
-import '../../domain/entities/edit_profile_user_entity.dart';
 import '../../domain/repository/edit_profile_repository.dart';
 import '../error/profile_validation_exception.dart';
-import '../models/edit_profile_user_model.dart';
 
 abstract class EditProfileRemoteDataSource {
   Future<Map<String, dynamic>> getProfileRaw();
-  Future<Map<String, dynamic>> updateProfileRaw(Map<String, dynamic> fields, SignatureInput? signature);
+  Future<void> uploadProfileImage(String path);
+  Future<Map<String, dynamic>> updateProfileRaw(
+    Map<String, dynamic> fields,
+    SignatureInput? signature,
+  );
 }
 
 class EditProfileRemoteDataSourceImpl implements EditProfileRemoteDataSource {
@@ -24,7 +25,9 @@ class EditProfileRemoteDataSourceImpl implements EditProfileRemoteDataSource {
 
   Future<Options> _authOptions() async {
     final token = await _secureStorage.getAccessToken();
-    return Options(headers: {if (token != null) 'Authorization': 'Bearer $token'});
+    return Options(
+      headers: {if (token != null) 'Authorization': 'Bearer $token'},
+    );
   }
 
   @override
@@ -32,6 +35,31 @@ class EditProfileRemoteDataSourceImpl implements EditProfileRemoteDataSource {
     try {
       final response = await _dio.get(ApiConstants.profileEndpoint, options: await _authOptions());
       return response.data as Map<String, dynamic>;
+    } on DioException catch (e) {
+      throw ApiException.fromDioException(e);
+    }
+  }
+
+  @override
+  Future<void> uploadProfileImage(String path) async {
+    try {
+      final filename = path.split(RegExp(r'[/\\]')).last;
+      final image = kIsWeb
+          ? MultipartFile.fromBytes(
+              await XFile(path).readAsBytes(),
+              filename: filename.contains('.') ? filename : 'profile_image.jpg',
+            )
+          : await MultipartFile.fromFile(
+              path,
+              filename: filename.contains('.') ? filename : 'profile_image.jpg',
+            );
+      final form = FormData.fromMap({'profile_image': image});
+
+      await _dio.post(
+        ApiConstants.profileImageEndpoint,
+        data: form,
+        options: await _authOptions(),
+      );
     } on DioException catch (e) {
       throw ApiException.fromDioException(e);
     }

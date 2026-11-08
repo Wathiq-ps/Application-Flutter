@@ -67,7 +67,7 @@ class _EditProfileViewState extends State<_EditProfileView> {
 
   Future<void> _pickAvatar(EditProfileCubit cubit) async {
     final paths = await Injector.imagePickerService.pickImages(limit: 1);
-    if (paths.isNotEmpty) cubit.setLocalAvatarPath(paths.first);
+    if (paths.isNotEmpty) await cubit.uploadProfileImage(paths.first);
   }
 
   Future<void> _pickDate(
@@ -120,6 +120,15 @@ class _EditProfileViewState extends State<_EditProfileView> {
               context.pop(true);
             }
             if (state.status == EditProfileStatus.saveFailed &&
+                state.errorMessage != null) {
+              AppTopSnackBar.show(
+                context,
+                title: AppStrings.somethingWentWrong,
+                message: state.errorMessage!,
+                prefixIcon: AppIcons.error,
+              );
+            }
+            if (state.status == EditProfileStatus.avatarUploadFailed &&
                 state.errorMessage != null) {
               AppTopSnackBar.show(
                 context,
@@ -213,21 +222,33 @@ class _EditProfileViewState extends State<_EditProfileView> {
                                     end: 0,
                                     bottom: 2 * ws,
                                     child: GestureDetector(
-                                      onTap: () => _pickAvatar(cubit),
+                                      onTap: state.isAvatarUploading
+                                          ? null
+                                          : () => _pickAvatar(cubit),
                                       behavior: HitTestBehavior.opaque,
                                       child: Container(
                                         width: 32 * ws,
                                         height: 32 * ws,
                                         alignment: Alignment.center,
-                                        child: SvgPicture.asset(
-                                          AppIcons.camera,
-                                          width: 14 * ws,
-                                          height: 14 * ws,
-                                          colorFilter: const ColorFilter.mode(
-                                            AppColors.primary,
-                                            BlendMode.srcIn,
-                                          ),
-                                        ),
+                                        child: state.isAvatarUploading
+                                            ? SizedBox(
+                                                width: 16 * ws,
+                                                height: 16 * ws,
+                                                child:
+                                                    const CircularProgressIndicator(
+                                                      strokeWidth: 2,
+                                                    ),
+                                              )
+                                            : SvgPicture.asset(
+                                                AppIcons.camera,
+                                                width: 14 * ws,
+                                                height: 14 * ws,
+                                                colorFilter:
+                                                    const ColorFilter.mode(
+                                                      AppColors.primary,
+                                                      BlendMode.srcIn,
+                                                    ),
+                                              ),
                                       ),
                                     ),
                                   ),
@@ -236,7 +257,9 @@ class _EditProfileViewState extends State<_EditProfileView> {
                             ),
                             SizedBox(height: 12 * ws),
                             GestureDetector(
-                              onTap: () => _pickAvatar(cubit),
+                              onTap: state.isAvatarUploading
+                                  ? null
+                                  : () => _pickAvatar(cubit),
                               child: Text(
                                 AppStrings.addPhoto,
                                 style: TextStyle(
@@ -410,7 +433,9 @@ class _EditProfileViewState extends State<_EditProfileView> {
 
                       AppElevatedButton(
                         text: AppStrings.saveChangesCta,
-                        onPressed: state.isSaving ? null : cubit.save,
+                        onPressed: state.isSaving || state.isAvatarUploading
+                            ? null
+                            : cubit.save,
                         backgroundColor: AppColors.primary,
                         height: 56 * ws,
                         width: double.infinity,

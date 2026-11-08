@@ -44,7 +44,28 @@ class EditProfileCubit extends Cubit<EditProfileState> {
   void setDocumentNumber(String v) => emit(state.copyWith(documentNumber: v));
   void setPhone(String v) => emit(state.copyWith(phone: v)); // UI only for now
   void setDateOfBirth(DateTime v) => emit(state.copyWith(dateOfBirth: v)); // UI only for now
-  void setLocalAvatarPath(String path) => emit(state.copyWith(localAvatarPath: path)); // UI only
+
+  Future<void> uploadProfileImage(String path) async {
+    emit(state.copyWith(
+      status: EditProfileStatus.uploadingAvatar,
+      localAvatarPath: path,
+      clearError: true,
+    ));
+    try {
+      await _repository.uploadProfileImage(path);
+      emit(state.copyWith(status: EditProfileStatus.ready));
+    } on ApiException catch (e) {
+      emit(state.copyWith(
+        status: EditProfileStatus.avatarUploadFailed,
+        errorMessage: e.message,
+      ));
+    } catch (_) {
+      emit(state.copyWith(
+        status: EditProfileStatus.avatarUploadFailed,
+        errorMessage: AppStrings.somethingWentWrong,
+      ));
+    }
+  }
 
   void setUploadedSignature(String filePath) {
     emit(state.copyWith(pendingSignature: SignatureInput.file(filePath)));
