@@ -6,7 +6,9 @@ import 'package:mobile/core/constant/app_icons.dart';
 import 'package:mobile/core/constant/images_path.dart';
 import 'package:mobile/core/constant/strings.dart';
 import 'package:mobile/core/di/injector.dart';
+import 'package:mobile/core/error/auth_exception.dart';
 import 'package:mobile/core/extensions/media_query_extensions.dart';
+import 'package:mobile/core/widget/app_dialog.dart';
 import 'package:mobile/core/widget/app_profile_avatar.dart';
 import 'package:mobile/core/widget/app_top_snackbar.dart';
 import 'package:mobile/core/widget/page_header.dart';
@@ -32,6 +34,45 @@ class ProfileScreen extends StatelessWidget {
 
 class _ProfileView extends StatelessWidget {
   const _ProfileView();
+
+  Future<void> _confirmLogout(BuildContext context) async {
+    final confirmed = await AppDialog.show<bool>(
+      context,
+      icon: AppIcons.errorDialog,
+      iconWidth: 26,
+      iconHeight: 22,
+      title: AppStrings.logout,
+      message: AppStrings.logoutConfirmationMessage,
+      primaryText: AppStrings.confirm,
+      primaryBackgroundColor: AppColors.error,
+      onPrimary: () => Navigator.of(context).pop(true),
+      secondaryText: AppStrings.cancelAction,
+      onSecondary: () => Navigator.of(context).pop(false),
+    );
+
+    if (confirmed != true || !context.mounted) return;
+
+    try {
+      await Injector.authRepository.logout();
+      if (context.mounted) context.go(RouteNames.onboardingScreen);
+    } on AuthException catch (e) {
+      if (!context.mounted) return;
+      AppTopSnackBar.show(
+        context,
+        title: AppStrings.somethingWentWrong,
+        message: e.message,
+        prefixIcon: AppIcons.error,
+      );
+    } catch (_) {
+      if (!context.mounted) return;
+      AppTopSnackBar.show(
+        context,
+        title: AppStrings.somethingWentWrong,
+        message: AppStrings.somethingWentWrong,
+        prefixIcon: AppIcons.error,
+      );
+    }
+  }
 
   String? _blockedActionMessage(
     ProfileEntity? profile, {
@@ -297,7 +338,7 @@ class _ProfileView extends StatelessWidget {
                     widthScale: widthScale,
                     heightScale: heightScale,
                     isDestructive: true,
-                    onTap: () {},
+                    onTap: () => _confirmLogout(context),
                   ),
                 ],
               ),

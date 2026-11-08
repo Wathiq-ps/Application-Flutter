@@ -223,6 +223,8 @@
   "language": "اللغة",
   "settings": "الإعدادات",
   "logout": "تسجيل الخروج",
+  "logoutConfirmationMessage": "هل أنت متأكد أنك تريد تسجيل الخروج؟",
+  "confirm": "تأكيد",
   "editProfile": "تعديل الملف الشخصي",
   "identityVerification": "التحقق من الهوية",
   "status": "الحالة:",

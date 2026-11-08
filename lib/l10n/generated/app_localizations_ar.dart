@@ -692,6 +692,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get logout => 'تسجيل الخروج';
 
   @override
+  String get logoutConfirmationMessage => 'هل أنت متأكد أنك تريد تسجيل الخروج؟';
+
+  @override
+  String get confirm => 'تأكيد';
+
+  @override
   String get editProfile => 'تعديل الملف الشخصي';
 
   @override

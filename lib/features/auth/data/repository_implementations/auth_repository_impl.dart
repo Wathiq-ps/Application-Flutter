@@ -46,4 +46,10 @@ class AuthRepositoryImpl implements AuthRepository {
       expiresIn: result.expiresIn,
     );
   }
+
+  @override
+  Future<void> logout() async {
+    await _dataSource.logout();
+    await _secureStorage.clearTokens();
+  }
 }

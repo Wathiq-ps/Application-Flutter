@@ -6,4 +6,6 @@ abstract class AuthRepository {
   Future<AuthResultEntity> verifyOtp({required String email, required String code});
 
   Future<RefreshResultEntity> refreshToken({required String refreshToken});
+
+  Future<void> logout();
 }

@@ -223,6 +223,8 @@
   "language": "Language",
   "settings": "Settings",
   "logout": "Logout",
+  "logoutConfirmationMessage": "Are you sure you want to log out?",
+  "confirm": "Confirm",
   "editProfile": "Edit Profile",
   "identityVerification": "Identity Verification",
   "status": "Status:",

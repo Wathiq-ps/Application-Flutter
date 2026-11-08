@@ -228,6 +228,8 @@ class AppStrings {
   static String get language => _l.language;
   static String get settings => _l.settings;
   static String get logout => _l.logout;
+  static String get logoutConfirmationMessage => _l.logoutConfirmationMessage;
+  static String get confirm => _l.confirm;
   static String get editProfile => _l.editProfile;
   static String get identityVerification => _l.identityVerification;
   static String get status => _l.status;

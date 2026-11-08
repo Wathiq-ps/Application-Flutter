@@ -10,6 +10,7 @@ abstract class AuthDataSource {
   Future<OtpRequestResponseModel> requestOtp({required String email, required String status});
   Future<AuthResultModel> verifyOtp({required String email, required String code});
   Future<RefreshResponseModel> refreshToken({required String refreshToken});
+  Future<void> logout();
 }
 
 class AuthDataSourceImpl implements AuthDataSource {
@@ -53,6 +54,15 @@ class AuthDataSourceImpl implements AuthDataSource {
         data: {'refresh_token': refreshToken},
       );
       return RefreshResponseModel.fromJson(response.data as Map<String, dynamic>);
+    } on DioException catch (e) {
+      throw AuthException.fromDioException(e);
+    }
+  }
+
+  @override
+  Future<void> logout() async {
+    try {
+      await _dio.post(ApiConstants.logoutEndpoint);
     } on DioException catch (e) {
       throw AuthException.fromDioException(e);
     }
