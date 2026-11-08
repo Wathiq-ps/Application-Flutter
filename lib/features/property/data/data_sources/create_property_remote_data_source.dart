@@ -75,8 +75,8 @@ class CreatePropertyRemoteDataSourceImpl
     }
 
     if (property.features != null && property.features!.isNotEmpty) {
-      for (final feature in property.features!) {
-        formData.fields.add(MapEntry('features[]', feature));
+      for (var i = 0; i < property.features!.length; i++) {
+        formData.fields.add(MapEntry('features[$i]', property.features![i]));
       }
     }
 
@@ -86,12 +86,17 @@ class CreatePropertyRemoteDataSourceImpl
       );
     }
 
-    for (final photo in property.photos) {
-      formData.files.add(MapEntry('photos[]', await _toMultipartFile(photo)));
-    }
-    for (final document in property.ownershipDocuments) {
+    for (var i = 0; i < property.photos.length; i++) {
       formData.files.add(
-        MapEntry('ownership_documents[]', await _toMultipartFile(document)),
+        MapEntry('photos[$i]', await _toMultipartFile(property.photos[i])),
+      );
+    }
+    for (var i = 0; i < property.ownershipDocuments.length; i++) {
+      formData.files.add(
+        MapEntry(
+          'ownership_documents[$i]',
+          await _toMultipartFile(property.ownershipDocuments[i]),
+        ),
       );
     }
 

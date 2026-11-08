@@ -35,6 +35,7 @@ class OwnerPropertyListItemModel extends OwnerPropertyListItem {
     final String currency = json['price_currency'] as String? ?? 'JOD';
     final String? apiStatus = json['status'] as String?;
     final String? apiPriceUnit = json['price_unit'] as String?;
+    final imageUrl = _coverPhotoUrl(json['photos']);
 
     return OwnerPropertyListItemModel(
       id: json['id'] as String,
@@ -48,7 +49,7 @@ class OwnerPropertyListItemModel extends OwnerPropertyListItem {
       pricePeriod: _periodSuffix(apiPriceUnit),
       currency: currency,
       status: PropertyStatus.fromApi(apiStatus),
-      imageUrl: null,
+      imageUrl: imageUrl,
       isListingActive: apiStatus == 'active',
       propertyType: _capitalize(json['type'] as String? ?? ''),
       description: json['description'] as String? ?? '',
@@ -72,6 +73,18 @@ class OwnerPropertyListItemModel extends OwnerPropertyListItem {
     if (district.isEmpty) return city;
     if (city.isEmpty) return district;
     return '$district, $city';
+  }
+
+  static String? _coverPhotoUrl(dynamic value) {
+    if (value is! List) return null;
+
+    final photos = value.whereType<Map>();
+    final coverPhoto = photos.where((photo) => photo['is_cover'] == true);
+    for (final photo in coverPhoto.followedBy(photos)) {
+      final url = photo['url'];
+      if (url is String && url.trim().isNotEmpty) return url;
+    }
+    return null;
   }
 
   static String _capitalize(String s) =>
