@@ -233,6 +233,14 @@ class AppStrings {
   static String get status => _l.status;
   static String get verifiedID => _l.verifiedID;
   static String get notVerifiedID => _l.notVerifiedID;
+  static String get completeYourProfile => _l.completeYourProfile;
+  static String get identityPending => _l.identityPending;
+  static String get identityUnderReview => _l.identityUnderReview;
+  static String get completeProfileFirst => _l.completeProfileFirst;
+  static String get uploadIdentityFirst => _l.uploadIdentityFirst;
+  static String get waitForIdentityReview => _l.waitForIdentityReview;
+  static String get reuploadIdentity => _l.reuploadIdentity;
+  static String get identityAlreadyVerified => _l.identityAlreadyVerified;
   static String get showingSavedData => _l.showingSavedData;
   static String get saved => _l.saved;
   static String get all => _l.all;

@@ -5,7 +5,9 @@ class ProfileModel extends ProfileEntity {
     required super.id,
     required super.name,
     required super.email,
-    required super.isVerified,
+    required super.identityStatus,
+    required super.missingProfileFields,
+    required super.profileImageUrl,
   });
 
   factory ProfileModel.fromJson(Map<String, dynamic> json) {
@@ -15,7 +17,14 @@ class ProfileModel extends ProfileEntity {
       id: user['id'] as String,
       name: user['name'] as String? ?? '',
       email: user['email'] as String? ?? '',
-      isVerified: user['profile_complete'] as bool? ?? false,
+      identityStatus: ProfileIdentityStatus.fromApi(
+        user['identity_status'] as String?,
+      ),
+      missingProfileFields:
+          (user['missing_profile_fields'] as List? ?? const [])
+              .map((field) => field.toString())
+              .toList(growable: false),
+      profileImageUrl: user['profile_image_url'] as String?,
     );
   }
 }

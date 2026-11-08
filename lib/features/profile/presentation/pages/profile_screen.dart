@@ -8,10 +8,12 @@ import 'package:mobile/core/constant/strings.dart';
 import 'package:mobile/core/di/injector.dart';
 import 'package:mobile/core/extensions/media_query_extensions.dart';
 import 'package:mobile/core/widget/app_profile_avatar.dart';
+import 'package:mobile/core/widget/app_top_snackbar.dart';
 import 'package:mobile/core/widget/page_header.dart';
 import '../../../../config/routes/routes_names.dart';
 import '../state_management/profile_cubit.dart';
 import '../state_management/profile_state.dart';
+import '../../domain/entities/profile_entity.dart';
 import '../widgets/language_picker_sheet.dart';
 import '../widgets/profile_menu_item.dart';
 import '../widgets/verified_status_badge.dart';
@@ -30,6 +32,47 @@ class ProfileScreen extends StatelessWidget {
 
 class _ProfileView extends StatelessWidget {
   const _ProfileView();
+
+  String? _blockedActionMessage(
+    ProfileEntity? profile, {
+    required bool isIdentityAction,
+  }) {
+    if (profile == null) return AppStrings.somethingWentWrong;
+    if (!profile.isProfileComplete) return AppStrings.completeProfileFirst;
+
+    switch (profile.identityStatus) {
+      case ProfileIdentityStatus.pending:
+        return isIdentityAction ? null : AppStrings.uploadIdentityFirst;
+      case ProfileIdentityStatus.underReview:
+        return AppStrings.waitForIdentityReview;
+      case ProfileIdentityStatus.approved:
+        return isIdentityAction ? AppStrings.identityAlreadyVerified : null;
+      case ProfileIdentityStatus.rejected:
+        return isIdentityAction ? null : AppStrings.reuploadIdentity;
+    }
+  }
+
+  void _showBlockedAction(BuildContext context, String message) {
+    AppTopSnackBar.show(
+      context,
+      title: AppStrings.somethingWentWrong,
+      message: message,
+      prefixIcon: AppIcons.error,
+    );
+  }
+
+  String _identityStatusLabel(ProfileIdentityStatus status) {
+    switch (status) {
+      case ProfileIdentityStatus.pending:
+        return AppStrings.identityPending;
+      case ProfileIdentityStatus.underReview:
+        return AppStrings.identityUnderReview;
+      case ProfileIdentityStatus.approved:
+        return AppStrings.verifiedID;
+      case ProfileIdentityStatus.rejected:
+        return AppStrings.verificationRejected;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -146,7 +189,8 @@ class _ProfileView extends StatelessWidget {
                           ),
                           SizedBox(height: 8 * heightScale),
                           VerifiedStatusBadge(
-                            isVerified: profile.isVerified,
+                            status: profile.identityStatus,
+                            isProfileComplete: profile.isProfileComplete,
                             widthScale: widthScale,
                           ),
                         ],
@@ -156,17 +200,32 @@ class _ProfileView extends StatelessWidget {
 
                   SizedBox(height: 24 * heightScale),
 
-                  ProfileMenuItem(
-                    icon: AppIcons.identity,
-                    title: AppStrings.identityVerification,
-                    subtitle: AppStrings.status,
-                    widthScale: widthScale,
-                    heightScale: heightScale,
-                    iconWidth: 18 * widthScale,
-                    iconHeight: 19 * widthScale,
-                    onTap: () async {
-                      await context.push(RouteNames.verifyIdentityScreen);
-                      profileCubit.load(); // refresh badge when coming back
+                  BlocBuilder<ProfileCubit, ProfileState>(
+                    builder: (context, state) {
+                      final profile = state.data;
+                      return ProfileMenuItem(
+                        icon: AppIcons.identity,
+                        title: AppStrings.identityVerification,
+                        subtitle: profile == null
+                            ? AppStrings.status
+                            : '${AppStrings.status} ${_identityStatusLabel(profile.identityStatus)}',
+                        widthScale: widthScale,
+                        heightScale: heightScale,
+                        iconWidth: 18 * widthScale,
+                        iconHeight: 19 * widthScale,
+                        onTap: () async {
+                          final blockedMessage = _blockedActionMessage(
+                            profileCubit.state.data,
+                            isIdentityAction: true,
+                          );
+                          if (blockedMessage != null) {
+                            _showBlockedAction(context, blockedMessage);
+                            return;
+                          }
+                          await context.push(RouteNames.verifyIdentityScreen);
+                          profileCubit.load();
+                        },
+                      );
                     },
                   ),
 
@@ -177,7 +236,17 @@ class _ProfileView extends StatelessWidget {
                     heightScale: heightScale,
                     iconWidth: 20 * widthScale,
                     iconHeight: 18 * widthScale,
-                    onTap: () => context.push(RouteNames.ownerPropertiesScreen),
+                    onTap: () {
+                      final blockedMessage = _blockedActionMessage(
+                        profileCubit.state.data,
+                        isIdentityAction: false,
+                      );
+                      if (blockedMessage != null) {
+                        _showBlockedAction(context, blockedMessage);
+                        return;
+                      }
+                      context.push(RouteNames.ownerPropertiesScreen);
+                    },
                   ),
 
                   ProfileMenuItem(
@@ -187,7 +256,15 @@ class _ProfileView extends StatelessWidget {
                     heightScale: heightScale,
                     iconWidth: 24 * widthScale,
                     iconHeight: 24 * widthScale,
-                    onTap: () {},
+                    onTap: () {
+                      final blockedMessage = _blockedActionMessage(
+                        profileCubit.state.data,
+                        isIdentityAction: false,
+                      );
+                      if (blockedMessage != null) {
+                        _showBlockedAction(context, blockedMessage);
+                      }
+                    },
                   ),
 
                   ProfileMenuItem(
@@ -242,6 +319,7 @@ class _ProfileView extends StatelessWidget {
                 return Center(
                   child: AppProfileAvatar(
                     widthScale: widthScale,
+                    imageUrl: profile?.profileImageUrl,
                     imageAsset: null,
                     initialsSource: displayName,
                     showInitialsFallback: true,

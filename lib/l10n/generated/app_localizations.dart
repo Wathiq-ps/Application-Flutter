@@ -1445,8 +1445,56 @@ abstract class AppLocalizations {
   /// No description provided for @notVerifiedID.
   ///
   /// In en, this message translates to:
-  /// **'Not Verified'**
+  /// **'Unverified ID'**
   String get notVerifiedID;
+
+  /// No description provided for @completeYourProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete your profile'**
+  String get completeYourProfile;
+
+  /// No description provided for @identityPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get identityPending;
+
+  /// No description provided for @identityUnderReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Under review'**
+  String get identityUnderReview;
+
+  /// No description provided for @completeProfileFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Please complete the missing profile information first.'**
+  String get completeProfileFirst;
+
+  /// No description provided for @uploadIdentityFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Please upload your ID first.'**
+  String get uploadIdentityFirst;
+
+  /// No description provided for @waitForIdentityReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Please wait for an admin to review your ID.'**
+  String get waitForIdentityReview;
+
+  /// No description provided for @reuploadIdentity.
+  ///
+  /// In en, this message translates to:
+  /// **'You must upload your ID again.'**
+  String get reuploadIdentity;
+
+  /// No description provided for @identityAlreadyVerified.
+  ///
+  /// In en, this message translates to:
+  /// **'Your ID is already verified.'**
+  String get identityAlreadyVerified;
 
   /// No description provided for @showingSavedData.
   ///

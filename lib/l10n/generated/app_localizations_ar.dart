@@ -704,7 +704,32 @@ class AppLocalizationsAr extends AppLocalizations {
   String get verifiedID => 'هوية موثقة';
 
   @override
-  String get notVerifiedID => 'غير موثق';
+  String get notVerifiedID => 'هوية غير موثقة';
+
+  @override
+  String get completeYourProfile => 'أكمل البيانات الناقصة';
+
+  @override
+  String get identityPending => 'قيد الانتظار';
+
+  @override
+  String get identityUnderReview => 'قيد المراجعة';
+
+  @override
+  String get completeProfileFirst =>
+      'يرجى إكمال البيانات الناقصة في ملفك الشخصي أولاً.';
+
+  @override
+  String get uploadIdentityFirst => 'يرجى رفع هويتك أولاً.';
+
+  @override
+  String get waitForIdentityReview => 'يرجى انتظار مراجعة المسؤول لهويتك.';
+
+  @override
+  String get reuploadIdentity => 'يجب إعادة رفع هويتك.';
+
+  @override
+  String get identityAlreadyVerified => 'هويتك موثقة بالفعل.';
 
   @override
   String get showingSavedData => 'عرض بيانات محفوظة';

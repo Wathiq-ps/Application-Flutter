@@ -708,7 +708,33 @@ class AppLocalizationsEn extends AppLocalizations {
   String get verifiedID => 'Verified ID';
 
   @override
-  String get notVerifiedID => 'Not Verified';
+  String get notVerifiedID => 'Unverified ID';
+
+  @override
+  String get completeYourProfile => 'Complete your profile';
+
+  @override
+  String get identityPending => 'Pending';
+
+  @override
+  String get identityUnderReview => 'Under review';
+
+  @override
+  String get completeProfileFirst =>
+      'Please complete the missing profile information first.';
+
+  @override
+  String get uploadIdentityFirst => 'Please upload your ID first.';
+
+  @override
+  String get waitForIdentityReview =>
+      'Please wait for an admin to review your ID.';
+
+  @override
+  String get reuploadIdentity => 'You must upload your ID again.';
+
+  @override
+  String get identityAlreadyVerified => 'Your ID is already verified.';
 
   @override
   String get showingSavedData => 'Showing saved data';
